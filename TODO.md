@@ -13,9 +13,9 @@
 - [x] 2.5 Implement `internal/delivery/http/v1/dto.go` (Request/Response DTOs)
 
 ## Phase 3: Repository Layer (Database Access)
-- [ ] 3.1 Implement `internal/repository/user_postgres.go` (CRUD, auth queries)
-- [ ] 3.2 Implement `internal/repository/team_postgres.go` (Transactions with `FOR UPDATE` for Join/Kick/Leave)
-- [ ] 3.3 Implement `internal/repository/score_postgres.go` (Upsert jury scores, aggregation)
+- [x] 3.1 Implement `internal/repository/user_postgres.go` (CRUD, auth queries)
+- [x] 3.2 Implement `internal/repository/team_postgres.go` (Transactions with `FOR UPDATE` for Join/Kick/Leave)
+- [x] 3.3 Implement `internal/repository/score_postgres.go` (Upsert jury scores, aggregation)
 
 ## Phase 4: Service Layer (Business Logic)
 - [ ] 4.1 Implement `internal/service/auth_service.go` (Password hashing, JWT generation)
