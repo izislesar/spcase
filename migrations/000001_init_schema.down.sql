@@ -1,0 +1,1 @@
+-- Rollback for the initial schema migration.
