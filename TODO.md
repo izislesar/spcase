@@ -8,7 +8,7 @@
 ## Phase 2: Domain Layer
 - [x] 2.1 Implement `internal/domain/user.go` (Enums, structs)
 - [x] 2.2 Implement `internal/domain/team.go` (Structs for team and members)
-- [ ] 2.3 Implement `internal/domain/score.go` (Structs for evaluation)
+- [x] 2.3 Implement `internal/domain/score.go` (Structs for evaluation)
 - [ ] 2.4 Implement `internal/domain/errors.go` (Custom domain errors)
 - [ ] 2.5 Implement `internal/delivery/http/v1/dto.go` (Request/Response DTOs)
 
