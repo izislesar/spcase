@@ -9,7 +9,7 @@
 - [x] 2.1 Implement `internal/domain/user.go` (Enums, structs)
 - [x] 2.2 Implement `internal/domain/team.go` (Structs for team and members)
 - [x] 2.3 Implement `internal/domain/score.go` (Structs for evaluation)
-- [ ] 2.4 Implement `internal/domain/errors.go` (Custom domain errors)
+- [x] 2.4 Implement `internal/domain/errors.go` (Custom domain errors)
 - [ ] 2.5 Implement `internal/delivery/http/v1/dto.go` (Request/Response DTOs)
 
 ## Phase 3: Repository Layer (Database Access)
