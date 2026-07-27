@@ -10,7 +10,7 @@
 - [x] 2.2 Implement `internal/domain/team.go` (Structs for team and members)
 - [x] 2.3 Implement `internal/domain/score.go` (Structs for evaluation)
 - [x] 2.4 Implement `internal/domain/errors.go` (Custom domain errors)
-- [ ] 2.5 Implement `internal/delivery/http/v1/dto.go` (Request/Response DTOs)
+- [x] 2.5 Implement `internal/delivery/http/v1/dto.go` (Request/Response DTOs)
 
 ## Phase 3: Repository Layer (Database Access)
 - [ ] 3.1 Implement `internal/repository/user_postgres.go` (CRUD, auth queries)
