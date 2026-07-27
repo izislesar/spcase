@@ -3,11 +3,11 @@
 ## Phase 1: Environment & Core
 - [x] 1.1 Create `go.mod` and directory structure according to `backend.md`
 - [x] 1.2 Implement `internal/config/config.go` (ENV loading with validation)
-- [ ] 1.3 Implement `internal/pkg/postgres/postgres.go` (`pgxpool` initialization, ping, timeouts)
+- [x] 1.3 Implement `internal/pkg/postgres/postgres.go` (`pgxpool` initialization, ping, timeouts)
 
 ## Phase 2: Domain Layer
-- [ ] 2.1 Implement `internal/domain/user.go` (Enums, structs)
-- [ ] 2.2 Implement `internal/domain/team.go` (Structs for team and members)
+- [x] 2.1 Implement `internal/domain/user.go` (Enums, structs)
+- [x] 2.2 Implement `internal/domain/team.go` (Structs for team and members)
 - [ ] 2.3 Implement `internal/domain/score.go` (Structs for evaluation)
 - [ ] 2.4 Implement `internal/domain/errors.go` (Custom domain errors)
 - [ ] 2.5 Implement `internal/delivery/http/v1/dto.go` (Request/Response DTOs)
