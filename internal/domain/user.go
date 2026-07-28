@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Role defines the permissions assigned to an authenticated principal.
+// Role is the global RBAC role of an account.
 type Role string
 
 const (
@@ -15,7 +15,6 @@ const (
 	RoleAdmin Role = "ADMIN"
 )
 
-// IsValid reports whether the role is supported by the application RBAC model.
 func (r Role) IsValid() bool {
 	switch r {
 	case RoleUser, RoleJury, RoleAdmin:
@@ -25,57 +24,60 @@ func (r Role) IsValid() bool {
 	}
 }
 
-// TeamStatus describes a participant's relationship to a team.
-type TeamStatus string
+// MembershipState is a USER account's relationship to a team. It is not an
+// RBAC role and is never stored in JWT claims.
+type MembershipState string
 
 const (
-	TeamStatusNoTeam  TeamStatus = "NO_TEAM"
-	TeamStatusInTeam  TeamStatus = "IN_TEAM"
-	TeamStatusCaptain TeamStatus = "CAPTAIN"
+	MembershipNoTeam  MembershipState = "NO_TEAM"
+	MembershipInTeam  MembershipState = "IN_TEAM"
+	MembershipCaptain MembershipState = "CAPTAIN"
 )
 
-// IsValid reports whether the team status is part of the user state machine.
-func (s TeamStatus) IsValid() bool {
+func (s MembershipState) IsValid() bool {
 	switch s {
-	case TeamStatusNoTeam, TeamStatusInTeam, TeamStatusCaptain:
+	case MembershipNoTeam, MembershipInTeam, MembershipCaptain:
 		return true
 	default:
 		return false
 	}
 }
 
-// User is a participant or administrator account. TeamID is nil when the user
-// is not a member of a team.
+// User is the single identity model used by participants, jury, and admins.
+// University and Telegram are required only for RoleUser.
 type User struct {
 	ID           uuid.UUID
 	FullName     string
-	University   string
+	University   *string
 	Email        string
-	Telegram     string
+	Telegram     *string
 	PasswordHash string
 	Role         Role
-	TeamID       *uuid.UUID
+	AuthVersion  int
+	DisabledAt   *time.Time
 	CreatedAt    time.Time
 }
 
-// TeamStatus returns the user's current state in the team state machine.
-// captainID may be nil when no team has been found.
-func (u User) TeamStatus(captainID *uuid.UUID) TeamStatus {
-	if u.TeamID == nil {
-		return TeamStatusNoTeam
-	}
-	if captainID != nil && u.ID == *captainID {
-		return TeamStatusCaptain
-	}
-	return TeamStatusInTeam
+// AccountProjection is the minimal mutable identity data checked on every
+// authenticated request.
+type AccountProjection struct {
+	ID          uuid.UUID
+	Role        Role
+	AuthVersion int
+	DisabledAt  *time.Time
 }
 
-// Jury is an isolated expert account. It deliberately has no team membership
-// or participant profile fields.
-type Jury struct {
-	ID           uuid.UUID
-	FullName     string
-	Email        string
-	PasswordHash string
-	CreatedAt    time.Time
+func (u User) IsDisabled() bool {
+	return u.DisabledAt != nil
+}
+
+// MembershipStateFor derives membership state from current database data.
+func MembershipStateFor(userID uuid.UUID, membership *TeamMembership, captainID uuid.UUID) MembershipState {
+	if membership == nil {
+		return MembershipNoTeam
+	}
+	if userID == captainID {
+		return MembershipCaptain
+	}
+	return MembershipInTeam
 }

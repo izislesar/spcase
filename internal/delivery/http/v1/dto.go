@@ -105,14 +105,14 @@ type LogoutResponse struct {
 
 // UserMeResponse contains the authenticated participant profile.
 type UserMeResponse struct {
-	ID         uuid.UUID         `json:"id"`
-	FullName   string            `json:"full_name"`
-	University string            `json:"university"`
-	Email      string            `json:"email"`
-	Telegram   string            `json:"telegram"`
-	Role       domain.Role       `json:"role"`
-	TeamStatus domain.TeamStatus `json:"team_status"`
-	TeamID     *uuid.UUID        `json:"team_id"`
+	ID         uuid.UUID              `json:"id"`
+	FullName   string                 `json:"full_name"`
+	University string                 `json:"university"`
+	Email      string                 `json:"email"`
+	Telegram   string                 `json:"telegram"`
+	Role       domain.Role            `json:"role"`
+	TeamStatus domain.MembershipState `json:"team_status"`
+	TeamID     *uuid.UUID             `json:"team_id"`
 }
 
 // CreateTeamRequest contains the desired team name.
@@ -156,13 +156,14 @@ type TeamSubmissionResponse struct {
 
 // MyTeamResponse contains a team, its roster, and its optional submission.
 type MyTeamResponse struct {
-	ID          uuid.UUID               `json:"id"`
-	Name        string                  `json:"name"`
-	InviteCode  string                  `json:"invite_code"`
-	CaptainID   uuid.UUID               `json:"captain_id"`
-	StatusBadge domain.TeamStatusBadge  `json:"status_badge"`
-	Members     []TeamMemberResponse    `json:"members"`
-	Submission  *TeamSubmissionResponse `json:"submission"`
+	ID              uuid.UUID               `json:"id"`
+	Name            string                  `json:"name"`
+	InviteCode      string                  `json:"invite_code"`
+	CaptainID       uuid.UUID               `json:"captain_id"`
+	StatusBadge     domain.TeamStatusBadge  `json:"status_badge"`
+	MutationsLocked bool                    `json:"mutations_locked"`
+	Members         []TeamMemberResponse    `json:"members"`
+	Submission      *TeamSubmissionResponse `json:"submission"`
 }
 
 // KickTeamMemberRequest identifies the member a captain wants to remove.
@@ -241,8 +242,9 @@ type SaveEvaluationsRequest struct {
 
 // AdminStatsResponse contains aggregate platform counters.
 type AdminStatsResponse struct {
-	TotalUsers         int `json:"total_users"`
-	TotalTeams         int `json:"total_teams"`
-	SubmittedSolutions int `json:"submitted_solutions"`
-	TotalJuries        int `json:"total_juries"`
+	TotalUsers         int  `json:"total_users"`
+	TotalTeams         int  `json:"total_teams"`
+	SubmittedSolutions int  `json:"submitted_solutions"`
+	TotalJuries        int  `json:"total_juries"`
+	EvaluationsClosed  bool `json:"evaluations_closed"`
 }

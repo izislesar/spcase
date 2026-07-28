@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -19,12 +20,15 @@ const (
 
 // Config contains all runtime settings required by the application.
 type Config struct {
-	Port                int
-	AppDomain           string
-	CORSAllowedOrigins  []string
-	DB                  DatabaseConfig
-	JWT                 JWTConfig
-	JuryRegistrationKey string
+	Port                 int
+	AppDomain            string
+	CORSAllowedOrigins   []string
+	DB                   DatabaseConfig
+	JWT                  JWTConfig
+	JuryRegistrationKey  string
+	RegistrationDeadline time.Time
+	SubmissionDeadline   time.Time
+	NoTeamTelegramURL    string
 }
 
 // DatabaseConfig contains PostgreSQL connection settings.
@@ -66,6 +70,7 @@ func load(getenv func(string) string) (Config, error) {
 	cfg := Config{
 		AppDomain:           valueOrDefault(getenv("APP_DOMAIN"), defaultAppDomain),
 		JuryRegistrationKey: strings.TrimSpace(getenv("JURY_REGISTRATION_KEY")),
+		NoTeamTelegramURL:   strings.TrimSpace(getenv("NO_TEAM_TELEGRAM_URL")),
 		DB: DatabaseConfig{
 			Host:     strings.TrimSpace(getenv("DB_HOST")),
 			User:     strings.TrimSpace(getenv("DB_USER")),
@@ -79,13 +84,17 @@ func load(getenv func(string) string) (Config, error) {
 	cfg.Port, errs = parsePort("PORT", valueOrDefault(getenv("PORT"), strconv.Itoa(defaultPort)), errs)
 	cfg.DB.Port, errs = parsePort("DB_PORT", getenv("DB_PORT"), errs)
 	cfg.CORSAllowedOrigins, errs = parseOrigins(getenv("CORS_ALLOWED_ORIGINS"), errs)
+	cfg.RegistrationDeadline, errs = parseTimestamp("REGISTRATION_DEADLINE", getenv("REGISTRATION_DEADLINE"), errs)
+	cfg.SubmissionDeadline, errs = parseTimestamp("SUBMISSION_DEADLINE", getenv("SUBMISSION_DEADLINE"), errs)
+	cfg.NoTeamTelegramURL, errs = parseHTTPSURL("NO_TEAM_TELEGRAM_URL", cfg.NoTeamTelegramURL, errs)
 
 	for key, value := range map[string]string{
-		"DB_HOST":     cfg.DB.Host,
-		"DB_USER":     cfg.DB.User,
-		"DB_PASSWORD": cfg.DB.Password,
-		"DB_NAME":     cfg.DB.Name,
-		"JWT_SECRET":  cfg.JWT.Secret,
+		"DB_HOST":               cfg.DB.Host,
+		"DB_USER":               cfg.DB.User,
+		"DB_PASSWORD":           cfg.DB.Password,
+		"DB_NAME":               cfg.DB.Name,
+		"JWT_SECRET":            cfg.JWT.Secret,
+		"JURY_REGISTRATION_KEY": cfg.JuryRegistrationKey,
 	} {
 		if strings.TrimSpace(value) == "" {
 			errs = append(errs, fmt.Errorf("%s is required", key))
@@ -97,6 +106,11 @@ func load(getenv func(string) string) (Config, error) {
 	}
 	if strings.ContainsAny(cfg.AppDomain, "/:\\") {
 		errs = append(errs, errors.New("APP_DOMAIN must be a domain name without scheme, path, or port"))
+	}
+	if !cfg.RegistrationDeadline.IsZero() &&
+		!cfg.SubmissionDeadline.IsZero() &&
+		!cfg.RegistrationDeadline.Before(cfg.SubmissionDeadline) {
+		errs = append(errs, errors.New("REGISTRATION_DEADLINE must be before SUBMISSION_DEADLINE"))
 	}
 	if len(errs) > 0 {
 		return Config{}, errors.Join(errs...)
@@ -136,6 +150,29 @@ func parseOrigins(raw string, errs []error) ([]string, []error) {
 		errs = append(errs, errors.New("CORS_ALLOWED_ORIGINS must contain at least one HTTPS origin"))
 	}
 	return origins, errs
+}
+
+func parseTimestamp(key, raw string, errs []error) (time.Time, []error) {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return time.Time{}, append(errs, fmt.Errorf("%s is required", key))
+	}
+	deadline, err := time.Parse(time.RFC3339, raw)
+	if err != nil {
+		return time.Time{}, append(errs, fmt.Errorf("%s must use RFC3339 format", key))
+	}
+	return deadline.UTC(), errs
+}
+
+func parseHTTPSURL(key, raw string, errs []error) (string, []error) {
+	if raw == "" {
+		return "", append(errs, fmt.Errorf("%s is required", key))
+	}
+	parsed, err := url.ParseRequestURI(raw)
+	if err != nil || parsed.Scheme != "https" || parsed.Host == "" {
+		return "", append(errs, fmt.Errorf("%s must be a valid HTTPS URL", key))
+	}
+	return parsed.String(), errs
 }
 
 func valueOrDefault(value, fallback string) string {

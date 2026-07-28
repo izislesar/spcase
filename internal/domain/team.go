@@ -39,6 +39,14 @@ type Team struct {
 	InviteCode string
 	CaptainID  uuid.UUID
 	CreatedAt  time.Time
+	UpdatedAt  time.Time
+}
+
+// TeamMembership is the persisted association between one USER and one team.
+type TeamMembership struct {
+	TeamID   uuid.UUID
+	UserID   uuid.UUID
+	JoinedAt time.Time
 }
 
 // TeamMember is the public participant representation returned with a team.
@@ -74,4 +82,10 @@ func StatusBadge(memberCount int, hasSubmission bool) TeamStatusBadge {
 		return TeamStatusReady
 	}
 	return TeamStatusSearching
+}
+
+// TeamState keeps independently derived readiness and mutation lock state.
+type TeamState struct {
+	Status          TeamStatusBadge
+	MutationsLocked bool
 }
