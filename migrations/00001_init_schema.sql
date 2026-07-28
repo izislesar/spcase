@@ -19,8 +19,6 @@ CREATE TABLE users (
     )
 );
 
-CREATE UNIQUE INDEX uq_users_email_ci ON users (LOWER(email));
-
 CREATE TABLE teams (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
@@ -28,11 +26,9 @@ CREATE TABLE teams (
     captain_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_invite_code_format CHECK (invite_code ~ '^[A-Z0-9]{8}$')
+    CONSTRAINT chk_invite_code_format CHECK (invite_code ~ '^[A-Z0-9]{8}$'),
+    CONSTRAINT uq_teams_invite_code UNIQUE (invite_code)
 );
-
-CREATE UNIQUE INDEX uq_teams_name_ci ON teams (LOWER(name));
-CREATE UNIQUE INDEX uq_teams_invite_code ON teams (invite_code);
 
 CREATE TABLE team_members (
     team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
@@ -157,6 +153,40 @@ DEFERRABLE INITIALLY IMMEDIATE
 FOR EACH ROW EXECUTE FUNCTION enforce_evaluation_event_admin_role();
 
 -- +goose StatementBegin
+CREATE FUNCTION prevent_evaluation_state_removal() RETURNS TRIGGER
+LANGUAGE plpgsql AS $$
+BEGIN
+    RAISE EXCEPTION 'evaluation state singleton cannot be removed' USING ERRCODE = '55000';
+END;
+$$;
+-- +goose StatementEnd
+
+CREATE TRIGGER trg_evaluation_state_no_delete
+BEFORE DELETE ON evaluation_state
+FOR EACH ROW EXECUTE FUNCTION prevent_evaluation_state_removal();
+
+CREATE TRIGGER trg_evaluation_state_no_truncate
+BEFORE TRUNCATE ON evaluation_state
+FOR EACH STATEMENT EXECUTE FUNCTION prevent_evaluation_state_removal();
+
+-- +goose StatementBegin
+CREATE FUNCTION prevent_evaluation_event_mutation() RETURNS TRIGGER
+LANGUAGE plpgsql AS $$
+BEGIN
+    RAISE EXCEPTION 'evaluation state events are append-only' USING ERRCODE = '55000';
+END;
+$$;
+-- +goose StatementEnd
+
+CREATE TRIGGER trg_evaluation_events_append_only
+BEFORE UPDATE OR DELETE ON evaluation_state_events
+FOR EACH ROW EXECUTE FUNCTION prevent_evaluation_event_mutation();
+
+CREATE TRIGGER trg_evaluation_events_no_truncate
+BEFORE TRUNCATE ON evaluation_state_events
+FOR EACH STATEMENT EXECUTE FUNCTION prevent_evaluation_event_mutation();
+
+-- +goose StatementBegin
 CREATE FUNCTION enforce_user_role_relations() RETURNS TRIGGER
 LANGUAGE plpgsql AS $$
 BEGIN
@@ -188,10 +218,16 @@ EXECUTE FUNCTION enforce_user_role_relations();
 
 -- +goose Down
 DROP TRIGGER IF EXISTS trg_user_role_relations ON users;
+DROP TRIGGER IF EXISTS trg_evaluation_events_no_truncate ON evaluation_state_events;
+DROP TRIGGER IF EXISTS trg_evaluation_events_append_only ON evaluation_state_events;
+DROP TRIGGER IF EXISTS trg_evaluation_state_no_truncate ON evaluation_state;
+DROP TRIGGER IF EXISTS trg_evaluation_state_no_delete ON evaluation_state;
 DROP TRIGGER IF EXISTS trg_evaluation_event_admin_role ON evaluation_state_events;
 DROP TRIGGER IF EXISTS trg_evaluation_state_admin_role ON evaluation_state;
 DROP TRIGGER IF EXISTS trg_evaluation_jury_role ON evaluations;
 DROP TRIGGER IF EXISTS trg_team_member_role ON team_members;
+DROP FUNCTION IF EXISTS prevent_evaluation_event_mutation();
+DROP FUNCTION IF EXISTS prevent_evaluation_state_removal();
 DROP FUNCTION IF EXISTS enforce_evaluation_event_admin_role();
 DROP FUNCTION IF EXISTS enforce_evaluation_state_admin_role();
 DROP FUNCTION IF EXISTS enforce_user_role_relations();

@@ -14,6 +14,14 @@ import (
 
 const evaluationColumns = `id, jury_id, team_id, criterion_id, score, updated_at`
 
+const listTeamTotalsQuery = `
+	SELECT t.id, COALESCE(SUM(e.score), 0), COUNT(DISTINCT e.jury_id)
+	FROM teams t
+	LEFT JOIN evaluations e ON e.team_id = t.id
+	GROUP BY t.id
+	ORDER BY COALESCE(SUM(e.score), 0) DESC, t.id
+`
+
 type ScoreRepository interface {
 	UpsertBatch(context.Context, []domain.Evaluation) ([]domain.Evaluation, error)
 	ListByJuryID(context.Context, uuid.UUID) ([]domain.Evaluation, error)
@@ -128,14 +136,7 @@ func (r *ScorePostgres) TeamTotal(ctx context.Context, teamID uuid.UUID) (domain
 }
 
 func (r *ScorePostgres) ListTeamTotals(ctx context.Context) ([]domain.TeamScoreTotal, error) {
-	const query = `
-		SELECT t.id, COALESCE(SUM(e.score), 0), COUNT(DISTINCT e.jury_id)
-		FROM teams t
-		LEFT JOIN evaluations e ON e.team_id = t.id
-		GROUP BY t.id
-		ORDER BY COALESCE(SUM(e.score), 0) DESC, t.id
-	`
-	rows, err := r.pool.Query(ctx, query)
+	rows, err := r.pool.Query(ctx, listTeamTotalsQuery)
 	if err != nil {
 		return nil, fmt.Errorf("list team totals: %w", err)
 	}

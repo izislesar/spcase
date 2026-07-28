@@ -18,6 +18,15 @@ import (
 
 const teamColumns = `id, name, invite_code, captain_id, created_at, updated_at`
 
+const listTeamMembersQuery = `
+	SELECT u.id, u.full_name, COALESCE(u.telegram, ''), u.id = t.captain_id
+	FROM team_members tm
+	JOIN users u ON u.id = tm.user_id
+	JOIN teams t ON t.id = tm.team_id
+	WHERE tm.team_id = $1
+	ORDER BY tm.joined_at, u.id
+`
+
 type TeamRepository interface {
 	Create(context.Context, domain.Team) (domain.Team, error)
 	GetByID(context.Context, uuid.UUID) (domain.Team, error)
@@ -123,15 +132,7 @@ func (r *TeamPostgres) GetByUserID(
 }
 
 func (r *TeamPostgres) ListMembers(ctx context.Context, teamID uuid.UUID) ([]domain.TeamMember, error) {
-	const query = `
-		SELECT u.id, u.full_name, COALESCE(u.telegram, ''), u.id = t.captain_id
-		FROM team_members tm
-		JOIN users u ON u.id = tm.user_id
-		JOIN teams t ON t.id = tm.team_id
-		WHERE tm.team_id = $1
-		ORDER BY tm.joined_at, u.id
-	`
-	rows, err := r.pool.Query(ctx, query, teamID)
+	rows, err := r.pool.Query(ctx, listTeamMembersQuery, teamID)
 	if err != nil {
 		return nil, fmt.Errorf("list team members: %w", err)
 	}

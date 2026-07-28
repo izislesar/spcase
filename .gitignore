@@ -1,27 +1,14 @@
-# Secrets and local environment
-.env
-.env.*
-!.env.example
-
-# Go build and test artifacts
-/bin/
-/build/
-/dist/
-*.exe
-*.test
-*.out
-coverage.*
-
-# Local development tools
-.vexp/
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS metadata
-.DS_Store
-Thumbs.db
-
-# Local agent documentation
 .docs/
+AGENTS.md
+api.md
+architecture.md
+backend.md
+business-logic.md
+database.md
+frontend.md
+
+.vscode/
+settings.json
+
+.env.example
+.env@
