@@ -9,10 +9,11 @@ import (
 	"github.com/google/uuid"
 
 	"spcase.ru/backend/internal/domain"
+	"spcase.ru/backend/internal/service"
 )
 
 type JuryUseCases interface {
-	Teams(context.Context, uuid.UUID) ([]domain.JuryTeam, error)
+	Workspace(context.Context, uuid.UUID) (service.JuryWorkspace, error)
 }
 
 type JuryHandler struct {
@@ -32,13 +33,16 @@ func (h *JuryHandler) Teams(writer http.ResponseWriter, request *http.Request) {
 	if !ok {
 		return
 	}
-	teams, err := h.jury.Teams(request.Context(), principal.UserID)
+	workspace, err := h.jury.Workspace(request.Context(), principal.UserID)
 	if err != nil {
 		handleError(writer, request, h.logger, err)
 		return
 	}
-	response := JuryTeamsResponse{Teams: make([]JuryTeamResponse, 0, len(teams))}
-	for _, team := range teams {
+	response := JuryTeamsResponse{
+		Teams:             make([]JuryTeamResponse, 0, len(workspace.Teams)),
+		EvaluationsLocked: workspace.EvaluationsLocked,
+	}
+	for _, team := range workspace.Teams {
 		response.Teams = append(response.Teams, JuryTeamResponse{
 			TeamID: team.TeamID, TeamName: team.TeamName, SolutionURL: team.SolutionURL,
 			IsEvaluatedByMe: team.EvaluatedByMe, MembersCount: team.MembersCount,

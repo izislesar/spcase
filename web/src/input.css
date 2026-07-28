@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --bg-primary: #FDFBF7;
+    --bg-card: #FFFFFF;
+    --text-main: #0B1B3D;
+    --accent-yellow: #F9AB06;
+    --accent-red: #FF4D4D;
+    --accent-green: #20C997;
+    --border-width: 2px;
+    --border-color: #0B1B3D;
+    --box-shadow-brutal: 4px 4px 0 #0B1B3D;
+    --box-shadow-press: 1px 1px 0 #0B1B3D;
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+
+  body {
+    @apply min-h-screen bg-ivory font-sans text-ink antialiased;
+  }
+
+  a {
+    @apply underline-offset-4;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-4 ring-mustard ring-offset-2 ring-offset-ivory;
+  }
+}
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
+  }
+
+  .brutal-card {
+    @apply border-2 border-ink bg-card p-5 shadow-brutal sm:p-7;
+  }
+
+  .brutal-card-strong {
+    @apply border-4 border-ink bg-card p-5 shadow-brutal sm:p-8;
+  }
+
+  .btn {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 border-2 border-ink px-5 py-2.5 text-center font-black no-underline shadow-brutal transition-transform duration-100 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn:hover:not(:disabled) {
+    @apply -translate-x-px -translate-y-px;
+  }
+
+  .btn:active:not(:disabled) {
+    @apply translate-x-[3px] translate-y-[3px] shadow-press;
+  }
+
+  .btn-primary {
+    @apply btn bg-mustard text-ink;
+  }
+
+  .btn-secondary {
+    @apply btn bg-card text-ink;
+  }
+
+  .btn-success {
+    @apply btn bg-mint text-ink;
+  }
+
+  .btn-danger {
+    @apply btn bg-coral text-ink;
+  }
+
+  .field {
+    @apply w-full border-2 border-ink bg-card px-4 py-3 text-base text-ink shadow-none placeholder:text-ink/45 focus:border-4 focus:outline-none;
+  }
+
+  .field-invalid {
+    @apply border-coral bg-coral/10;
+  }
+
+  .field-label {
+    @apply mb-2 block text-sm font-black uppercase tracking-wide;
+  }
+
+  .badge {
+    @apply inline-flex items-center border-2 border-ink px-3 py-1 text-xs font-black uppercase tracking-wide;
+  }
+
+  .badge-searching {
+    @apply badge bg-mustard;
+  }
+
+  .badge-ready {
+    @apply badge bg-mint;
+  }
+
+  .badge-submitted {
+    @apply badge bg-ink text-ivory;
+  }
+
+  .lock-banner {
+    @apply border-4 border-ink bg-coral p-4 font-bold shadow-brutal;
+  }
+
+  .section-title {
+    @apply text-3xl font-black uppercase leading-none sm:text-5xl;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 z-40 grid place-items-center bg-ink/80 p-4;
+  }
+
+  .modal-panel {
+    @apply max-h-[90vh] w-full max-w-lg overflow-y-auto border-4 border-ink bg-ivory p-6 shadow-[8px_8px_0px_0px_rgba(249,171,6,1)];
+  }
+
+  .table-grid {
+    @apply w-full border-collapse border-2 border-ink bg-card text-left;
+  }
+
+  .table-grid th,
+  .table-grid td {
+    @apply border-2 border-ink p-3 align-top;
+  }
+
+  .skeleton {
+    @apply animate-pulse border-2 border-ink/30 bg-sand;
+  }
+}

@@ -51,10 +51,11 @@ type TeamMembership struct {
 
 // TeamMember is the public participant representation returned with a team.
 type TeamMember struct {
-	ID        uuid.UUID
-	FullName  string
-	Telegram  string
-	IsCaptain bool
+	ID         uuid.UUID
+	FullName   string
+	University string
+	Telegram   string
+	IsCaptain  bool
 }
 
 // IsCaptain reports whether userID owns the team.

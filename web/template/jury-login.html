@@ -1,0 +1,18 @@
+{{define "content"}}
+<div x-data="juryAuthPage('login')" class="page-shell">
+  <div class="mx-auto max-w-xl">
+    <header class="brutal-card-strong bg-mint">
+      <p class="font-black uppercase">Контур эксперта</p>
+      <h1 class="mt-3 text-4xl font-black uppercase">Вход для жюри</h1>
+    </header>
+    <form class="brutal-card mt-7" @submit.prevent="submit()">
+      <label for="jury-login-email" class="field-label">Email</label>
+      <input id="jury-login-email" x-model.trim="form.email" class="field" type="email" autocomplete="email" required>
+      <label for="jury-login-password" class="field-label mt-5">Пароль</label>
+      <input id="jury-login-password" x-model="form.password" class="field" type="password" autocomplete="current-password" required>
+      <button class="btn-success mt-7 w-full" :disabled="busy">Войти в реестр команд</button>
+      <p class="mt-6 text-center">Первый вход? <a href="/jury/register" class="font-black underline">Регистрация по ключу</a></p>
+    </form>
+  </div>
+</div>
+{{end}}

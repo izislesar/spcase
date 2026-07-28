@@ -1,0 +1,18 @@
+{{define "content"}}
+<div x-data="noTeamPage" x-init="init()" class="page-shell">
+  <section class="mx-auto max-w-3xl brutal-card-strong bg-mustard">
+    <span class="text-6xl" aria-hidden="true">👋</span>
+    <h1 class="mt-6 section-title">Команда найдётся</h1>
+    <p class="mt-6 text-lg font-bold" x-text="message">Загружаем инструкцию…</p>
+    <ol class="mt-7 list-inside list-decimal space-y-2 border-y-2 border-ink py-5 font-bold">
+      <li>Коротко расскажи о себе и своих сильных сторонах.</li>
+      <li>Укажи ВУЗ, опыт и удобный Telegram-тег.</li>
+      <li>Соберите 2–4 человека и создайте команду в кабинете.</li>
+    </ol>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a :href="telegramURL" target="_blank" rel="noopener noreferrer" class="btn bg-ink text-ivory" :class="telegramURL ? '' : 'pointer-events-none opacity-50'">Перейти в Telegram-чат ↗</a>
+      <a href="/dashboard" class="btn-secondary">В кабинет</a>
+    </div>
+  </section>
+</div>
+{{end}}

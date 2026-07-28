@@ -7,7 +7,7 @@ MIGRATIONS_DIR ?= ./migrations
 DATABASE_URL ?= postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 GOOSE_COMMAND = $(GOOSE) -dir $(MIGRATIONS_DIR) $(GOOSE_DRIVER) "$(DATABASE_URL)"
 
-.PHONY: migrate-up migrate-down migrate-status migrate-reset test-database
+.PHONY: migrate-up migrate-down migrate-status migrate-reset test-database frontend-build
 
 migrate-up:
 	$(GOOSE_COMMAND) up
@@ -24,3 +24,7 @@ migrate-reset:
 
 test-database:
 	SPCASE_TEST_DATABASE_URL="$(DATABASE_URL)" go test -tags=integration ./internal/repository
+
+frontend-build:
+	npm ci
+	npm run build

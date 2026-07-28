@@ -19,7 +19,8 @@ import (
 const teamColumns = `id, name, invite_code, captain_id, created_at, updated_at`
 
 const listTeamMembersQuery = `
-	SELECT u.id, u.full_name, COALESCE(u.telegram, ''), u.id = t.captain_id
+	SELECT u.id, u.full_name, COALESCE(u.university, ''), COALESCE(u.telegram, ''),
+		u.id = t.captain_id
 	FROM team_members tm
 	JOIN users u ON u.id = tm.user_id
 	JOIN teams t ON t.id = tm.team_id
@@ -140,7 +141,13 @@ func (r *TeamPostgres) ListMembers(ctx context.Context, teamID uuid.UUID) ([]dom
 	members := make([]domain.TeamMember, 0)
 	for rows.Next() {
 		var member domain.TeamMember
-		if err := rows.Scan(&member.ID, &member.FullName, &member.Telegram, &member.IsCaptain); err != nil {
+		if err := rows.Scan(
+			&member.ID,
+			&member.FullName,
+			&member.University,
+			&member.Telegram,
+			&member.IsCaptain,
+		); err != nil {
 			return nil, fmt.Errorf("scan team member: %w", err)
 		}
 		members = append(members, member)

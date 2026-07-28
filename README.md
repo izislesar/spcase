@@ -2,6 +2,18 @@
 
 Backend кейс-чемпионата на Go и PostgreSQL.
 
+## Frontend
+
+HTML-шаблоны, скомпилированные Tailwind CSS и Alpine.js bundle встраиваются
+в Go-бинарник. Для воспроизводимой сборки assets:
+
+```bash
+make frontend-build
+```
+
+Во время разработки CSS и JavaScript можно пересобирать раздельно командами
+`npm run watch:css` и `npm run watch:js`.
+
 ## Миграции
 
 Команды используют `DATABASE_URL` либо DB-переменные из локального `.env`:

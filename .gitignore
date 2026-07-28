@@ -10,5 +10,7 @@ frontend.md
 .vscode/
 settings.json
 
-.env.example
+.env
 .env@
+node_modules/
+npm-debug.log*

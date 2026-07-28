@@ -1,0 +1,41 @@
+{{define "content"}}
+<div x-data="registerPage" class="page-shell">
+  <div class="mx-auto max-w-3xl">
+    <header class="mb-8">
+      <p class="font-black uppercase text-coral">Старт здесь</p>
+      <h1 class="section-title mt-3">Регистрация участника</h1>
+      <p class="mt-4">После успешной регистрации сервер создаст защищённую HttpOnly-сессию, и вы сразу попадёте в кабинет.</p>
+    </header>
+    <form class="brutal-card-strong" @submit.prevent="submit()" novalidate>
+      <div class="grid gap-5 md:grid-cols-2">
+        <div class="md:col-span-2">
+          <label for="register-name" class="field-label">ФИО</label>
+          <input id="register-name" x-model.trim="form.full_name" class="field" required maxlength="255" autocomplete="name" placeholder="Иванов Иван Иванович">
+        </div>
+        <div>
+          <label for="register-university" class="field-label">ВУЗ</label>
+          <input id="register-university" x-model.trim="form.university" class="field" required maxlength="255" placeholder="РУДН">
+        </div>
+        <div>
+          <label for="register-telegram" class="field-label">Telegram</label>
+          <input id="register-telegram" x-model.trim="form.telegram" class="field" required maxlength="255" placeholder="@username">
+        </div>
+        <div>
+          <label for="register-email" class="field-label">Email</label>
+          <input id="register-email" x-model.trim="form.email" class="field" type="email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div>
+          <label for="register-password" class="field-label">Пароль</label>
+          <input id="register-password" x-model="form.password" class="field" type="password" required minlength="8" autocomplete="new-password">
+          <p class="mt-2 text-xs font-bold">Минимум 8 символов.</p>
+        </div>
+      </div>
+      <p x-show="formError" class="mt-5 border-2 border-coral bg-coral/10 p-3 font-bold" x-text="formError"></p>
+      <button class="btn-primary mt-7 w-full" :disabled="busy">
+        <span x-show="!busy">Создать аккаунт</span><span x-show="busy">Создаём…</span>
+      </button>
+      <p class="mt-6 text-center">Уже зарегистрированы? <a href="/login" class="font-black underline">Войти</a></p>
+    </form>
+  </div>
+</div>
+{{end}}

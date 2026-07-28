@@ -1,0 +1,29 @@
+{{define "content"}}
+<div x-data="loginPage" class="page-shell">
+  <div class="mx-auto grid max-w-5xl gap-7 lg:grid-cols-2">
+    <section class="brutal-card-strong bg-mustard">
+      <p class="font-black uppercase">С возвращением</p>
+      <h1 class="mt-4 text-5xl font-black uppercase leading-none">Вход в платформу</h1>
+      <p class="mt-6 text-lg font-bold">Одна форма для участников и администратора. Эксперты жюри входят через отдельный контур.</p>
+      <a href="/jury/login" class="mt-8 inline-block font-black underline">Я член жюри →</a>
+    </section>
+    <form class="brutal-card" @submit.prevent="submit()" novalidate>
+      <h2 class="text-2xl font-black uppercase">Данные аккаунта</h2>
+      <div class="mt-6">
+        <label for="login-email" class="field-label">Email</label>
+        <input id="login-email" x-model.trim="email" class="field" :class="errors.email ? 'field-invalid' : ''" type="email" autocomplete="email" required>
+        <p x-show="errors.email" class="mt-2 text-sm font-bold text-coral" x-text="errors.email"></p>
+      </div>
+      <div class="mt-5">
+        <label for="login-password" class="field-label">Пароль</label>
+        <input id="login-password" x-model="password" class="field" :class="errors.password ? 'field-invalid' : ''" type="password" autocomplete="current-password" required>
+        <p x-show="errors.password" class="mt-2 text-sm font-bold text-coral" x-text="errors.password"></p>
+      </div>
+      <button class="btn-primary mt-7 w-full" :disabled="busy">
+        <span x-show="!busy">Войти</span><span x-show="busy">Проверяем…</span>
+      </button>
+      <p class="mt-6 text-center">Нет аккаунта? <a href="/register" class="font-black underline">Зарегистрироваться</a></p>
+    </form>
+  </div>
+</div>
+{{end}}

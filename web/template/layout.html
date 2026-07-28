@@ -1,0 +1,58 @@
+{{define "layout"}}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Платформа кейс-чемпионата SPCASE">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script defer src="/static/js/app.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-mustard focus:p-3">К содержанию</a>
+  <header class="border-b-4 border-ink bg-card">
+    <nav class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8" aria-label="Основная навигация">
+      <a href="/" class="text-2xl font-black no-underline">SP<span class="bg-mustard px-1">CASE</span></a>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-black uppercase">
+        <a href="/schedule" class="hover:underline">Расписание</a>
+        <a href="/dashboard" class="hover:underline">Команда</a>
+        <a href="/jury/teams" class="hover:underline">Жюри</a>
+        <a href="/login" class="hover:underline">Войти</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    {{template "content" .}}
+  </main>
+
+  <footer class="mt-16 border-t-4 border-ink bg-ink text-ivory">
+    <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-8 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <p class="font-black uppercase">SPCASE · кейс-чемпионат</p>
+      <p>Команда: 2–4 участника · один капитан · одна сильная идея</p>
+    </div>
+  </footer>
+
+  <div
+    x-data
+    aria-live="polite"
+    aria-atomic="true"
+    class="pointer-events-none fixed right-4 top-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3"
+  >
+    <template x-for="toast in $store.toast.items" :key="toast.id">
+      <div
+        class="pointer-events-auto border-2 border-ink p-4 font-bold shadow-brutal"
+        :class="toast.type === 'error' ? 'bg-coral' : (toast.type === 'success' ? 'bg-mint' : 'bg-mustard')"
+        role="status"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <p x-text="toast.message"></p>
+          <button type="button" class="font-black" @click="$store.toast.remove(toast.id)" aria-label="Закрыть уведомление">×</button>
+        </div>
+      </div>
+    </template>
+  </div>
+</body>
+</html>
+{{end}}

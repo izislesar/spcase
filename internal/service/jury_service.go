@@ -11,6 +11,13 @@ import (
 
 type JuryQueryRepository interface {
 	ListJuryTeams(context.Context, uuid.UUID) ([]domain.JuryTeam, error)
+	EvaluationsClosed(context.Context) (bool, error)
+}
+
+// JuryWorkspace contains the team registry and its global write state.
+type JuryWorkspace struct {
+	Teams             []domain.JuryTeam
+	EvaluationsLocked bool
 }
 
 type JuryService struct {
@@ -24,9 +31,17 @@ func NewJuryService(queries JuryQueryRepository) (*JuryService, error) {
 	return &JuryService{queries: queries}, nil
 }
 
-func (s *JuryService) Teams(ctx context.Context, juryID uuid.UUID) ([]domain.JuryTeam, error) {
+func (s *JuryService) Workspace(ctx context.Context, juryID uuid.UUID) (JuryWorkspace, error) {
 	if juryID == uuid.Nil {
-		return nil, domain.ErrUnauthorized
+		return JuryWorkspace{}, domain.ErrUnauthorized
 	}
-	return s.queries.ListJuryTeams(ctx, juryID)
+	teams, err := s.queries.ListJuryTeams(ctx, juryID)
+	if err != nil {
+		return JuryWorkspace{}, err
+	}
+	locked, err := s.queries.EvaluationsClosed(ctx)
+	if err != nil {
+		return JuryWorkspace{}, err
+	}
+	return JuryWorkspace{Teams: teams, EvaluationsLocked: locked}, nil
 }

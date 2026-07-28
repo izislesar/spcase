@@ -1,0 +1,109 @@
+{{define "content"}}
+<div x-data="homePage" x-init="init()" class="page-shell">
+  <section class="grid items-stretch gap-8 lg:grid-cols-[1.35fr_0.65fr]">
+    <div class="brutal-card-strong bg-mustard">
+      <p class="mb-5 inline-block border-2 border-ink bg-card px-3 py-1 font-black uppercase">Кейс-чемпионат 2026</p>
+      <h1 class="max-w-4xl text-5xl font-black uppercase leading-[0.9] sm:text-7xl lg:text-8xl">Решай.<br>Собирай.<br>Побеждай.</h1>
+      <p class="mt-7 max-w-2xl text-lg font-bold">Собери команду из 2–4 человек, разберись с реальным бизнес-кейсом и защити решение перед экспертами.</p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a href="/register" class="btn-secondary">Зарегистрироваться</a>
+        <a href="/login" class="btn bg-ink text-ivory">Войти</a>
+      </div>
+    </div>
+
+    <aside class="brutal-card flex flex-col justify-between bg-mint">
+      <div>
+        <p class="font-black uppercase">До конца регистрации</p>
+        <p class="mt-4 font-mono text-4xl font-black sm:text-5xl" x-text="countdown" aria-live="polite">—</p>
+      </div>
+      <div class="mt-10 border-t-2 border-ink pt-5">
+        <p class="text-sm font-bold uppercase">Дедлайн регистрации</p>
+        <p class="mt-1 text-lg font-black" x-text="formatDate(info.registration_deadline)">Загрузка…</p>
+      </div>
+    </aside>
+  </section>
+
+  <section x-cloak x-show="showTeamChoice" class="mt-12" aria-labelledby="team-choice-title">
+    <h2 id="team-choice-title" class="section-title">Найди своих</h2>
+    <p class="mt-3 max-w-2xl font-bold">Профиль готов. Теперь выбери, как собрать команду.</p>
+    <div class="mt-6 grid gap-6 md:grid-cols-2">
+      <button type="button" class="brutal-card-strong text-left transition-transform hover:-translate-y-1" @click="teamModal = true">
+        <span class="text-4xl" aria-hidden="true">🤝</span>
+        <span class="mt-5 block text-2xl font-black uppercase">У меня есть команда</span>
+        <span class="mt-2 block">Создать новую или войти по 8-значному коду.</span>
+      </button>
+      <a href="/no-team" class="brutal-card-strong block text-left no-underline transition-transform hover:-translate-y-1">
+        <span class="text-4xl" aria-hidden="true">📣</span>
+        <span class="mt-5 block text-2xl font-black uppercase">У меня нет команды</span>
+        <span class="mt-2 block">Перейти в официальный чат поиска участников.</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="mt-16" aria-labelledby="timeline-title">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 id="timeline-title" class="section-title">Таймлайн</h2>
+      <a href="/schedule" class="font-black underline">Полное расписание →</a>
+    </div>
+    <div class="mt-7 grid gap-5 md:grid-cols-2">
+      <template x-for="event in schedule" :key="event.id">
+        <article class="brutal-card">
+          <p class="font-mono text-sm font-black" x-text="formatDate(event.start_time)"></p>
+          <h3 class="mt-3 text-xl font-black uppercase" x-text="event.title"></h3>
+          <p class="mt-2" x-text="event.description"></p>
+        </article>
+      </template>
+      <div x-show="loading" class="skeleton h-36"></div>
+      <div x-show="loading" class="skeleton h-36"></div>
+    </div>
+  </section>
+
+  <section class="mt-16" aria-labelledby="faq-title">
+    <h2 id="faq-title" class="section-title">FAQ</h2>
+    <div class="mt-7 border-2 border-b-0 border-ink bg-card">
+      <template x-for="item in faq" :key="item.id">
+        <article class="border-b-2 border-ink" :class="openFAQ === item.id ? 'bg-sand' : 'bg-card'">
+          <button
+            type="button"
+            class="flex w-full items-center justify-between gap-4 p-5 text-left font-black"
+            @click="openFAQ = openFAQ === item.id ? null : item.id"
+            :aria-expanded="openFAQ === item.id"
+          >
+            <span x-text="item.question"></span>
+            <span class="text-2xl transition-transform" :class="openFAQ === item.id ? 'rotate-180' : ''" aria-hidden="true">↓</span>
+          </button>
+          <div x-cloak x-show="openFAQ === item.id" class="px-5 pb-5">
+            <p x-text="item.answer"></p>
+          </div>
+        </article>
+      </template>
+    </div>
+  </section>
+
+  <div x-cloak x-show="teamModal" class="modal-overlay" @keydown.escape.window="teamModal = false" role="dialog" aria-modal="true" aria-labelledby="team-modal-title">
+    <div class="modal-panel" @click.outside="teamModal = false">
+      <div class="flex items-start justify-between gap-4">
+        <h2 id="team-modal-title" class="text-2xl font-black uppercase">Команда</h2>
+        <button type="button" class="text-3xl font-black" @click="teamModal = false" aria-label="Закрыть">×</button>
+      </div>
+      <form class="mt-6" @submit.prevent="createTeam()">
+        <label for="home-team-name" class="field-label">Создать команду</label>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <input id="home-team-name" x-model.trim="teamName" class="field" maxlength="100" required placeholder="Название команды">
+          <button class="btn-primary shrink-0" :disabled="busy">Создать</button>
+        </div>
+      </form>
+      <div class="my-7 flex items-center gap-3">
+        <span class="h-0.5 flex-1 bg-ink"></span><span class="font-black">ИЛИ</span><span class="h-0.5 flex-1 bg-ink"></span>
+      </div>
+      <form @submit.prevent="joinTeam()">
+        <label for="home-invite-code" class="field-label">Войти по коду</label>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <input id="home-invite-code" x-model="inviteCode" @input="inviteCode = inviteCode.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8)" class="field font-mono uppercase" minlength="8" maxlength="8" required placeholder="X8K2M9N7">
+          <button class="btn-success shrink-0" :disabled="busy || inviteCode.length !== 8">Войти</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{{end}}

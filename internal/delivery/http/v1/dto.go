@@ -142,10 +142,11 @@ type JoinTeamResponse struct {
 
 // TeamMemberResponse is one member in a team's public roster.
 type TeamMemberResponse struct {
-	ID        uuid.UUID `json:"id"`
-	FullName  string    `json:"full_name"`
-	Telegram  string    `json:"telegram"`
-	IsCaptain bool      `json:"is_captain"`
+	ID         uuid.UUID `json:"id"`
+	FullName   string    `json:"full_name"`
+	University string    `json:"university"`
+	Telegram   string    `json:"telegram"`
+	IsCaptain  bool      `json:"is_captain"`
 }
 
 // TeamSubmissionResponse is a submitted solution attached to a team.
@@ -213,7 +214,8 @@ type JuryTeamResponse struct {
 
 // JuryTeamsResponse contains teams visible to the authenticated jury member.
 type JuryTeamsResponse struct {
-	Teams []JuryTeamResponse `json:"teams"`
+	Teams             []JuryTeamResponse `json:"teams"`
+	EvaluationsLocked bool               `json:"evaluations_locked"`
 }
 
 // EvaluationResponse is one saved score returned to its author.

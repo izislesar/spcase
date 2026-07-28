@@ -1,0 +1,56 @@
+{{define "content"}}
+<div x-data="adminPage" x-init="init()" class="page-shell">
+  <header class="flex flex-wrap items-end justify-between gap-5">
+    <div>
+      <p class="font-black uppercase text-coral">Управление платформой</p>
+      <h1 class="section-title mt-3">Админ-панель</h1>
+    </div>
+    <button type="button" class="btn-secondary" @click="logout()">Выйти</button>
+  </header>
+
+  <section class="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" aria-label="Метрики">
+    <article class="brutal-card bg-mustard">
+      <p class="font-black uppercase">Участники</p>
+      <p class="mt-4 text-5xl font-black" x-text="stats.total_users ?? '—'"></p>
+    </article>
+    <article class="brutal-card bg-mint">
+      <p class="font-black uppercase">Команды</p>
+      <p class="mt-4 text-5xl font-black" x-text="stats.total_teams ?? '—'"></p>
+    </article>
+    <article class="brutal-card">
+      <p class="font-black uppercase">Сданные работы</p>
+      <p class="mt-4 text-5xl font-black" x-text="stats.submitted_solutions ?? '—'"></p>
+    </article>
+    <article class="brutal-card bg-sand">
+      <p class="font-black uppercase">Жюри</p>
+      <p class="mt-4 text-5xl font-black" x-text="stats.total_juries ?? '—'"></p>
+    </article>
+  </section>
+
+  <section class="mt-10 grid gap-7 lg:grid-cols-2">
+    <article class="brutal-card-strong">
+      <p class="font-black uppercase">Excel-отчёт</p>
+      <h2 class="mt-3 text-3xl font-black uppercase">Итоговые результаты</h2>
+      <p class="mt-4">Выгрузка содержит команды, составы, ссылки, суммарные баллы, покрытие жюри и детализацию по шести критериям.</p>
+      <button type="button" class="btn-primary mt-7" :disabled="downloading" @click="downloadExcel()">
+        <span x-show="!downloading">Скачать .xlsx ↓</span>
+        <span x-show="downloading">Готовим файл…</span>
+      </button>
+    </article>
+
+    <article class="brutal-card-strong" :class="stats.evaluations_closed ? 'bg-coral' : 'bg-mint'">
+      <p class="font-black uppercase">Глобальное состояние</p>
+      <h2 class="mt-3 text-3xl font-black uppercase" x-text="stats.evaluations_closed ? 'Оценивание закрыто' : 'Оценивание открыто'"></h2>
+      <p class="mt-4 font-bold">Изменение состояния применяется ко всему жюри и журналируется сервером.</p>
+      <button
+        type="button"
+        class="mt-7"
+        :class="stats.evaluations_closed ? 'btn-success' : 'btn-danger'"
+        :disabled="stateBusy"
+        @click="setEvaluationState(!stats.evaluations_closed)"
+        x-text="stats.evaluations_closed ? 'Открыть оценивание' : 'Закрыть оценивание'"
+      ></button>
+    </article>
+  </section>
+</div>
+{{end}}

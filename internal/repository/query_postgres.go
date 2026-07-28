@@ -14,6 +14,7 @@ import (
 
 type QueryRepository interface {
 	ListJuryTeams(context.Context, uuid.UUID) ([]domain.JuryTeam, error)
+	EvaluationsClosed(context.Context) (bool, error)
 	AdminStats(context.Context) (domain.AdminStats, error)
 	SetEvaluationClosed(context.Context, uuid.UUID, bool) (domain.EvaluationState, error)
 	ExportSummary(context.Context) ([]domain.ExportSummaryRow, error)
@@ -113,6 +114,18 @@ func (r *QueryPostgres) ListJuryTeams(ctx context.Context, juryID uuid.UUID) ([]
 		return nil, fmt.Errorf("iterate jury teams: %w", err)
 	}
 	return teams, nil
+}
+
+// EvaluationsClosed returns the singleton jury evaluation state.
+func (r *QueryPostgres) EvaluationsClosed(ctx context.Context) (bool, error) {
+	var closed bool
+	if err := r.pool.QueryRow(
+		ctx,
+		`SELECT is_closed FROM evaluation_state WHERE singleton_id = 1`,
+	).Scan(&closed); err != nil {
+		return false, fmt.Errorf("load evaluation state: %w", err)
+	}
+	return closed, nil
 }
 
 func (r *QueryPostgres) AdminStats(ctx context.Context) (domain.AdminStats, error) {

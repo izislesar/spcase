@@ -1,0 +1,32 @@
+{{define "content"}}
+<div x-data="juryAuthPage('register')" class="page-shell">
+  <div class="mx-auto max-w-2xl">
+    <header>
+      <p class="font-black uppercase text-coral">Только по приглашению</p>
+      <h1 class="section-title mt-3">Регистрация жюри</h1>
+    </header>
+    <form class="brutal-card-strong mt-8" @submit.prevent="submit()">
+      <div class="space-y-5">
+        <div>
+          <label for="jury-secret" class="field-label">Секретный ключ</label>
+          <input id="jury-secret" x-model="form.secret_key" class="field font-mono" type="password" required autocomplete="off">
+        </div>
+        <div>
+          <label for="jury-name" class="field-label">ФИО</label>
+          <input id="jury-name" x-model.trim="form.full_name" class="field" required maxlength="255" autocomplete="name">
+        </div>
+        <div>
+          <label for="jury-email" class="field-label">Email</label>
+          <input id="jury-email" x-model.trim="form.email" class="field" type="email" required autocomplete="email">
+        </div>
+        <div>
+          <label for="jury-password" class="field-label">Пароль</label>
+          <input id="jury-password" x-model="form.password" class="field" type="password" minlength="8" required autocomplete="new-password">
+        </div>
+      </div>
+      <button class="btn-primary mt-7 w-full" :disabled="busy">Создать аккаунт жюри</button>
+      <p class="mt-6 text-center">Уже есть аккаунт? <a href="/jury/login" class="font-black underline">Войти</a></p>
+    </form>
+  </div>
+</div>
+{{end}}

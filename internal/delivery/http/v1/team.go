@@ -107,10 +107,11 @@ func (h *TeamHandler) My(writer http.ResponseWriter, request *http.Request) {
 	members := make([]TeamMemberResponse, 0, len(details.Members))
 	for _, member := range details.Members {
 		members = append(members, TeamMemberResponse{
-			ID:        member.ID,
-			FullName:  member.FullName,
-			Telegram:  member.Telegram,
-			IsCaptain: member.IsCaptain,
+			ID:         member.ID,
+			FullName:   member.FullName,
+			University: member.University,
+			Telegram:   member.Telegram,
+			IsCaptain:  member.IsCaptain,
 		})
 	}
 	var submission *TeamSubmissionResponse
