@@ -1,0 +1,64 @@
+{{define "content"}}
+<div x-data="loginPage" class="auth-experience auth-experience--participant">
+  <section class="auth-visual" aria-labelledby="participant-login-title" data-reveal>
+    <p class="auth-index">01 / Вход</p>
+    <div>
+      <h1 id="participant-login-title" class="auth-title">Личный<br>кабинет</h1>
+      <p class="auth-note">Участники управляют командой и решением, администратор — ходом чемпионата.</p>
+    </div>
+    <p class="auth-note">
+      Вы входите как эксперт?
+      <a href="/jury/login" class="inline-link">Перейти в контур жюри <span aria-hidden="true">↗</span></a>
+    </p>
+  </section>
+
+  <form class="auth-panel" @submit.prevent="submit()" novalidate aria-labelledby="participant-login-form-title" data-reveal>
+    <header class="form-heading">
+      <p class="auth-index">СПК · 2026</p>
+      <h2 id="participant-login-form-title">Войти в аккаунт</h2>
+      <p>Используйте email и пароль, указанные при регистрации.</p>
+    </header>
+
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="login-email" class="field-label">Email</label>
+        <input
+          id="login-email"
+          x-model.trim="email"
+          class="field"
+          :class="errors.email ? 'field-invalid' : ''"
+          :aria-invalid="Boolean(errors.email)"
+          aria-describedby="login-email-error"
+          type="email"
+          autocomplete="email"
+          required
+        >
+        <p id="login-email-error" x-cloak x-show="errors.email" class="field-error" role="alert" x-text="errors.email"></p>
+      </div>
+
+      <div class="form-field">
+        <label for="login-password" class="field-label">Пароль</label>
+        <input
+          id="login-password"
+          x-model="password"
+          class="field"
+          :class="errors.password ? 'field-invalid' : ''"
+          :aria-invalid="Boolean(errors.password)"
+          aria-describedby="login-password-error"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+        <p id="login-password-error" x-cloak x-show="errors.password" class="field-error" role="alert" x-text="errors.password"></p>
+      </div>
+
+      <button type="submit" class="button button--primary" :disabled="busy" :aria-busy="busy" data-magnetic>
+        <span x-show="!busy">Войти</span>
+        <span x-cloak x-show="busy">Проверяем…</span>
+      </button>
+    </div>
+
+    <p class="auth-note">Нет аккаунта? <a href="/register" class="inline-link">Зарегистрироваться</a></p>
+  </form>
+</div>
+{{end}}

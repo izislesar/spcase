@@ -1,0 +1,109 @@
+{{define "layout"}}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="СПК — кейс-чемпионат в Санкт-Петербурге">
+  <meta name="theme-color" content="#FBFAF5">
+  <title>{{.Title}}</title>
+  <link rel="stylesheet" href="/static/css/app.css?v={{.AssetVersion}}">
+  <script defer src="/static/js/app.js?v={{.AssetVersion}}"></script>
+</head>
+<body>
+  <div class="page-grain" aria-hidden="true"></div>
+  <a href="#main-content" class="skip-link">К содержанию</a>
+
+  <header class="site-header" data-site-header>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="/" class="wordmark" aria-label="СПК — на главную">
+        <span class="wordmark__name">СПК</span>
+        <span class="wordmark__meta">кейс-чемпионат<br>Санкт-Петербург</span>
+      </a>
+
+      <div class="site-nav__links">
+        <a href="/#about" class="nav-link">О чемпионате</a>
+        <a href="/schedule" class="nav-link">Расписание</a>
+        <a href="/#faq" class="nav-link">Вопросы</a>
+        <a href="/dashboard" class="nav-link">Кабинет</a>
+      </div>
+
+      <a href="/login" class="header-access" data-magnetic>
+        <span>Войти</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+
+      <details
+        class="mobile-menu"
+        x-data="{ menuOpen: false }"
+        @toggle="
+          menuOpen = $el.open;
+          document.documentElement.classList.toggle('menu-open', menuOpen);
+          $dispatch('spcase:scroll-lock', { source: 'mobile-menu', locked: menuOpen })
+        "
+        @keydown.escape.window="$el.open = false"
+      >
+        <summary :aria-label="menuOpen ? 'Закрыть меню' : 'Открыть меню'">
+          <span>Меню</span>
+          <span class="mobile-menu__icon" aria-hidden="true"></span>
+        </summary>
+        <div class="mobile-menu__panel" data-lenis-prevent>
+          <p class="eyebrow">Навигация</p>
+          <a href="/#about" @click="$el.closest('details').open = false">О чемпионате <span>01</span></a>
+          <a href="/schedule" @click="$el.closest('details').open = false">Расписание <span>02</span></a>
+          <a href="/#faq" @click="$el.closest('details').open = false">Вопросы <span>03</span></a>
+          <a href="/dashboard" @click="$el.closest('details').open = false">Кабинет <span>04</span></a>
+          <a href="/login" @click="$el.closest('details').open = false">Войти <span>↗</span></a>
+        </div>
+      </details>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    {{template "content" .}}
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__top">
+        <p class="eyebrow">Санкт-Петербург · 2026</p>
+        <a href="#main-content" class="back-to-top" data-magnetic>
+          Наверх <span aria-hidden="true">↑</span>
+        </a>
+      </div>
+      <p class="site-footer__title" aria-label="СПК кейс-чемпионат">
+        <span>СПК</span>
+        <span>кейс-чемпионат</span>
+      </p>
+      <div class="site-footer__bottom">
+        <p>Командное соревнование для студентов</p>
+        <div>
+          <a href="/register" class="text-link">Регистрация</a>
+          <a href="/schedule" class="text-link">Расписание</a>
+          <a href="/jury/login" class="text-link">Жюри</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div
+    x-data
+    data-focus-exempt
+    class="toast-stack"
+  >
+    <template x-for="toast in $store.toast.items" :key="toast.id">
+      <div
+        class="toast"
+        :class="'toast--' + toast.type"
+        :role="toast.type === 'error' ? 'alert' : 'status'"
+        aria-atomic="true"
+      >
+        <span class="toast__marker" aria-hidden="true"></span>
+        <p x-text="toast.message"></p>
+        <button type="button" @click="$store.toast.remove(toast.id)" aria-label="Закрыть уведомление">×</button>
+      </div>
+    </template>
+  </div>
+</body>
+</html>
+{{end}}

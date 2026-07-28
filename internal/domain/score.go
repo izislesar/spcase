@@ -15,6 +15,10 @@ const (
 	MinScore Score = 0
 	// MaxScore is the highest score a jury member can assign to a criterion.
 	MaxScore Score = 10
+	// CriterionCount is the exact number of rubric criteria.
+	CriterionCount = 6
+	// MaximumJuryTotal is the maximum total assigned by one jury member.
+	MaximumJuryTotal Score = CriterionCount * MaxScore
 )
 
 // CriterionID identifies one criterion in the evaluation rubric.
@@ -44,19 +48,43 @@ type Evaluation struct {
 	UpdatedAt   time.Time
 }
 
+// TeamScoreTotal is a team aggregate with explicit jury coverage.
+type TeamScoreTotal struct {
+	TeamID           uuid.UUID
+	Total            Score
+	EvaluatedByCount int
+}
+
 // IsValid reports whether the evaluation has valid criterion and score values.
 func (e Evaluation) IsValid() bool {
 	return e.CriterionID.IsValid() && e.Score.IsValid()
 }
 
-// EvaluationTotal returns the sum of valid evaluation scores. Invalid scores
-// are ignored because they cannot contribute to a persisted aggregate.
-func EvaluationTotal(evaluations []Evaluation) Score {
-	var total Score
-	for _, evaluation := range evaluations {
-		if evaluation.IsValid() {
-			total += evaluation.Score
-		}
+// JuryEvaluationTotal validates a complete six-criterion set from one jury
+// member for one team and returns its total.
+func JuryEvaluationTotal(evaluations []Evaluation) (Score, error) {
+	if len(evaluations) != CriterionCount {
+		return 0, ErrInvalidEvaluation
 	}
-	return total
+
+	var juryID, teamID uuid.UUID
+	criteria := make(map[CriterionID]struct{}, CriterionCount)
+	var total Score
+	for index, evaluation := range evaluations {
+		if evaluation.JuryID == uuid.Nil || evaluation.TeamID == uuid.Nil || !evaluation.IsValid() {
+			return 0, ErrInvalidEvaluation
+		}
+		if index == 0 {
+			juryID = evaluation.JuryID
+			teamID = evaluation.TeamID
+		} else if evaluation.JuryID != juryID || evaluation.TeamID != teamID {
+			return 0, ErrInvalidEvaluation
+		}
+		if _, exists := criteria[evaluation.CriterionID]; exists {
+			return 0, ErrInvalidEvaluation
+		}
+		criteria[evaluation.CriterionID] = struct{}{}
+		total += evaluation.Score
+	}
+	return total, nil
 }

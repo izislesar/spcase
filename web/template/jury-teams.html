@@ -1,0 +1,84 @@
+{{define "content"}}
+<div x-data="juryWorkspace" :aria-busy="loading" class="internal-page">
+  <header class="workspace-header" data-reveal>
+    <div>
+      <p class="eyebrow">Рабочее пространство жюри</p>
+      <h1 class="workspace-title">Работы команд</h1>
+    </div>
+    <div class="workspace-actions">
+      <button type="button" class="button button--secondary" data-magnetic @click="logout()">Выйти</button>
+    </div>
+  </header>
+
+  <div x-cloak x-show="evaluationsLocked" class="lock-notice" role="status" data-reveal>
+    <p class="lock-notice__title">EVALUATIONS_LOCKED · Оценивание закрыто</p>
+    <p>Все поля переведены в режим чтения. Сохранённые оценки доступны для просмотра.</p>
+  </div>
+
+  <div class="jury-toolbar" data-reveal>
+    <label class="jury-toolbar__filter">
+      <input x-model="hideEvaluated" type="checkbox">
+      <span>Скрыть проверенные</span>
+    </label>
+    <p class="jury-toolbar__count">Показано: <strong x-text="visibleTeams.length"></strong> из <strong x-text="teams.length"></strong></p>
+  </div>
+
+  <div x-show="loading" class="loading-lines" role="status" aria-live="polite" aria-label="Загрузка работ команд">
+    <span class="loading-lines__line"></span>
+    <span class="loading-lines__line loading-lines__line--short"></span>
+    <span class="loading-lines__line"></span>
+  </div>
+
+  <div x-cloak x-show="!loading" class="dossier-list">
+    <template x-for="team in visibleTeams" :key="team.team_id">
+      <article class="dossier" data-reveal>
+        <header class="dossier-head">
+          <div>
+            <span
+              :class="team.is_evaluated_by_me ? 'status-mark status-mark--done' : 'status-mark status-mark--pending'"
+              x-text="team.is_evaluated_by_me ? 'Оценено' : 'Требует оценки'"
+            ></span>
+            <h2 x-text="team.team_name"></h2>
+            <p>Состав: <strong x-text="team.members_count"></strong> участника</p>
+          </div>
+          <a :href="team.solution_url" target="_blank" rel="noopener noreferrer" class="button button--secondary" data-magnetic>Открыть решение ↗</a>
+        </header>
+
+        <form class="dossier__form" @submit.prevent="save(team)">
+          <div class="score-matrix">
+            <template x-for="criterion in criteria" :key="criterion.id">
+              <label class="score-cell">
+                <span class="field-label" x-text="criterion.label"></span>
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  required
+                  class="field field--score"
+                  x-model.number="scores[team.team_id][criterion.id]"
+                  :disabled="evaluationsLocked || savingTeamID === team.team_id"
+                >
+                <span class="field-help">От 0 до 10 баллов</span>
+              </label>
+            </template>
+          </div>
+
+          <footer class="dossier-total">
+            <p class="dossier-total__value">Итого: <strong x-text="totalFor(team.team_id)"></strong> / 60</p>
+            <button class="button button--positive" data-magnetic :disabled="evaluationsLocked || savingTeamID === team.team_id">
+              <span x-show="savingTeamID !== team.team_id">Сохранить 6 оценок</span>
+              <span x-cloak x-show="savingTeamID === team.team_id">Сохраняем…</span>
+            </button>
+          </footer>
+        </form>
+      </article>
+    </template>
+
+    <div x-show="visibleTeams.length === 0" class="empty-state" data-reveal>
+      <p class="empty-state__title">Список пуст</p>
+      <p x-text="hideEvaluated ? 'Все доступные работы уже проверены.' : 'Команды пока не сдали решения.'"></p>
+    </div>
+  </div>
+</div>
+{{end}}

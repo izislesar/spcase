@@ -1,0 +1,67 @@
+{{define "content"}}
+<div x-data="adminPage" class="internal-page">
+  <header class="workspace-header" data-reveal>
+    <div>
+      <p class="eyebrow">Управление платформой</p>
+      <h1 class="workspace-title">Админ-панель</h1>
+    </div>
+    <div class="workspace-actions">
+      <button type="button" class="button button--secondary" data-magnetic @click="logout()">Выйти</button>
+    </div>
+  </header>
+
+  <section class="metric-strip" aria-label="Метрики" data-reveal>
+    <article class="metric">
+      <p class="metric__label">Участники</p>
+      <p class="metric__value" x-text="stats.total_users ?? '—'"></p>
+    </article>
+    <article class="metric">
+      <p class="metric__label">Команды</p>
+      <p class="metric__value" x-text="stats.total_teams ?? '—'"></p>
+    </article>
+    <article class="metric">
+      <p class="metric__label">Сданные работы</p>
+      <p class="metric__value" x-text="stats.submitted_solutions ?? '—'"></p>
+    </article>
+    <article class="metric">
+      <p class="metric__label">Жюри</p>
+      <p class="metric__value" x-text="stats.total_juries ?? '—'"></p>
+    </article>
+  </section>
+
+  <section class="action-ledger" aria-label="Действия администратора">
+    <article class="action-row" data-reveal>
+      <span class="action-row__index" aria-hidden="true">01</span>
+      <div class="action-row__content">
+        <p class="eyebrow">Excel-отчёт</p>
+        <h2>Итоговые результаты</h2>
+        <p>Выгрузка содержит команды, составы, ссылки, суммарные баллы, покрытие жюри и детализацию по шести критериям.</p>
+      </div>
+      <div class="action-row__control">
+        <button type="button" class="button button--primary" data-magnetic :disabled="downloading" @click="downloadExcel()">
+          <span x-show="!downloading">Скачать .xlsx ↓</span>
+          <span x-cloak x-show="downloading">Готовим файл…</span>
+        </button>
+      </div>
+    </article>
+
+    <article class="action-row" :class="stats.evaluations_closed ? 'action-row--closed' : 'action-row--open'" data-reveal>
+      <span class="action-row__index" aria-hidden="true">02</span>
+      <div class="action-row__content">
+        <p class="eyebrow">Глобальное состояние</p>
+        <h2 x-text="stats.evaluations_closed ? 'Оценивание закрыто' : 'Оценивание открыто'"></h2>
+        <p>Изменение состояния применяется ко всему жюри и журналируется сервером.</p>
+      </div>
+      <div class="action-row__control">
+        <button
+          type="button"
+          :class="stats.evaluations_closed ? 'button button--positive' : 'button button--danger'"
+          :disabled="stateBusy"
+          @click="setEvaluationState(!stats.evaluations_closed)"
+          x-text="stats.evaluations_closed ? 'Открыть оценивание' : 'Закрыть оценивание'"
+        ></button>
+      </div>
+    </article>
+  </section>
+</div>
+{{end}}

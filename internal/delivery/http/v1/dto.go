@@ -105,14 +105,14 @@ type LogoutResponse struct {
 
 // UserMeResponse contains the authenticated participant profile.
 type UserMeResponse struct {
-	ID         uuid.UUID         `json:"id"`
-	FullName   string            `json:"full_name"`
-	University string            `json:"university"`
-	Email      string            `json:"email"`
-	Telegram   string            `json:"telegram"`
-	Role       domain.Role       `json:"role"`
-	TeamStatus domain.TeamStatus `json:"team_status"`
-	TeamID     *uuid.UUID        `json:"team_id"`
+	ID         uuid.UUID              `json:"id"`
+	FullName   string                 `json:"full_name"`
+	University string                 `json:"university"`
+	Email      string                 `json:"email"`
+	Telegram   string                 `json:"telegram"`
+	Role       domain.Role            `json:"role"`
+	TeamStatus domain.MembershipState `json:"team_status"`
+	TeamID     *uuid.UUID             `json:"team_id"`
 }
 
 // CreateTeamRequest contains the desired team name.
@@ -142,10 +142,11 @@ type JoinTeamResponse struct {
 
 // TeamMemberResponse is one member in a team's public roster.
 type TeamMemberResponse struct {
-	ID        uuid.UUID `json:"id"`
-	FullName  string    `json:"full_name"`
-	Telegram  string    `json:"telegram"`
-	IsCaptain bool      `json:"is_captain"`
+	ID         uuid.UUID `json:"id"`
+	FullName   string    `json:"full_name"`
+	University string    `json:"university"`
+	Telegram   string    `json:"telegram"`
+	IsCaptain  bool      `json:"is_captain"`
 }
 
 // TeamSubmissionResponse is a submitted solution attached to a team.
@@ -156,13 +157,14 @@ type TeamSubmissionResponse struct {
 
 // MyTeamResponse contains a team, its roster, and its optional submission.
 type MyTeamResponse struct {
-	ID          uuid.UUID               `json:"id"`
-	Name        string                  `json:"name"`
-	InviteCode  string                  `json:"invite_code"`
-	CaptainID   uuid.UUID               `json:"captain_id"`
-	StatusBadge domain.TeamStatusBadge  `json:"status_badge"`
-	Members     []TeamMemberResponse    `json:"members"`
-	Submission  *TeamSubmissionResponse `json:"submission"`
+	ID              uuid.UUID               `json:"id"`
+	Name            string                  `json:"name"`
+	InviteCode      string                  `json:"invite_code"`
+	CaptainID       uuid.UUID               `json:"captain_id"`
+	StatusBadge     domain.TeamStatusBadge  `json:"status_badge"`
+	MutationsLocked bool                    `json:"mutations_locked"`
+	Members         []TeamMemberResponse    `json:"members"`
+	Submission      *TeamSubmissionResponse `json:"submission"`
 }
 
 // KickTeamMemberRequest identifies the member a captain wants to remove.
@@ -212,7 +214,8 @@ type JuryTeamResponse struct {
 
 // JuryTeamsResponse contains teams visible to the authenticated jury member.
 type JuryTeamsResponse struct {
-	Teams []JuryTeamResponse `json:"teams"`
+	Teams             []JuryTeamResponse `json:"teams"`
+	EvaluationsLocked bool               `json:"evaluations_locked"`
 }
 
 // EvaluationResponse is one saved score returned to its author.
@@ -241,8 +244,9 @@ type SaveEvaluationsRequest struct {
 
 // AdminStatsResponse contains aggregate platform counters.
 type AdminStatsResponse struct {
-	TotalUsers         int `json:"total_users"`
-	TotalTeams         int `json:"total_teams"`
-	SubmittedSolutions int `json:"submitted_solutions"`
-	TotalJuries        int `json:"total_juries"`
+	TotalUsers         int  `json:"total_users"`
+	TotalTeams         int  `json:"total_teams"`
+	SubmittedSolutions int  `json:"submitted_solutions"`
+	TotalJuries        int  `json:"total_juries"`
+	EvaluationsClosed  bool `json:"evaluations_closed"`
 }
