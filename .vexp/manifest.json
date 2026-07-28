@@ -55,16 +55,16 @@
     "migrations/00002_add_indexes.sql": "795f101ab2efff113aef309da92ec5f31ff1059b9a95bb1c5df03d174b3e99c0",
     "migrations/00003_seed_dev_data.sql": "353c9822665e2fb9f3711021290c07a668303e047fa1830e5a578b51885c8de4",
     "tailwind.config.js": "70a3120377ca35adc4e7ad6221b9cf5f85000fe995e661109aa87fdda8dcafb3",
-    "web/handler.go": "5e0f2624d6392656563076917d8ecdb0b778e702df2619b99d4917b9cc37a19c",
+    "web/handler.go": "f542d05d2cf3abdab880ff3edbd147fc4d2ff12bf3b94432caa9bb1cad4a78bc",
     "web/handler_test.go": "fd8f3825819512bcd1e9bc01a81aafcb2505be5daaf93a6e32671c557a47b943",
     "web/src/app.js": "55a162545034828dec262cc2d68f0240e14e7fac9ffe9c85f185916274d069de",
     "web/static/js/app.js": "82e14a89744d2d7b2c80d6f0a50dc561e4f7d1196afd2d5e35b37fff2622f1e6"
   },
-  "indexed_at_commit": "3464ce45a90df863c8ef874289044d30ce287154",
-  "indexed_at_timestamp": "2026-07-28T12:25:11.897252508+00:00",
+  "indexed_at_commit": "b4786e06034e000066450d3b403fdf1c9326f760",
+  "indexed_at_timestamp": "2026-07-28T12:41:02.580374197+00:00",
   "schema_version": 3,
   "stats": {
-    "total_edges": 902,
+    "total_edges": 904,
     "total_files": 59,
     "total_nodes": 697
   },

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-//go:embed template/*.html static/css/app.css static/js/app.js
+//go:embed template static
 var assets embed.FS
 
 type pageData struct {
