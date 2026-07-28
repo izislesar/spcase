@@ -12,6 +12,7 @@ frontend.md
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # JavaScript dependencies, caches and logs
 node_modules/

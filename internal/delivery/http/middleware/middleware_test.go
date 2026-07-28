@@ -60,6 +60,66 @@ func TestAuthMiddlewareUsesCurrentAccountProjection(t *testing.T) {
 	}
 }
 
+func TestAuthMiddlewareReturnsAPIErrorContractForUnauthorizedRequest(t *testing.T) {
+	auth, err := NewAuthMiddleware(fakeAuthenticator{}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler := auth.Middleware(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
+		t.Fatal("next handler must not be called")
+	}))
+	recorder := httptest.NewRecorder()
+
+	handler.ServeHTTP(
+		recorder,
+		httptest.NewRequest(http.MethodGet, "/api/v1/user/me", nil),
+	)
+
+	assertErrorResponse(
+		t,
+		recorder,
+		http.StatusUnauthorized,
+		domain.CodeUnauthorized,
+		domain.ErrUnauthorized.Message,
+	)
+}
+
+func TestRoleMiddlewareReturnsAPIErrorContractForForbiddenRequest(t *testing.T) {
+	userID := uuid.New()
+	auth, err := NewAuthMiddleware(fakeAuthenticator{
+		claims: service.AccessTokenClaims{
+			Role: domain.RoleUser,
+			RegisteredClaims: jwt.RegisteredClaims{
+				Subject: userID.String(),
+			},
+		},
+		projection: domain.AccountProjection{
+			ID: userID, Role: domain.RoleUser, AuthVersion: 1,
+		},
+	}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler := auth.Middleware(
+		RequireRoles(domain.RoleAdmin)(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
+			t.Fatal("next handler must not be called")
+		})),
+	)
+	request := httptest.NewRequest(http.MethodGet, "/api/v1/admin/stats", nil)
+	request.AddCookie(&http.Cookie{Name: AccessTokenCookieName, Value: "token"})
+	recorder := httptest.NewRecorder()
+
+	handler.ServeHTTP(recorder, request)
+
+	assertErrorResponse(
+		t,
+		recorder,
+		http.StatusForbidden,
+		domain.CodeForbidden,
+		domain.ErrForbidden.Message,
+	)
+}
+
 func TestRoleMiddlewareRejectsDifferentRole(t *testing.T) {
 	next := RequireRoles(domain.RoleAdmin)(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
 		t.Fatal("next handler must not be called")

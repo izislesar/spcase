@@ -77,7 +77,6 @@ func NewHandler() (*Handler, error) {
 
 // ServeHTTP serves exact page routes and embedded static assets.
 func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	h.setSecurityHeaders(writer)
 	if strings.HasPrefix(request.URL.Path, "/static/") {
 		writer.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		h.static.ServeHTTP(writer, request)
@@ -114,11 +113,4 @@ func embeddedAssetVersion() (string, error) {
 		}
 	}
 	return hex.EncodeToString(digest.Sum(nil))[:12], nil
-}
-
-func (h *Handler) setSecurityHeaders(writer http.ResponseWriter) {
-	writer.Header().Set("X-Content-Type-Options", "nosniff")
-	writer.Header().Set("X-Frame-Options", "DENY")
-	writer.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
-	writer.Header().Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 }

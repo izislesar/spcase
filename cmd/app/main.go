@@ -276,5 +276,11 @@ func buildHandler(cfg config.Config, pool *pgxpool.Pool, logger *slog.Logger) (h
 	))
 	mux.Handle("GET /", webHandler)
 
-	return corsMiddleware.Middleware(recoveryMiddleware.Middleware(mux)), nil
+	return httpmiddleware.SecurityHeaders(
+		httpmiddleware.NoStoreSensitiveResponses(
+			corsMiddleware.Middleware(
+				recoveryMiddleware.Middleware(httpmiddleware.APIErrorResponses(mux)),
+			),
+		),
+	), nil
 }

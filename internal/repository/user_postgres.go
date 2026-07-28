@@ -17,8 +17,13 @@ import (
 
 const userColumns = `id, full_name, university, email, telegram, password_hash, role, auth_version, disabled_at, created_at`
 
+// adminBootstrapAdvisoryLockKey serializes all first-administrator checks.
+// Its hexadecimal representation is the ASCII string "SPCADMIN".
+const adminBootstrapAdvisoryLockKey int64 = 0x53504341444d494e
+
 type UserRepository interface {
 	Create(context.Context, domain.User) (domain.User, error)
+	CreateFirstAdmin(context.Context, domain.User) (domain.User, error)
 	GetByID(context.Context, uuid.UUID) (domain.User, error)
 	GetByEmail(context.Context, string) (domain.User, error)
 	GetAccountProjection(context.Context, uuid.UUID) (domain.AccountProjection, error)
@@ -48,6 +53,43 @@ func (r *UserPostgres) Create(ctx context.Context, user domain.User) (domain.Use
 	))
 	if err != nil {
 		return domain.User{}, mapUserError(err)
+	}
+	return created, nil
+}
+
+func (r *UserPostgres) CreateFirstAdmin(
+	ctx context.Context,
+	user domain.User,
+) (domain.User, error) {
+	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return domain.User{}, fmt.Errorf("begin admin bootstrap transaction: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`, adminBootstrapAdvisoryLockKey); err != nil {
+		return domain.User{}, fmt.Errorf("lock admin bootstrap: %w", err)
+	}
+
+	var adminExists bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM users WHERE role = 'ADMIN')`).
+		Scan(&adminExists); err != nil {
+		return domain.User{}, fmt.Errorf("check existing administrator: %w", err)
+	}
+	if adminExists {
+		return domain.User{}, domain.ErrAdminAlreadyExists
+	}
+
+	const query = `
+		INSERT INTO users (full_name, email, password_hash, role)
+		VALUES ($1, LOWER($2), $3, 'ADMIN')
+		RETURNING ` + userColumns
+	created, err := scanUser(tx.QueryRow(ctx, query, user.FullName, user.Email, user.PasswordHash))
+	if err != nil {
+		return domain.User{}, mapUserError(err)
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return domain.User{}, fmt.Errorf("commit admin bootstrap transaction: %w", err)
 	}
 	return created, nil
 }

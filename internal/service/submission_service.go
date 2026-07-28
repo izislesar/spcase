@@ -3,8 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -43,18 +41,9 @@ func (s *SubmissionService) Submit(
 	if !s.now().UTC().Before(s.deadline) {
 		return domain.Submission{}, domain.ErrDeadlinePassed
 	}
-	solutionURL, err := normalizeSolutionURL(rawURL)
+	solutionURL, err := domain.NormalizeSolutionURL(rawURL)
 	if err != nil {
 		return domain.Submission{}, err
 	}
 	return s.submissions.Upsert(ctx, captainID, solutionURL, s.deadline)
-}
-
-func normalizeSolutionURL(raw string) (string, error) {
-	raw = strings.TrimSpace(raw)
-	parsed, err := url.ParseRequestURI(raw)
-	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" {
-		return "", domain.ErrInvalidURLFormat
-	}
-	return parsed.String(), nil
 }

@@ -1,0 +1,3 @@
+# Production schema migrations. Dev fixtures must never be added to this list.
+00001_init_schema.sql
+00002_add_indexes.sql

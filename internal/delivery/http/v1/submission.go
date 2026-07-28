@@ -39,8 +39,13 @@ func (h *SubmissionHandler) Submit(writer http.ResponseWriter, request *http.Req
 	if !decodeJSON(writer, request, &input) {
 		return
 	}
+	solutionURL, err := domain.NormalizeSolutionURL(input.SolutionURL)
+	if err != nil {
+		handleError(writer, request, h.logger, err)
+		return
+	}
 	submission, err := h.submissions.Submit(
-		request.Context(), principal.UserID, input.SolutionURL,
+		request.Context(), principal.UserID, solutionURL,
 	)
 	if err != nil {
 		handleError(writer, request, h.logger, err)

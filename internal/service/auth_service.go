@@ -288,12 +288,20 @@ func (s *AuthService) createAccount(
 	user domain.User,
 	password string,
 ) (domain.User, error) {
+	hash, err := hashPassword(password)
+	if err != nil {
+		return domain.User{}, err
+	}
+	user.PasswordHash = hash
+	return s.users.Create(ctx, user)
+}
+
+func hashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return domain.User{}, fmt.Errorf("hash password: %w", err)
+		return "", fmt.Errorf("hash password: %w", err)
 	}
-	user.PasswordHash = string(hash)
-	return s.users.Create(ctx, user)
+	return string(hash), nil
 }
 
 func (s *AuthService) authenticate(user domain.User) (AuthResult, error) {

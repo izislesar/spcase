@@ -7,6 +7,8 @@ type ErrorCode string
 const (
 	CodeInvalidRequest        ErrorCode = "INVALID_REQUEST"
 	CodeInternal              ErrorCode = "INTERNAL_ERROR"
+	CodeRouteNotFound         ErrorCode = "ROUTE_NOT_FOUND"
+	CodeMethodNotAllowed      ErrorCode = "METHOD_NOT_ALLOWED"
 	CodeEmailAlreadyExists    ErrorCode = "EMAIL_ALREADY_EXISTS"
 	CodeTeamNameAlreadyExists ErrorCode = "TEAM_NAME_ALREADY_EXISTS"
 	CodeInvalidCredentials    ErrorCode = "INVALID_CREDENTIALS"
@@ -34,6 +36,7 @@ const (
 	CodeInvalidEvaluation     ErrorCode = "INVALID_EVALUATION"
 	CodeEvaluationLocked      ErrorCode = "EVALUATIONS_LOCKED"
 	CodeNotReady              ErrorCode = "NOT_READY"
+	CodeAdminAlreadyExists    ErrorCode = "ADMIN_ALREADY_EXISTS"
 )
 
 // DomainError represents a business-rule violation that can be safely exposed
@@ -57,6 +60,8 @@ func (e *DomainError) Is(target error) bool {
 var (
 	ErrInvalidRequest        = &DomainError{Code: CodeInvalidRequest, Message: "Request body is invalid"}
 	ErrInternal              = &DomainError{Code: CodeInternal, Message: "Internal server error"}
+	ErrRouteNotFound         = &DomainError{Code: CodeRouteNotFound, Message: "API endpoint not found"}
+	ErrMethodNotAllowed      = &DomainError{Code: CodeMethodNotAllowed, Message: "HTTP method is not allowed"}
 	ErrEmailAlreadyExists    = &DomainError{Code: CodeEmailAlreadyExists, Message: "Email is already registered"}
 	ErrTeamNameAlreadyExists = &DomainError{Code: CodeTeamNameAlreadyExists, Message: "Team name is already registered"}
 	ErrInvalidCredentials    = &DomainError{Code: CodeInvalidCredentials, Message: "Invalid email or password"}
@@ -87,4 +92,8 @@ var (
 	ErrInvalidEvaluation  = &DomainError{Code: CodeInvalidEvaluation, Message: "Evaluation contains an invalid criterion or score"}
 	ErrEvaluationLocked   = &DomainError{Code: CodeEvaluationLocked, Message: "Evaluations are locked"}
 	ErrNotReady           = &DomainError{Code: CodeNotReady, Message: "Database is unavailable"}
+	ErrAdminAlreadyExists = &DomainError{
+		Code:    CodeAdminAlreadyExists,
+		Message: "An administrator account already exists",
+	}
 )

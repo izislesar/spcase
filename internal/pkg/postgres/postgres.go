@@ -28,16 +28,10 @@ func New(ctx context.Context, db config.DatabaseConfig) (*pgxpool.Pool, error) {
 		return nil, errors.New("postgres initialization context cannot be nil")
 	}
 
-	poolConfig, err := pgxpool.ParseConfig(connectionString(db))
+	poolConfig, err := poolConfiguration(db)
 	if err != nil {
-		return nil, fmt.Errorf("parse PostgreSQL configuration: %w", err)
+		return nil, err
 	}
-	poolConfig.ConnConfig.ConnectTimeout = connectTimeout
-	poolConfig.MaxConns = 10
-	poolConfig.MinConns = 2
-	poolConfig.MaxConnLifetime = time.Hour
-	poolConfig.MaxConnIdleTime = 30 * time.Minute
-	poolConfig.HealthCheckPeriod = time.Minute
 
 	connectCtx, cancelConnect := context.WithTimeout(ctx, connectTimeout)
 	defer cancelConnect()
@@ -55,6 +49,30 @@ func New(ctx context.Context, db config.DatabaseConfig) (*pgxpool.Pool, error) {
 	}
 
 	return pool, nil
+}
+
+func poolConfiguration(db config.DatabaseConfig) (*pgxpool.Config, error) {
+	poolConfig, err := pgxpool.ParseConfig(connectionString(db))
+	if err != nil {
+		return nil, fmt.Errorf("parse PostgreSQL configuration: %w", err)
+	}
+	poolConfig.ConnConfig.ConnectTimeout = connectTimeout
+	applySessionTimeouts(poolConfig, db)
+	poolConfig.MaxConns = 10
+	poolConfig.MinConns = 2
+	poolConfig.MaxConnLifetime = time.Hour
+	poolConfig.MaxConnIdleTime = 30 * time.Minute
+	poolConfig.HealthCheckPeriod = time.Minute
+	return poolConfig, nil
+}
+
+func applySessionTimeouts(poolConfig *pgxpool.Config, db config.DatabaseConfig) {
+	poolConfig.ConnConfig.RuntimeParams["statement_timeout"] = durationMilliseconds(db.StatementTimeout)
+	poolConfig.ConnConfig.RuntimeParams["lock_timeout"] = durationMilliseconds(db.LockTimeout)
+}
+
+func durationMilliseconds(duration time.Duration) string {
+	return strconv.FormatInt(duration.Milliseconds(), 10)
 }
 
 func connectionString(db config.DatabaseConfig) string {

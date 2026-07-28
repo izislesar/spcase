@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"io"
@@ -83,11 +84,18 @@ func (h *AdminHandler) ExportExcel(writer http.ResponseWriter, request *http.Req
 	if _, ok := requireRole(writer, request, domain.RoleAdmin); !ok {
 		return
 	}
+
+	var output bytes.Buffer
+	if err := h.export.WriteXLSX(request.Context(), &output); err != nil {
+		handleError(writer, request, h.logger, err)
+		return
+	}
+
 	writer.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	writer.Header().Set("Content-Disposition", `attachment; filename="hackathon_results.xlsx"`)
 	writer.Header().Set("X-Content-Type-Options", "nosniff")
-	if err := h.export.WriteXLSX(request.Context(), writer); err != nil {
-		// Headers may already be committed by the stream; log without exposing details.
+	writer.WriteHeader(http.StatusOK)
+	if _, err := writer.Write(output.Bytes()); err != nil {
 		logInternalError(h.logger, request, err)
 	}
 }

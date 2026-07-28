@@ -144,15 +144,6 @@ func TestScoreServiceRequiresSixCriteria(t *testing.T) {
 	}
 }
 
-func TestNormalizeSolutionURL(t *testing.T) {
-	if got, err := normalizeSolutionURL(" https://example.com/result "); err != nil || got != "https://example.com/result" {
-		t.Fatalf("valid URL = %q, %v", got, err)
-	}
-	if _, err := normalizeSolutionURL("javascript:alert(1)"); !errors.Is(err, domain.ErrInvalidURLFormat) {
-		t.Fatalf("invalid URL error = %v", err)
-	}
-}
-
 type fakeExportRepository struct{}
 
 func (fakeExportRepository) ExportSummary(context.Context) ([]domain.ExportSummaryRow, error) {
