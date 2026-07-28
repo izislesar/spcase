@@ -1,6 +1,6 @@
 {
   "file_hashes": {
-    "README.md": "19f1417149e926d46dc0378c62c10568f557bc4a50946b0963321591413b449c",
+    "README.md": "971208971edf86593803731635b1bb8baf2d6b1b2d6f6677ba1240c6a5b1e0b2",
     "cmd/app/main.go": "af5f3122b185a3e81a0bb3f5f2b7323883d5019e069edcc42e3f0d8e6dcca6f9",
     "internal/config/config.go": "ae9dcb28426a1d9a52ab31c38e639805fc475da8a3a8fc500b33640e2560864f",
     "internal/config/config_test.go": "138f092c4abf9e786b0b58d8e10b30d28e8a32065471cbc693555e61e83b71b6",
@@ -54,19 +54,24 @@
     "migrations/00001_init_schema.sql": "12281514467d107d48df60ac0529bcc145d94f6c19e1d4366fb71f39c4c30d65",
     "migrations/00002_add_indexes.sql": "795f101ab2efff113aef309da92ec5f31ff1059b9a95bb1c5df03d174b3e99c0",
     "migrations/00003_seed_dev_data.sql": "353c9822665e2fb9f3711021290c07a668303e047fa1830e5a578b51885c8de4",
-    "tailwind.config.js": "70a3120377ca35adc4e7ad6221b9cf5f85000fe995e661109aa87fdda8dcafb3",
-    "web/handler.go": "f542d05d2cf3abdab880ff3edbd147fc4d2ff12bf3b94432caa9bb1cad4a78bc",
-    "web/handler_test.go": "fd8f3825819512bcd1e9bc01a81aafcb2505be5daaf93a6e32671c557a47b943",
-    "web/src/app.js": "55a162545034828dec262cc2d68f0240e14e7fac9ffe9c85f185916274d069de",
-    "web/static/js/app.js": "82e14a89744d2d7b2c80d6f0a50dc561e4f7d1196afd2d5e35b37fff2622f1e6"
+    "tailwind.config.js": "1aebac7ee171bc19a3736110d8f4e65b5a1ba7b1767601f2f75fbc371b0f4474",
+    "web/handler.go": "e369d0843c4282c01dcecb1348fb5e044dca5c75a0bc5b7b50022e5b0368449c",
+    "web/handler_test.go": "625154a8ff9f62d6798e90243e7b64077add1622afb854a0e61842572e8e9a64",
+    "web/src/animations/gsap.js": "9d4c8b74c679d1b7bb9fb391de3a58a15a4787e0a6fd27aa228ee987c48f5eb7",
+    "web/src/animations/index.js": "1d8610e10f3efb915daf75d483d54c1793343cf9eb3d55ad45b747efe0b2f1a3",
+    "web/src/animations/scroll.js": "1e6ba4eed6dd29d6144154c13913218dd127dac45d68fb1ccf789264d69fc8e5",
+    "web/src/animations/transitions.js": "91e645a88395bab1d6cd650f53f964ba19f7135b39ad123a20d4d38cf11effa8",
+    "web/src/app.js": "3a67dfc52907b5b347a76264e8d381fee5618269a947b8e28f2cca47e3b7366c",
+    "web/src/interactions/focus.js": "f23347b0f4fe8cc838d64e732b423fd08a8fb34bf7ff69ad749967dee95a8861",
+    "web/static/js/app.js": "274b9a3ea24efd6ba71e745530aead062b1801e67ffaebae6f7e3b9df7293385"
   },
-  "indexed_at_commit": "b4786e06034e000066450d3b403fdf1c9326f760",
-  "indexed_at_timestamp": "2026-07-28T12:41:02.580374197+00:00",
+  "indexed_at_commit": "7c42a205006476f49970f5c21e12db5d05a05946",
+  "indexed_at_timestamp": "2026-07-28T15:40:56.051497170+00:00",
   "schema_version": 3,
   "stats": {
-    "total_edges": 904,
-    "total_files": 59,
-    "total_nodes": 697
+    "total_edges": 1005,
+    "total_files": 64,
+    "total_nodes": 756
   },
   "vexp_version": "2.3.1"
 }

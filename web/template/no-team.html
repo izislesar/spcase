@@ -1,17 +1,51 @@
 {{define "content"}}
-<div x-data="noTeamPage" x-init="init()" class="page-shell">
-  <section class="mx-auto max-w-3xl brutal-card-strong bg-mustard">
-    <span class="text-6xl" aria-hidden="true">👋</span>
-    <h1 class="mt-6 section-title">Команда найдётся</h1>
-    <p class="mt-6 text-lg font-bold" x-text="message">Загружаем инструкцию…</p>
-    <ol class="mt-7 list-inside list-decimal space-y-2 border-y-2 border-ink py-5 font-bold">
-      <li>Коротко расскажи о себе и своих сильных сторонах.</li>
-      <li>Укажи ВУЗ, опыт и удобный Telegram-тег.</li>
-      <li>Соберите 2–4 человека и создайте команду в кабинете.</li>
+<div x-data="noTeamPage" class="no-team-experience">
+  <div class="no-team-orbit" aria-hidden="true" data-reveal>
+    <svg viewBox="0 0 480 480" focusable="false">
+      <circle cx="240" cy="240" r="188" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="240" cy="240" r="126" fill="none" stroke="currentColor" stroke-dasharray="5 12" stroke-width="1"/>
+      <path d="M97 331c58-38 132-51 204-31 32 9 60 24 83 44" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="104" cy="326" r="15" fill="#E83F67"/>
+      <circle cx="313" cy="150" r="22" fill="#F5B512"/>
+      <circle cx="374" cy="345" r="12" fill="#1596C5"/>
+    </svg>
+    <span class="no-team-orbit__label">2—4</span>
+    <span class="no-team-orbit__note">человека<br>в команде</span>
+  </div>
+
+  <section class="no-team-copy" aria-labelledby="no-team-title" data-reveal>
+    <p class="auth-index">Поиск команды · СПК</p>
+    <h1 id="no-team-title" class="auth-title">Команда<br>начинается<br>со знакомства</h1>
+    <p class="auth-note" x-text="message" aria-live="polite">Загружаем инструкцию…</p>
+
+    <ol class="instruction-list">
+      <li class="instruction-row">
+        <span aria-hidden="true">01</span>
+        <p>Коротко расскажите о себе и своих сильных сторонах.</p>
+      </li>
+      <li class="instruction-row">
+        <span aria-hidden="true">02</span>
+        <p>Укажите ВУЗ, опыт и удобный Telegram-тег.</p>
+      </li>
+      <li class="instruction-row">
+        <span aria-hidden="true">03</span>
+        <p>Соберите 2–4 человека и создайте команду в кабинете.</p>
+      </li>
     </ol>
-    <div class="mt-8 flex flex-wrap gap-4">
-      <a :href="telegramURL" target="_blank" rel="noopener noreferrer" class="btn bg-ink text-ivory" :class="telegramURL ? '' : 'pointer-events-none opacity-50'">Перейти в Telegram-чат ↗</a>
-      <a href="/dashboard" class="btn-secondary">В кабинет</a>
+
+    <div class="no-team-copy__actions">
+      <a
+        :href="telegramURL || null"
+        :class="telegramURL ? '' : 'pointer-events-none opacity-50'"
+        :aria-disabled="!telegramURL"
+        :tabindex="telegramURL ? 0 : -1"
+        @click="if (!telegramURL) $event.preventDefault()"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="button button--primary"
+        data-magnetic
+      >Открыть Telegram-чат <span aria-hidden="true">↗</span></a>
+      <a href="/dashboard" class="button button--secondary">Вернуться в кабинет</a>
     </div>
   </section>
 </div>

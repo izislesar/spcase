@@ -4,8 +4,8 @@ Backend кейс-чемпионата на Go и PostgreSQL.
 
 ## Frontend
 
-HTML-шаблоны, скомпилированные Tailwind CSS и Alpine.js bundle встраиваются
-в Go-бинарник. Для воспроизводимой сборки assets:
+HTML-шаблоны, скомпилированные Tailwind CSS, Alpine.js и motion-слой на
+Lenis/GSAP встраиваются в Go-бинарник. Для воспроизводимой сборки assets:
 
 ```bash
 make frontend-build

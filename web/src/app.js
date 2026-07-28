@@ -1,4 +1,6 @@
 import Alpine from "alpinejs";
+import { initMotionSystem } from "./animations/index.js";
+import { initFocusManagement } from "./interactions/focus.js";
 
 const API_BASE = "/api/v1";
 const LOCK_CODES = new Set([
@@ -160,8 +162,9 @@ document.addEventListener("alpine:init", () => {
         this.info = info;
         this.faq = faq.faq;
         this.schedule = schedule.events;
-        this.updateCountdown();
-        this.timer = window.setInterval(() => this.updateCountdown(), 1000);
+        if (this.updateCountdown()) {
+          this.timer = window.setInterval(() => this.updateCountdown(), 1000);
+        }
       } catch (error) {
         notify(errorMessage(error), "error");
       } finally {
@@ -176,19 +179,29 @@ document.addEventListener("alpine:init", () => {
         }
       }
     },
+    destroy() {
+      if (this.timer) {
+        window.clearInterval(this.timer);
+        this.timer = null;
+      }
+    },
     updateCountdown() {
       const deadline = new Date(this.info.registration_deadline).getTime();
       const distance = deadline - Date.now();
       if (!Number.isFinite(deadline) || distance <= 0) {
         this.countdown = "Регистрация завершена";
-        if (this.timer) window.clearInterval(this.timer);
-        return;
+        if (this.timer) {
+          window.clearInterval(this.timer);
+          this.timer = null;
+        }
+        return false;
       }
       const days = Math.floor(distance / 86400000);
       const hours = Math.floor((distance % 86400000) / 3600000);
       const minutes = Math.floor((distance % 3600000) / 60000);
       const seconds = Math.floor((distance % 60000) / 1000);
       this.countdown = `${days}д ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      return true;
     },
     async createTeam() {
       if (!this.teamName) return;
@@ -221,6 +234,7 @@ document.addEventListener("alpine:init", () => {
 
   Alpine.data("schedulePage", () => ({
     events: [],
+    loading: true,
     formatDate,
     async init() {
       try {
@@ -228,6 +242,8 @@ document.addEventListener("alpine:init", () => {
         this.events = response.events;
       } catch (error) {
         notify(errorMessage(error), "error");
+      } finally {
+        this.loading = false;
       }
     }
   }));
@@ -367,6 +383,8 @@ document.addEventListener("alpine:init", () => {
     editingSubmission: false,
     deadlinePassed: false,
     now: Date.now(),
+    clockTimer: null,
+    lockHandler: null,
     get isCaptain() {
       return this.profile.team_status === "CAPTAIN";
     },
@@ -378,11 +396,12 @@ document.addEventListener("alpine:init", () => {
       return this.deadlinePassed || (Number.isFinite(deadline) && this.now >= deadline);
     },
     async init() {
-      window.addEventListener("spcase:lock", (event) => {
+      this.lockHandler = (event) => {
         if (event.detail.code === "MUTATIONS_LOCKED") this.team.mutations_locked = true;
         if (event.detail.code === "DEADLINE_PASSED") this.deadlinePassed = true;
-      });
-      window.setInterval(() => {
+      };
+      window.addEventListener("spcase:lock", this.lockHandler);
+      this.clockTimer = window.setInterval(() => {
         this.now = Date.now();
       }, 30000);
       try {
@@ -403,6 +422,16 @@ document.addEventListener("alpine:init", () => {
         this.loading = false;
       }
     },
+    destroy() {
+      if (this.lockHandler) {
+        window.removeEventListener("spcase:lock", this.lockHandler);
+        this.lockHandler = null;
+      }
+      if (this.clockTimer) {
+        window.clearInterval(this.clockTimer);
+        this.clockTimer = null;
+      }
+    },
     async loadTeam() {
       this.team = await apiFetch("/team/my");
       this.solutionURL = this.team.submission?.solution_url || "";
@@ -417,9 +446,9 @@ document.addEventListener("alpine:init", () => {
     },
     badgeLabel(status) {
       return {
-        SEARCHING: "В поиске ⏳",
-        READY: "Команда готова 🟢",
-        SUBMITTED: "Решение сдано 🚀"
+        SEARCHING: "В поиске",
+        READY: "Команда готова",
+        SUBMITTED: "Решение сдано"
       }[status] || status;
     },
     async copyInvite() {
@@ -539,6 +568,7 @@ document.addEventListener("alpine:init", () => {
     hideEvaluated: false,
     evaluationsLocked: false,
     savingTeamID: "",
+    lockHandler: null,
     criteria: [
       { id: 1, label: "Критерий 1" },
       { id: 2, label: "Критерий 2" },
@@ -553,9 +583,10 @@ document.addEventListener("alpine:init", () => {
         : this.teams;
     },
     async init() {
-      window.addEventListener("spcase:lock", (event) => {
+      this.lockHandler = (event) => {
         if (event.detail.code === "EVALUATIONS_LOCKED") this.evaluationsLocked = true;
-      });
+      };
+      window.addEventListener("spcase:lock", this.lockHandler);
       try {
         const [teamResponse, evaluationResponse] = await Promise.all([
           apiFetch("/jury/teams"),
@@ -579,6 +610,11 @@ document.addEventListener("alpine:init", () => {
       } finally {
         this.loading = false;
       }
+    },
+    destroy() {
+      if (!this.lockHandler) return;
+      window.removeEventListener("spcase:lock", this.lockHandler);
+      this.lockHandler = null;
     },
     totalFor(teamID) {
       return Object.values(this.scores[teamID] || {}).reduce(
@@ -687,3 +723,5 @@ document.addEventListener("alpine:init", () => {
 
 window.Alpine = Alpine;
 Alpine.start();
+initFocusManagement();
+initMotionSystem();

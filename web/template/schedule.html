@@ -1,21 +1,33 @@
 {{define "content"}}
-<div x-data="schedulePage" x-init="init()" class="page-shell">
-  <header class="max-w-4xl">
-    <p class="font-black uppercase text-coral">Не пропусти этап</p>
-    <h1 class="section-title mt-3">Расписание</h1>
-    <p class="mt-5 text-lg">Все даты приходят с сервера и отображаются в вашем часовом поясе.</p>
+<div x-data="schedulePage" :aria-busy="loading" class="program-page">
+  <header class="workspace-header" data-reveal>
+    <div>
+      <p class="eyebrow">Этапы чемпионата</p>
+      <h1 class="workspace-title">Расписание</h1>
+      <p class="workspace-header__lede">Даты обновляются организаторами и отображаются в вашем часовом поясе.</p>
+    </div>
+    <div class="workspace-actions">
+      <a href="/" class="button button--secondary" data-magnetic>На главную →</a>
+    </div>
   </header>
-  <ol class="relative mt-10 border-l-4 border-ink pl-8">
-    <template x-for="(event, index) in events" :key="event.id">
-      <li class="relative mb-8 last:mb-0">
-        <span class="absolute -left-[3.2rem] grid h-9 w-9 place-items-center border-2 border-ink bg-mustard font-black" x-text="index + 1"></span>
-        <article class="brutal-card">
-          <time class="font-mono text-sm font-black" x-text="formatDate(event.start_time)"></time>
-          <h2 class="mt-2 text-2xl font-black uppercase" x-text="event.title"></h2>
-          <p class="mt-3" x-text="event.description"></p>
-        </article>
-      </li>
-    </template>
-  </ol>
+
+  <p x-show="loading" class="sr-only" role="status" aria-live="polite">Загружаем расписание…</p>
+
+  <div class="program-axis" data-schedule-rail>
+    <span class="program-axis__line" aria-hidden="true"></span>
+    <span class="program-axis__progress" data-schedule-progress aria-hidden="true"></span>
+    <ol class="program-axis__list">
+      <template x-for="(event, index) in events" :key="event.id">
+        <li class="program-event" data-reveal>
+          <span class="program-event__index" x-text="String(index + 1).padStart(2, '0')" aria-hidden="true"></span>
+          <time class="program-event__time" :datetime="event.start_time" x-text="formatDate(event.start_time)"></time>
+          <div class="program-event__content">
+            <h2 x-text="event.title"></h2>
+            <p x-text="event.description"></p>
+          </div>
+        </li>
+      </template>
+    </ol>
+  </div>
 </div>
 {{end}}

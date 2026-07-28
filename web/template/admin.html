@@ -1,55 +1,66 @@
 {{define "content"}}
-<div x-data="adminPage" x-init="init()" class="page-shell">
-  <header class="flex flex-wrap items-end justify-between gap-5">
+<div x-data="adminPage" class="internal-page">
+  <header class="workspace-header" data-reveal>
     <div>
-      <p class="font-black uppercase text-coral">Управление платформой</p>
-      <h1 class="section-title mt-3">Админ-панель</h1>
+      <p class="eyebrow">Управление платформой</p>
+      <h1 class="workspace-title">Админ-панель</h1>
     </div>
-    <button type="button" class="btn-secondary" @click="logout()">Выйти</button>
+    <div class="workspace-actions">
+      <button type="button" class="button button--secondary" data-magnetic @click="logout()">Выйти</button>
+    </div>
   </header>
 
-  <section class="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" aria-label="Метрики">
-    <article class="brutal-card bg-mustard">
-      <p class="font-black uppercase">Участники</p>
-      <p class="mt-4 text-5xl font-black" x-text="stats.total_users ?? '—'"></p>
+  <section class="metric-strip" aria-label="Метрики" data-reveal>
+    <article class="metric">
+      <p class="metric__label">Участники</p>
+      <p class="metric__value" x-text="stats.total_users ?? '—'"></p>
     </article>
-    <article class="brutal-card bg-mint">
-      <p class="font-black uppercase">Команды</p>
-      <p class="mt-4 text-5xl font-black" x-text="stats.total_teams ?? '—'"></p>
+    <article class="metric">
+      <p class="metric__label">Команды</p>
+      <p class="metric__value" x-text="stats.total_teams ?? '—'"></p>
     </article>
-    <article class="brutal-card">
-      <p class="font-black uppercase">Сданные работы</p>
-      <p class="mt-4 text-5xl font-black" x-text="stats.submitted_solutions ?? '—'"></p>
+    <article class="metric">
+      <p class="metric__label">Сданные работы</p>
+      <p class="metric__value" x-text="stats.submitted_solutions ?? '—'"></p>
     </article>
-    <article class="brutal-card bg-sand">
-      <p class="font-black uppercase">Жюри</p>
-      <p class="mt-4 text-5xl font-black" x-text="stats.total_juries ?? '—'"></p>
+    <article class="metric">
+      <p class="metric__label">Жюри</p>
+      <p class="metric__value" x-text="stats.total_juries ?? '—'"></p>
     </article>
   </section>
 
-  <section class="mt-10 grid gap-7 lg:grid-cols-2">
-    <article class="brutal-card-strong">
-      <p class="font-black uppercase">Excel-отчёт</p>
-      <h2 class="mt-3 text-3xl font-black uppercase">Итоговые результаты</h2>
-      <p class="mt-4">Выгрузка содержит команды, составы, ссылки, суммарные баллы, покрытие жюри и детализацию по шести критериям.</p>
-      <button type="button" class="btn-primary mt-7" :disabled="downloading" @click="downloadExcel()">
-        <span x-show="!downloading">Скачать .xlsx ↓</span>
-        <span x-show="downloading">Готовим файл…</span>
-      </button>
+  <section class="action-ledger" aria-label="Действия администратора">
+    <article class="action-row" data-reveal>
+      <span class="action-row__index" aria-hidden="true">01</span>
+      <div class="action-row__content">
+        <p class="eyebrow">Excel-отчёт</p>
+        <h2>Итоговые результаты</h2>
+        <p>Выгрузка содержит команды, составы, ссылки, суммарные баллы, покрытие жюри и детализацию по шести критериям.</p>
+      </div>
+      <div class="action-row__control">
+        <button type="button" class="button button--primary" data-magnetic :disabled="downloading" @click="downloadExcel()">
+          <span x-show="!downloading">Скачать .xlsx ↓</span>
+          <span x-cloak x-show="downloading">Готовим файл…</span>
+        </button>
+      </div>
     </article>
 
-    <article class="brutal-card-strong" :class="stats.evaluations_closed ? 'bg-coral' : 'bg-mint'">
-      <p class="font-black uppercase">Глобальное состояние</p>
-      <h2 class="mt-3 text-3xl font-black uppercase" x-text="stats.evaluations_closed ? 'Оценивание закрыто' : 'Оценивание открыто'"></h2>
-      <p class="mt-4 font-bold">Изменение состояния применяется ко всему жюри и журналируется сервером.</p>
-      <button
-        type="button"
-        class="mt-7"
-        :class="stats.evaluations_closed ? 'btn-success' : 'btn-danger'"
-        :disabled="stateBusy"
-        @click="setEvaluationState(!stats.evaluations_closed)"
-        x-text="stats.evaluations_closed ? 'Открыть оценивание' : 'Закрыть оценивание'"
-      ></button>
+    <article class="action-row" :class="stats.evaluations_closed ? 'action-row--closed' : 'action-row--open'" data-reveal>
+      <span class="action-row__index" aria-hidden="true">02</span>
+      <div class="action-row__content">
+        <p class="eyebrow">Глобальное состояние</p>
+        <h2 x-text="stats.evaluations_closed ? 'Оценивание закрыто' : 'Оценивание открыто'"></h2>
+        <p>Изменение состояния применяется ко всему жюри и журналируется сервером.</p>
+      </div>
+      <div class="action-row__control">
+        <button
+          type="button"
+          :class="stats.evaluations_closed ? 'button button--positive' : 'button button--danger'"
+          :disabled="stateBusy"
+          @click="setEvaluationState(!stats.evaluations_closed)"
+          x-text="stats.evaluations_closed ? 'Открыть оценивание' : 'Закрыть оценивание'"
+        ></button>
+      </div>
     </article>
   </section>
 </div>

@@ -1,47 +1,53 @@
 {{define "content"}}
-<div x-data="juryWorkspace" x-init="init()" class="page-shell">
-  <header class="flex flex-wrap items-end justify-between gap-5">
+<div x-data="juryWorkspace" :aria-busy="loading" class="internal-page">
+  <header class="workspace-header" data-reveal>
     <div>
-      <p class="font-black uppercase text-coral">Рабочее пространство жюри</p>
-      <h1 class="section-title mt-3">Работы команд</h1>
+      <p class="eyebrow">Рабочее пространство жюри</p>
+      <h1 class="workspace-title">Работы команд</h1>
     </div>
-    <button type="button" class="btn-secondary" @click="logout()">Выйти</button>
+    <div class="workspace-actions">
+      <button type="button" class="button button--secondary" data-magnetic @click="logout()">Выйти</button>
+    </div>
   </header>
 
-  <div x-show="evaluationsLocked" class="lock-banner mt-8" role="status">
-    <p class="text-lg font-black uppercase">EVALUATIONS_LOCKED · Оценивание закрыто</p>
-    <p class="mt-1">Все поля переведены в режим чтения. Сохранённые оценки доступны для просмотра.</p>
+  <div x-cloak x-show="evaluationsLocked" class="lock-notice" role="status" data-reveal>
+    <p class="lock-notice__title">EVALUATIONS_LOCKED · Оценивание закрыто</p>
+    <p>Все поля переведены в режим чтения. Сохранённые оценки доступны для просмотра.</p>
   </div>
 
-  <div class="mt-8 flex flex-wrap items-center justify-between gap-4 border-2 border-ink bg-card p-4">
-    <label class="flex cursor-pointer items-center gap-3 font-black">
-      <input x-model="hideEvaluated" type="checkbox" class="h-5 w-5 accent-mustard">
-      Скрыть проверенные
+  <div class="jury-toolbar" data-reveal>
+    <label class="jury-toolbar__filter">
+      <input x-model="hideEvaluated" type="checkbox">
+      <span>Скрыть проверенные</span>
     </label>
-    <p class="font-bold">Показано: <span x-text="visibleTeams.length"></span> из <span x-text="teams.length"></span></p>
+    <p class="jury-toolbar__count">Показано: <strong x-text="visibleTeams.length"></strong> из <strong x-text="teams.length"></strong></p>
   </div>
 
-  <div x-show="loading" class="mt-7 space-y-5">
-    <div class="skeleton h-64"></div>
-    <div class="skeleton h-64"></div>
+  <div x-show="loading" class="loading-lines" role="status" aria-live="polite" aria-label="Загрузка работ команд">
+    <span class="loading-lines__line"></span>
+    <span class="loading-lines__line loading-lines__line--short"></span>
+    <span class="loading-lines__line"></span>
   </div>
 
-  <div x-cloak x-show="!loading" class="mt-7 space-y-7">
+  <div x-cloak x-show="!loading" class="dossier-list">
     <template x-for="team in visibleTeams" :key="team.team_id">
-      <article class="brutal-card-strong">
-        <div class="flex flex-wrap items-start justify-between gap-5">
+      <article class="dossier" data-reveal>
+        <header class="dossier-head">
           <div>
-            <span :class="team.is_evaluated_by_me ? 'badge bg-mint' : 'badge bg-mustard'" x-text="team.is_evaluated_by_me ? 'Оценено' : 'Требует оценки'"></span>
-            <h2 class="mt-4 text-3xl font-black uppercase" x-text="team.team_name"></h2>
-            <p class="mt-2 font-bold">Состав: <span x-text="team.members_count"></span> участника</p>
+            <span
+              :class="team.is_evaluated_by_me ? 'status-mark status-mark--done' : 'status-mark status-mark--pending'"
+              x-text="team.is_evaluated_by_me ? 'Оценено' : 'Требует оценки'"
+            ></span>
+            <h2 x-text="team.team_name"></h2>
+            <p>Состав: <strong x-text="team.members_count"></strong> участника</p>
           </div>
-          <a :href="team.solution_url" target="_blank" rel="noopener noreferrer" class="btn-secondary">Открыть решение ↗</a>
-        </div>
+          <a :href="team.solution_url" target="_blank" rel="noopener noreferrer" class="button button--secondary" data-magnetic>Открыть решение ↗</a>
+        </header>
 
-        <form class="mt-7 border-t-4 border-ink pt-6" @submit.prevent="save(team)">
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <form class="dossier__form" @submit.prevent="save(team)">
+          <div class="score-matrix">
             <template x-for="criterion in criteria" :key="criterion.id">
-              <label class="border-2 border-ink bg-sand p-3">
+              <label class="score-cell">
                 <span class="field-label" x-text="criterion.label"></span>
                 <input
                   type="number"
@@ -49,28 +55,29 @@
                   max="10"
                   step="1"
                   required
-                  class="field font-mono text-2xl font-black"
+                  class="field field--score"
                   x-model.number="scores[team.team_id][criterion.id]"
                   :disabled="evaluationsLocked || savingTeamID === team.team_id"
                 >
-                <span class="mt-2 block text-xs font-bold">От 0 до 10 баллов</span>
+                <span class="field-help">От 0 до 10 баллов</span>
               </label>
             </template>
           </div>
-          <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <p class="border-2 border-ink bg-mustard px-4 py-2 text-xl font-black">Итого: <span x-text="totalFor(team.team_id)"></span> / 60</p>
-            <button class="btn-success" :disabled="evaluationsLocked || savingTeamID === team.team_id">
+
+          <footer class="dossier-total">
+            <p class="dossier-total__value">Итого: <strong x-text="totalFor(team.team_id)"></strong> / 60</p>
+            <button class="button button--positive" data-magnetic :disabled="evaluationsLocked || savingTeamID === team.team_id">
               <span x-show="savingTeamID !== team.team_id">Сохранить 6 оценок</span>
-              <span x-show="savingTeamID === team.team_id">Сохраняем…</span>
+              <span x-cloak x-show="savingTeamID === team.team_id">Сохраняем…</span>
             </button>
-          </div>
+          </footer>
         </form>
       </article>
     </template>
 
-    <div x-show="visibleTeams.length === 0" class="brutal-card bg-mint text-center">
-      <p class="text-2xl font-black uppercase">Список пуст</p>
-      <p class="mt-2" x-text="hideEvaluated ? 'Все доступные работы уже проверены.' : 'Команды пока не сдали решения.'"></p>
+    <div x-show="visibleTeams.length === 0" class="empty-state" data-reveal>
+      <p class="empty-state__title">Список пуст</p>
+      <p x-text="hideEvaluated ? 'Все доступные работы уже проверены.' : 'Команды пока не сдали решения.'"></p>
     </div>
   </div>
 </div>
