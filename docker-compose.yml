@@ -25,11 +25,16 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME:?DB_NAME must be set}
-      POSTGRES_USER: ${DB_USER:?DB_USER must be set}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?POSTGRES_ADMIN_PASSWORD must be set}
+      DB_MIGRATOR_USER: ${DB_MIGRATOR_USER:?DB_MIGRATOR_USER must be set}
+      DB_MIGRATOR_PASSWORD: ${DB_MIGRATOR_PASSWORD:?DB_MIGRATOR_PASSWORD must be set}
+      DB_APP_USER: ${DB_APP_USER:?DB_APP_USER must be set}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:?DB_APP_PASSWORD must be set}
       POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256 --data-checksums
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-postgres-roles.sh:/docker-entrypoint-initdb.d/10-spcase-roles.sh:ro
     networks:
       - backend
     healthcheck:
@@ -49,6 +54,8 @@ services:
       target: migrator
     environment:
       <<: *database-environment
+      DB_USER: ${DB_MIGRATOR_USER:?DB_MIGRATOR_USER must be set}
+      DB_PASSWORD: ${DB_MIGRATOR_PASSWORD:?DB_MIGRATOR_PASSWORD must be set}
     depends_on:
       db:
         condition: service_healthy

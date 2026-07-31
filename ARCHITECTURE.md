@@ -19,6 +19,9 @@ Nginx container
                                   │
                                   ▼
                            PostgreSQL:5432
+                           ├── postgres (bootstrap/admin)
+                           ├── spcase_migrator (schema owner)
+                           └── spcase_app (runtime DML)
 ```
 
 Compose не реализует публичный TLS. Nginx публикуется только на `127.0.0.1:${NGINX_PORT:-8080}`; сертификаты, DNS и внешний HTTPS ingress находятся вне репозитория. Порты приложения и PostgreSQL на host не публикуются.
@@ -108,12 +111,16 @@ Dockerfile содержит stages:
 Compose startup:
 
 ```text
-db healthy → migrator completed → app ready → nginx
+fresh db role initialization → db healthy → migrator completed → app ready → nginx
 ```
 
 Containers используют nonroot users, dropped capabilities, `no-new-privileges` и read-only filesystems; writable temporary storage предоставляется только через tmpfs. PostgreSQL data хранится в named volume.
 
-Production migrator применяет только `migrations/production.txt`; development seed исключён. Первый ADMIN создаётся отдельно через `cmd/admin-bootstrap`, пароль читается только из stdin.
+При создании чистого volume PostgreSQL init script оставляет `postgres` единственной administrative superuser-role, создаёт non-superuser `spcase_migrator` и `spcase_app`, передаёт migrator ownership database/schema и отзывает PUBLIC privileges. Production migrator применяет только `migrations/production.txt`; migration `00004` выдаёт runtime role точные grants, development seed исключён.
+
+Разделение вводится в два шага для безопасной работы с существующими volumes. Migrator уже подключается через `DB_MIGRATOR_*`; Go application и `admin-bootstrap` пока используют совместимые legacy `DB_USER`/`DB_PASSWORD`. После administrative ownership cutover они переключаются на `DB_APP_*`. Поведение Go-приложения при этом не меняется.
+
+Первый ADMIN создаётся отдельно через `cmd/admin-bootstrap`, пароль читается только из stdin. Bootstrap требует только runtime DML и после переключения использует `spcase_app`, а не administrative database credentials.
 
 ## 9. Health and edge behavior
 

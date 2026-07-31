@@ -2,5 +2,8 @@
 # only so host-side integration tests can use the same isolated database.
 services:
   db:
+    networks:
+      - backend
+      - edge
     ports:
       - "127.0.0.1:${STAGING_DB_PORT:-15432}:5432"

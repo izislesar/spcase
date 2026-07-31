@@ -43,7 +43,7 @@
 - [ ] 4.1 Повторить `make security-check` на release commit
 - [ ] 4.2 Проверить генерацию, хранение, ротацию и разграничение доступа к секретам
 - [ ] 4.3 Проверить cookie, CORS, TLS, security headers и auth revocation в staging
-- [ ] 4.4 Проверить PostgreSQL privileges для app, migrator и administrative operations
+- [x] 4.4 Разделить PostgreSQL privileges для app, migrator и administrative operations
 - [ ] 4.5 Провести abuse-тест регистрации, login rate limits, payload limits и error disclosure
 
 ## 5. Backup and restore

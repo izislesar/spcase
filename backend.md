@@ -56,6 +56,8 @@ Optional/defaulted values:
 
 Secrets must be at least 32 characters, have sufficient diversity and must not match known placeholder/weak patterns. Registration deadline must precede submission deadline.
 
+Compose database provisioning additionally requires `POSTGRES_ADMIN_PASSWORD`, fixed role names `DB_MIGRATOR_USER=spcase_migrator` and `DB_APP_USER=spcase_app`, and separate `DB_MIGRATOR_PASSWORD`/`DB_APP_PASSWORD`. Эти credentials не читаются Go configuration. Compose подставляет migrator credentials в существующие `DB_USER`/`DB_PASSWORD` только для migration container; application и `admin-bootstrap` до завершения cutover продолжают использовать legacy connection values.
+
 ## 4. Startup and shutdown
 
 `cmd/app` loads configuration, creates and pings a PostgreSQL pool, constructs all dependencies, parses embedded templates and starts HTTP. Startup is bounded by 10 seconds.
@@ -120,13 +122,14 @@ The Docker frontend stage runs `npm ci`, Tailwind and esbuild. Nginx serves the 
 ## 9. Deployment components
 
 - PostgreSQL 16 with SCRAM host auth, checksums, healthcheck and named volume.
+- Fresh-volume role initialization with `postgres` for cluster administration, `spcase_migrator` as database/schema owner and `spcase_app` for runtime DML.
 - One-shot migrator gated by database health.
 - Distroless nonroot app with compiled healthcheck.
 - Nonroot Nginx with login/registration rate limits, request IDs, gzip and proxy timeouts.
 
 App/PostgreSQL are isolated on the internal backend network. Nginx alone binds to host loopback. External TLS termination is deliberately outside Compose.
 
-Production migrations use an explicit allowlist and never apply development seed data. Application startup does not run migrations.
+Production migrations use an explicit allowlist and never apply development seed data. Application startup does not run migrations. `spcase_migrator` owns schema objects and is the intended Goose identity; `spcase_app` has no DDL or ownership privileges and receives explicit per-table grants from `00004_grant_runtime_privileges.sql`. The first ADMIN bootstrap needs the same DML permissions as the application and must use the runtime role after credential cutover.
 
 ## 10. Testing
 

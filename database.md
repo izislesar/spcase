@@ -1,6 +1,6 @@
 # spcase v1.0.0 — PostgreSQL Schema
 
-Каноническая схема находится в `migrations/00001_init_schema.sql`, индексы — в `00002_add_indexes.sql`. `00003_seed_dev_data.sql` содержит только development fixtures и отсутствует в production allowlist.
+Каноническая схема находится в `migrations/00001_init_schema.sql`, индексы — в `00002_add_indexes.sql`, runtime grants — в `00004_grant_runtime_privileges.sql`. `00003_seed_dev_data.sql` содержит только development fixtures и отсутствует в production allowlist.
 
 ## 1. Types and tables
 
@@ -132,13 +132,38 @@ Integration tests выполняют `EXPLAIN` критических queries.
 
 Все repository transactions используют `READ COMMITTED`. Pool задаёт PostgreSQL `statement_timeout` и `lock_timeout` из configuration.
 
-## 5. Migrations
+## 5. Database roles
+
+- `postgres` — cluster bootstrap, создание ролей и аварийные administrative operations. Это единственная superuser-role; приложение и migrator не должны использовать её после завершения перехода.
+- `spcase_migrator` — LOGIN без `SUPERUSER`, `CREATEDB`, `CREATEROLE`, `REPLICATION` и `BYPASSRLS`; владеет application database и schema `public`, устанавливает extension и выполняет DDL через Goose.
+- `spcase_app` — LOGIN без administrative/DDL privileges; имеет `CONNECT`, schema `USAGE` и только требуемый runtime DML.
+
+Текущие runtime grants:
+
+- `users`: `SELECT`, `INSERT`, `UPDATE`;
+- `teams`: `SELECT`, `INSERT`, `UPDATE`, `DELETE`;
+- `team_members`: `SELECT`, `INSERT`, `DELETE`;
+- `submissions`: `SELECT`, `INSERT`, `UPDATE`, `DELETE`;
+- `evaluations`: `SELECT`, `INSERT`, `UPDATE`;
+- `evaluation_state`: `SELECT`, `UPDATE`;
+- `evaluation_state_events`: `INSERT`;
+- sequences: `USAGE`, `SELECT`, `UPDATE`;
+- `user_role` type: `USAGE`.
+
+`spcase_app` не получает schema `CREATE`, ownership или доступ к migration metadata. PUBLIC database/schema privileges отозваны. Default privileges объектов, создаваемых `spcase_migrator`, обеспечивают runtime DML и sequence access; каждая schema migration обязана уточнять grants для объектов с более узкой моделью доступа.
+
+## 6. Migrations
 
 Production workflow копирует только файлы из `migrations/production.txt` во временный каталог, запрещает development seed, запускает Goose `up` и проверяет итоговую schema version.
 
 Текущий production allowlist:
 
 - `00001_init_schema.sql`;
-- `00002_add_indexes.sql`.
+- `00002_add_indexes.sql`;
+- `00004_grant_runtime_privileges.sql`.
 
 `00003_seed_dev_data.sql` применяется только локальными development commands и обратим собственной Down-секцией.
+
+На чистом PostgreSQL entrypoint запускает `scripts/init-postgres-roles.sh`: создаёт non-superuser roles, передаёт database/schema ownership migrator и задаёт default privileges. Затем одноразовый migrator применяет production allowlist. На существующем volume роли и ownership должны быть подготовлены отдельной administrative cutover-процедурой до применения `00004`; изменение `POSTGRES_*` variables само по себе не меняет уже созданный cluster.
+
+Пока сохраняется переходный режим: migrator уже подключается как `spcase_migrator`, но application и `admin-bootstrap` продолжают читать legacy `DB_USER`/`DB_PASSWORD`. Их переключение на `spcase_app` выполняется после подготовки существующих databases и не является частью этой migration.

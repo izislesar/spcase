@@ -1,18 +1,18 @@
 {
   "file_hashes": {
     ".codex/vexp-hint.sh": "6bd357cdb2ee5916f9ea8639268036f691ab37326efae0ec26097a58ff8a9fbb",
-    "ARCHITECTURE.md": "5a0a6dd8a7c060bbd95b6547b8d73829b5c25028e124d2d4a795434e3155e4f0",
+    "ARCHITECTURE.md": "18889603b585286ba9ffc71ee488a188cd1cf60b5eaa4e5471b03e25c83c6028",
     "Dockerfile": "e8ea1ebb2033759e69ccd251757cfe256aa9e895b55ec102a7dfe4cac84636f7",
     "README.md": "a0459e36f98c522c06366afe1bc62cf06b2869285006b01868d7a9cff5986de6",
-    "TODO.md": "dd29cd261c72eedd950378b89f04fd307c8be73fa384a800f3f84554d532b774",
+    "TODO.md": "1e46e9d7ee42c9a510033308af6944536b0a9a4e0fa1b064f1bb0b8293b2b653",
     "api.md": "90bcbfc40029352bf07d922a52638b036752d81659ebcaf7a0ea63fcf606825d",
-    "backend.md": "e8eb7971db2c7d9dba73cbf342fae80726bb847b0166d60f1ac7544ed4b374ae",
+    "backend.md": "c4676a103f802f850b7870523bc003d0acc1afd2469c0a55d5f9232ab1a1116a",
     "business-logic.md": "b1653904b76e2c3a2fd1791bde88619c7e49225ef25b33de88fc4bfd5b3f8705",
     "cmd/admin-bootstrap/main.go": "415f1b15f0028d9c9c8b56ff09cea85d4f87f63675040f223d0e88f405b2f773",
     "cmd/admin-bootstrap/main_test.go": "526deebe1240b1e0486ffa12cfed90aa700a3bf41d1898c43077ed2ec87b343c",
     "cmd/app/main.go": "02076072417d4026b566c1329cbd123fbe899c197158640a36fcb94f41d41ae3",
     "cmd/healthcheck/main.go": "ddd70dc571e9798816fe784f7e72d142556fdab381a9ee09048e7b4a177450c8",
-    "database.md": "7ebac64af525525dc3702234e949159e4dff18ed458e1d69ea786e1928be96b3",
+    "database.md": "f86d788ea701893f71b9e0e365dba15f21c265eabc089dec997c0798725331ad",
     "internal/config/config.go": "aadef110c9dfe0dcdfa47e3c87464a6a0a906a7d67991b81969384de5572983c",
     "internal/config/config_test.go": "f015d14a9cef3adad1d1148234d21db24247ee8cc85eb72890a6ca71920970d3",
     "internal/delivery/http/middleware/api_errors.go": "494fa7735ee14ce59944178fc374a39856dbb515cfb66a2c7ca9dc5fe8b5b3a2",
@@ -82,6 +82,8 @@
     "migrations/00001_init_schema.sql": "12281514467d107d48df60ac0529bcc145d94f6c19e1d4366fb71f39c4c30d65",
     "migrations/00002_add_indexes.sql": "795f101ab2efff113aef309da92ec5f31ff1059b9a95bb1c5df03d174b3e99c0",
     "migrations/00003_seed_dev_data.sql": "353c9822665e2fb9f3711021290c07a668303e047fa1830e5a578b51885c8de4",
+    "migrations/00004_grant_runtime_privileges.sql": "2d1698380594dc4b4e0d8d5385b6dd8d270fdf17709e03127c9c446cbe19e8d7",
+    "scripts/init-postgres-roles.sh": "322628570bceaf9ec16e85a182b1e3e2649ca1f6c34086c5e17f04771a80f6fc",
     "scripts/migrate-production.sh": "3d37dc66c29d583d80c9af9584faee220f2d316563837e3078f00773854e68f7",
     "tailwind.config.js": "1aebac7ee171bc19a3736110d8f4e65b5a1ba7b1767601f2f75fbc371b0f4474",
     "web/handler.go": "2bea723776b2c19c6f5fdba5d25b2a7f1919336527aabdd924d7a080e847467d",
@@ -94,13 +96,13 @@
     "web/src/interactions/focus.js": "f23347b0f4fe8cc838d64e732b423fd08a8fb34bf7ff69ad749967dee95a8861",
     "web/static/js/app.js": "274b9a3ea24efd6ba71e745530aead062b1801e67ffaebae6f7e3b9df7293385"
   },
-  "indexed_at_commit": "ae5bf48e674d51b86be4529eb3b1a7e71dcaa3e9",
-  "indexed_at_timestamp": "2026-07-31T17:40:57.211546379+00:00",
+  "indexed_at_commit": "68eb04fac46c91c188cd846df8ee32123f0a2326",
+  "indexed_at_timestamp": "2026-07-31T19:47:47.727491286+00:00",
   "schema_version": 3,
   "stats": {
-    "total_edges": 1307,
-    "total_files": 93,
-    "total_nodes": 1007
+    "total_edges": 1308,
+    "total_files": 95,
+    "total_nodes": 1008
   },
   "vexp_version": "2.4.0"
 }
