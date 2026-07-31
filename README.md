@@ -86,6 +86,78 @@ SPCASE_TEST_DATABASE_URL='postgres://postgres:postgres@127.0.0.1:5432/spcase_tes
   go test -tags=integration ./internal/...
 ```
 
+## Local staging
+
+Local staging использует production Compose с отдельным override, project name,
+volume, image tags и loopback-портами. PostgreSQL публикуется только на
+`127.0.0.1` для host-side integration tests.
+
+Подготовка:
+
+```bash
+cp .env.staging.example .env.staging
+chmod 600 .env.staging
+openssl rand -hex 32
+openssl rand -base64 48
+openssl rand -base64 48
+```
+
+Заполните `DB_PASSWORD`, `JWT_SECRET` и `JURY_REGISTRATION_KEY`, затем:
+
+```bash
+docker compose \
+  -p spcase-staging \
+  -f docker-compose.yml \
+  -f docker-compose.staging.yml \
+  --env-file .env.staging \
+  config --quiet
+
+docker compose \
+  -p spcase-staging \
+  -f docker-compose.yml \
+  -f docker-compose.staging.yml \
+  --env-file .env.staging \
+  up --detach --build --wait
+```
+
+Проверки:
+
+```bash
+curl --fail http://127.0.0.1:18080/api/v1/health/live
+curl --fail http://127.0.0.1:18080/api/v1/health/ready
+
+SPCASE_TEST_DATABASE_URL='postgres://spcase_staging:<password>@127.0.0.1:15432/spcase_staging?sslmode=disable' \
+  go test -tags=integration ./internal/...
+```
+
+Первый ADMIN создаётся существующим CLI внутри application image:
+
+```bash
+systemd-ask-password "Initial staging ADMIN password:" |
+  docker compose \
+    -p spcase-staging \
+    -f docker-compose.yml \
+    -f docker-compose.staging.yml \
+    --env-file .env.staging \
+    run --rm --no-deps -T \
+    --entrypoint /app/admin-bootstrap app \
+    -full-name "Staging Administrator" \
+    -email "admin@staging.spcase.ru"
+```
+
+Остановка без удаления данных:
+
+```bash
+docker compose \
+  -p spcase-staging \
+  -f docker-compose.yml \
+  -f docker-compose.staging.yml \
+  --env-file .env.staging \
+  down
+```
+
+Не используйте `--volumes`, если staging data должны сохраниться.
+
 ## Production-контейнер
 
 Образ собирает frontend assets отдельным Node.js stage, затем статические

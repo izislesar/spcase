@@ -1,11 +1,18 @@
 {
   "file_hashes": {
-    "Dockerfile": "447d0db5c519cfa698d907dcbfd1e7c8bea62d43330529774c29a97ce3860be4",
-    "README.md": "54d62ec03621eeca07cddc63e9cf1ec8a523b642dd34eb188953f6c071320a51",
+    ".codex/vexp-hint.sh": "6bd357cdb2ee5916f9ea8639268036f691ab37326efae0ec26097a58ff8a9fbb",
+    "ARCHITECTURE.md": "5a0a6dd8a7c060bbd95b6547b8d73829b5c25028e124d2d4a795434e3155e4f0",
+    "Dockerfile": "e8ea1ebb2033759e69ccd251757cfe256aa9e895b55ec102a7dfe4cac84636f7",
+    "README.md": "a0459e36f98c522c06366afe1bc62cf06b2869285006b01868d7a9cff5986de6",
+    "TODO.md": "dd29cd261c72eedd950378b89f04fd307c8be73fa384a800f3f84554d532b774",
+    "api.md": "90bcbfc40029352bf07d922a52638b036752d81659ebcaf7a0ea63fcf606825d",
+    "backend.md": "e8eb7971db2c7d9dba73cbf342fae80726bb847b0166d60f1ac7544ed4b374ae",
+    "business-logic.md": "b1653904b76e2c3a2fd1791bde88619c7e49225ef25b33de88fc4bfd5b3f8705",
     "cmd/admin-bootstrap/main.go": "415f1b15f0028d9c9c8b56ff09cea85d4f87f63675040f223d0e88f405b2f773",
     "cmd/admin-bootstrap/main_test.go": "526deebe1240b1e0486ffa12cfed90aa700a3bf41d1898c43077ed2ec87b343c",
     "cmd/app/main.go": "02076072417d4026b566c1329cbd123fbe899c197158640a36fcb94f41d41ae3",
     "cmd/healthcheck/main.go": "ddd70dc571e9798816fe784f7e72d142556fdab381a9ee09048e7b4a177450c8",
+    "database.md": "7ebac64af525525dc3702234e949159e4dff18ed458e1d69ea786e1928be96b3",
     "internal/config/config.go": "aadef110c9dfe0dcdfa47e3c87464a6a0a906a7d67991b81969384de5572983c",
     "internal/config/config_test.go": "f015d14a9cef3adad1d1148234d21db24247ee8cc85eb72890a6ca71920970d3",
     "internal/delivery/http/middleware/api_errors.go": "494fa7735ee14ce59944178fc374a39856dbb515cfb66a2c7ca9dc5fe8b5b3a2",
@@ -87,13 +94,13 @@
     "web/src/interactions/focus.js": "f23347b0f4fe8cc838d64e732b423fd08a8fb34bf7ff69ad749967dee95a8861",
     "web/static/js/app.js": "274b9a3ea24efd6ba71e745530aead062b1801e67ffaebae6f7e3b9df7293385"
   },
-  "indexed_at_commit": "b6bb4c46d5252a729461af13944d4bb19b93e51c",
-  "indexed_at_timestamp": "2026-07-28T20:03:41.132497464+00:00",
+  "indexed_at_commit": "ae5bf48e674d51b86be4529eb3b1a7e71dcaa3e9",
+  "indexed_at_timestamp": "2026-07-31T17:40:57.211546379+00:00",
   "schema_version": 3,
   "stats": {
-    "total_edges": 1233,
-    "total_files": 86,
-    "total_nodes": 919
+    "total_edges": 1307,
+    "total_files": 93,
+    "total_nodes": 1007
   },
-  "vexp_version": "2.3.1"
+  "vexp_version": "2.4.0"
 }

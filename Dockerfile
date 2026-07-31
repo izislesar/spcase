@@ -32,7 +32,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS="${TARGETOS}" GOARCH="${TARGETARCH}" \
     go build -buildvcs=false -trimpath -ldflags="-s -w" -o /out/spcase ./cmd/app && \
     CGO_ENABLED=0 GOOS="${TARGETOS}" GOARCH="${TARGETARCH}" \
-    go build -buildvcs=false -trimpath -ldflags="-s -w" -o /out/healthcheck ./cmd/healthcheck
+    go build -buildvcs=false -trimpath -ldflags="-s -w" -o /out/healthcheck ./cmd/healthcheck && \
+    CGO_ENABLED=0 GOOS="${TARGETOS}" GOARCH="${TARGETARCH}" \
+    go build -buildvcs=false -trimpath -ldflags="-s -w" -o /out/admin-bootstrap ./cmd/admin-bootstrap
 
 
 FROM golang:1.26.5-bookworm@sha256:1ecb7edf62a0408027bd5729dfd6b1b8766e578e8df93995b225dfd0944eb651 AS migrator-build
@@ -87,6 +89,7 @@ WORKDIR /app
 
 COPY --from=go-build --chown=nonroot:nonroot /out/spcase /app/spcase
 COPY --from=go-build --chown=nonroot:nonroot /out/healthcheck /app/healthcheck
+COPY --from=go-build --chown=nonroot:nonroot /out/admin-bootstrap /app/admin-bootstrap
 
 ENV PORT=8000
 

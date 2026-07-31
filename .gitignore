@@ -1,11 +1,7 @@
 # Project documentation used for local agent context
 .docs/
 AGENTS.md
-api.md
 architecture.md
-backend.md
-business-logic.md
-database.md
 frontend.md
 
 # Local environment files (keep the public template)
@@ -13,6 +9,7 @@ frontend.md
 .env.*
 !.env.example
 !.env.production.example
+!.env.staging.example
 
 # JavaScript dependencies, caches and logs
 node_modules/
