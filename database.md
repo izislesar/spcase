@@ -77,7 +77,7 @@ Application дополнительно валидирует URL и ограни�
 | `score` | SMALLINT | 0..10 |
 | `updated_at` | TIMESTAMPTZ | NOT NULL |
 
-Unique `(jury_id, team_id, criterion_id)`. Constraint trigger требует роль JURY у автора.
+Unique `(jury_id, team_id, criterion_id)`. Constraint trigger требует роль JURY у автора. FK на `teams`, а не на `submissions`, отражает историческую семантику: потеря текущего submission не удаляет оценки, а удаление team удаляет их каскадно.
 
 ### `evaluation_state`
 
@@ -124,13 +124,15 @@ Integration tests выполняют `EXPLAIN` критических queries.
 - Team create блокирует captain account, проверяет role/membership и атомарно создаёт team + captain membership.
 - Join блокирует team по invite code и user; capacity проверяется внутри той же transaction.
 - Leave/kick/transfer/disband блокируют team `FOR UPDATE`, затем user rows в стабильном UUID-порядке. Hard Lock повторно вычисляется через `clock_timestamp()` после locks.
-- Leave/kick атомарно удаляют существующий submission, если состав стал меньше двух.
+- Leave/kick атомарно удаляют существующий submission, если состав стал меньше двух; исторические evaluations сохраняются.
 - Submission блокирует team, повторно проверяет captain, member count и database time, затем выполняет upsert.
-- Evaluation batch берёт `FOR SHARE` на singleton state, требует существующий submission и атомарно upsert-ит ровно шесть criteria.
+- Evaluation batch блокирует team `FOR SHARE`, затем singleton state `FOR SHARE` и текущий submission `FOR SHARE`; после проверок атомарно upsert-ит ровно шесть criteria в порядке criterion ID.
 - Open/close evaluation берёт singleton `FOR UPDATE`, обновляет state и append-only event в одной transaction.
 - First ADMIN bootstrap сериализован PostgreSQL advisory transaction lock.
 
 Все repository transactions используют `READ COMMITTED`. Pool задаёт PostgreSQL `statement_timeout` и `lock_timeout` из configuration.
+
+Lifecycle lock order начинается с team row. Membership mutations продолжают к user rows в стабильном UUID-порядке; scoring продолжает к evaluation state и submission. Поэтому scoring сериализован только с mutation той же команды, open/close сериализован со всеми score writes через singleton state, а операции разных команд не блокируют друг друга на team locks.
 
 ## 5. Database roles
 

@@ -98,7 +98,7 @@ Repositories execute direct SQL:
 - evaluation batches/totals;
 - read models, lifecycle state and exports.
 
-Team and submission writes use database transactions and row locks. Business deadlines are checked in service for fast rejection and again against PostgreSQL time inside critical transactions where applicable.
+Team, submission and score writes use database transactions and row locks. Submission/scoring/membership paths serialize on the affected team; scoring then locks evaluation state and current submission. Evaluation batches use deterministic criterion order. Business deadlines are checked in service for fast rejection and again against PostgreSQL time inside critical transactions where applicable.
 
 ## 7. HTTP middleware
 
@@ -168,7 +168,7 @@ SPCASE_TEST_APP_DATABASE_URL='postgres://spcase_app:...' \
 go test -race -count=1 -tags=integration ./internal/...
 ```
 
-The source database must already be at production migration version 5. The harness verifies both connection roles, creates/migrates/cleans an isolated schema as `spcase_migrator`, and constructs every repository with the `spcase_app` pool. Runtime grants for the isolated objects are copied from the already migrated `public` schema, so tests cannot silently broaden application privileges. It covers schema integrity, migrations/seed, concurrent joins, lock ordering, database deadline checks, submission invalidation, evaluation atomicity, query plans, aggregation, timeouts and concurrent ADMIN bootstrap.
+The source database must already be at production migration version 5. The harness verifies both connection roles, creates/migrates/cleans an isolated schema as `spcase_migrator`, and constructs every repository with the `spcase_app` pool. Runtime grants for the isolated objects are copied from the already migrated `public` schema, so tests cannot silently broaden application privileges. It covers schema integrity, migrations/seed, concurrent joins, database deadline checks, historical evaluation retention, deterministic scoring versus leave/kick/disband and submission races, evaluation-state serialization, per-team lock independence, query plans, aggregation, timeouts and concurrent ADMIN bootstrap.
 
 Fresh-database role ACL check:
 

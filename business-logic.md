@@ -58,7 +58,7 @@ The middleware performs an early check. Repository repeats it using PostgreSQL `
 
 Current implementation does not apply this lock to create or join.
 
-If leave/kick reduces a team below two members, its existing submission is deleted in the same transaction.
+If leave/kick reduces a team below two members, its existing submission is deleted in the same transaction. Existing evaluations are retained as historical team records; they become writable again only after the team regains eligibility, creates a current submission and evaluations are open. Disband is different: deleting the team cascades to both submission and evaluations.
 
 ## 5. Submissions
 
@@ -80,6 +80,8 @@ Each JURY submits exactly six scores for one submitted team:
 
 The batch is validated before persistence, sorted by criterion and upserted atomically. A JURY can update their own six rows while evaluation lifecycle is open. Evaluation identity is unique by `(jury_id, team_id, criterion_id)`.
 
+Scoring, submission writes and destructive membership mutations serialize on the affected team row. The scoring lock order is team → global evaluation state → current submission. If scoring obtains the team lock first, its complete batch commits before a later eligibility loss; the later mutation removes the submission but retains the committed historical evaluations. If the membership mutation commits first, scoring fails with `SUBMISSION_NOT_FOUND`.
+
 `is_evaluated_by_me` becomes true only when the current JURY has all six criterion rows for the team.
 
 Team total is the sum of all persisted criterion scores from all juries. Missing jury evaluations do not block aggregation. `evaluated_by_count` counts distinct juries with rows for that team.
@@ -93,6 +95,8 @@ Team total is the sum of all persisted criterion scores from all juries. Missing
 - reads, admin statistics and export remain available.
 
 Only ADMIN may open or close evaluations. The state row is locked during transition. Repeating the current state is idempotent; an immutable `OPEN`/`CLOSE` audit event is appended only when state changes.
+
+Closing and reopening evaluations does not delete or reset scores. A close transition serializes with in-flight scoring through the state row: an already locked score batch completes first, otherwise the batch observes the closed state and fails with `EVALUATIONS_LOCKED`.
 
 ## 8. Administration and export
 

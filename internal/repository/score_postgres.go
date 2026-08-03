@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -48,12 +49,22 @@ func (r *ScorePostgres) UpsertBatch(
 	if _, err := domain.JuryEvaluationTotal(evaluations); err != nil {
 		return nil, err
 	}
+	evaluations = append([]domain.Evaluation(nil), evaluations...)
+	sort.Slice(evaluations, func(i, j int) bool {
+		return evaluations[i].CriterionID < evaluations[j].CriterionID
+	})
 	tx, err := r.pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	if err != nil {
 		return nil, fmt.Errorf("begin score transaction: %w", err)
 	}
 	defer tx.Rollback(ctx)
 
+	// Lifecycle lock order is team -> evaluation state -> submission. Team
+	// membership mutations and submission upserts also lock the team first, so
+	// scoring cannot pass eligibility checks concurrently with invalidation.
+	if err := lockEvaluationTeam(ctx, tx, evaluations[0].TeamID); err != nil {
+		return nil, err
+	}
 	var isClosed bool
 	if err := tx.QueryRow(ctx,
 		`SELECT is_closed FROM evaluation_state WHERE singleton_id = 1 FOR SHARE`,
@@ -63,15 +74,14 @@ func (r *ScorePostgres) UpsertBatch(
 	if isClosed {
 		return nil, domain.ErrEvaluationLocked
 	}
-	var submitted bool
+	var submissionID uuid.UUID
 	if err := tx.QueryRow(ctx,
-		`SELECT EXISTS (SELECT 1 FROM submissions WHERE team_id = $1)`,
+		`SELECT id FROM submissions WHERE team_id = $1 FOR SHARE`,
 		evaluations[0].TeamID,
-	).Scan(&submitted); err != nil {
-		return nil, fmt.Errorf("check team submission: %w", err)
-	}
-	if !submitted {
+	).Scan(&submissionID); errors.Is(err, pgx.ErrNoRows) {
 		return nil, domain.ErrSubmissionNotFound
+	} else if err != nil {
+		return nil, fmt.Errorf("lock team submission: %w", err)
 	}
 
 	persisted := make([]domain.Evaluation, 0, domain.CriterionCount)
@@ -86,6 +96,18 @@ func (r *ScorePostgres) UpsertBatch(
 		return nil, fmt.Errorf("commit score transaction: %w", err)
 	}
 	return persisted, nil
+}
+
+func lockEvaluationTeam(ctx context.Context, tx pgx.Tx, teamID uuid.UUID) error {
+	var lockedTeamID uuid.UUID
+	if err := tx.QueryRow(ctx,
+		`SELECT id FROM teams WHERE id = $1 FOR SHARE`, teamID,
+	).Scan(&lockedTeamID); errors.Is(err, pgx.ErrNoRows) {
+		return domain.ErrSubmissionNotFound
+	} else if err != nil {
+		return fmt.Errorf("lock evaluation team: %w", err)
+	}
+	return nil
 }
 
 func (r *ScorePostgres) ListByJuryID(

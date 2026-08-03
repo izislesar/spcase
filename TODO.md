@@ -29,6 +29,7 @@
 - [ ] 2.3 Проверить production migration allowlist на чистой БД и повторный idempotent запуск
 - [ ] 2.4 Выполнить end-to-end сценарии USER, JURY и ADMIN через Nginx
 - [ ] 2.5 Проверить frontend в поддерживаемых браузерах и на мобильных viewport
+- [x] 2.6 Устранить submission/evaluation lifecycle race: team-scoped lock order, historical evaluation contract, deterministic concurrency tests и structural integrity probes
 
 ## 3. Deployment preparation
 

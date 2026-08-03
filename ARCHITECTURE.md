@@ -54,7 +54,7 @@ Repositories:
 - `UserPostgres` — accounts, account projection, auth version, disabled state, first ADMIN.
 - `TeamPostgres` — teams, membership и транзакционные mutations.
 - `SubmissionPostgres` — получение и atomic upsert решения.
-- `ScorePostgres` — atomic batch upsert и чтение evaluations/totals.
+- `ScorePostgres` — atomic batch upsert, team-scoped lifecycle locking и чтение evaluations/totals.
 - `QueryPostgres` — jury workspace, evaluation state, admin stats и exports.
 
 Services:
@@ -76,6 +76,8 @@ SecurityHeaders
 ```
 
 На защищённых маршрутах дополнительно применяются `AuthMiddleware` и `RequireRoles`. Для leave/kick/transfer/disband используется `HardLockMiddleware`; repository повторно проверяет lock по времени PostgreSQL после получения row locks.
+
+Submission, scoring и destructive team mutations разделяют team row как lifecycle lock. Scoring использует порядок team → evaluation state → submission; membership paths начинают с той же team row, затем блокируют users в UUID-порядке. Это не сериализует независимые команды. Evaluations принадлежат team как исторические записи: invalidation текущего submission их сохраняет, disband удаляет каскадно.
 
 HTTP server имеет read/write/header/idle timeouts, лимит заголовков и graceful shutdown до 15 секунд. Логи приложения — JSON через `slog` в stdout.
 
