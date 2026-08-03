@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"mime"
 	"net/http"
 	"strings"
+	"unicode/utf8"
 
 	"spcase.ru/backend/internal/domain"
 	"spcase.ru/backend/internal/service"
@@ -25,8 +27,22 @@ func decodeJSON(writer http.ResponseWriter, request *http.Request, destination a
 
 	request.Body = http.MaxBytesReader(writer, request.Body, maximumRequestBodyBytes)
 	defer request.Body.Close()
+	payload, err := io.ReadAll(request.Body)
+	if err != nil {
+		var maximumBytesError *http.MaxBytesError
+		if errors.As(err, &maximumBytesError) {
+			writeError(writer, http.StatusRequestEntityTooLarge, domain.CodeInvalidRequest, "Request body is too large")
+			return false
+		}
+		writeError(writer, http.StatusBadRequest, domain.CodeInvalidRequest, "Request body is invalid")
+		return false
+	}
+	if !utf8.Valid(payload) || validateUniqueJSONKeys(payload) != nil {
+		writeError(writer, http.StatusBadRequest, domain.CodeInvalidRequest, "Request body is invalid")
+		return false
+	}
 
-	decoder := json.NewDecoder(request.Body)
+	decoder := json.NewDecoder(bytes.NewReader(payload))
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(destination); err != nil {
 		writeError(writer, http.StatusBadRequest, domain.CodeInvalidRequest, "Request body is invalid")
@@ -39,6 +55,68 @@ func decodeJSON(writer http.ResponseWriter, request *http.Request, destination a
 		return false
 	}
 	return true
+}
+
+func validateUniqueJSONKeys(payload []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(payload))
+	if err := walkJSONValue(decoder); err != nil {
+		return err
+	}
+	var trailing any
+	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
+		return errors.New("JSON contains trailing content")
+	}
+	return nil
+}
+
+func walkJSONValue(decoder *json.Decoder) error {
+	token, err := decoder.Token()
+	if err != nil {
+		return err
+	}
+	delimiter, ok := token.(json.Delim)
+	if !ok {
+		return nil
+	}
+
+	switch delimiter {
+	case '{':
+		keys := make(map[string]struct{})
+		for decoder.More() {
+			keyToken, err := decoder.Token()
+			if err != nil {
+				return err
+			}
+			key, ok := keyToken.(string)
+			if !ok {
+				return errors.New("JSON object key is not a string")
+			}
+			if _, exists := keys[key]; exists {
+				return errors.New("JSON object contains duplicate key")
+			}
+			keys[key] = struct{}{}
+			if err := walkJSONValue(decoder); err != nil {
+				return err
+			}
+		}
+		closing, err := decoder.Token()
+		if err != nil || closing != json.Delim('}') {
+			return errors.New("JSON object is not closed")
+		}
+	case '[':
+		for decoder.More() {
+			if err := walkJSONValue(decoder); err != nil {
+				return err
+			}
+		}
+		closing, err := decoder.Token()
+		if err != nil || closing != json.Delim(']') {
+			return errors.New("JSON array is not closed")
+		}
+	default:
+		return errors.New("unexpected JSON delimiter")
+	}
+	return nil
 }
 
 func writeJSON(writer http.ResponseWriter, status int, value any) {

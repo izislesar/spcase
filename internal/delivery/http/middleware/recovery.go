@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -34,7 +35,7 @@ func (m *RecoveryMiddleware) Middleware(next http.Handler) http.Handler {
 					"HTTP handler panic",
 					slog.String("method", request.Method),
 					slog.String("path", request.URL.Path),
-					slog.Any("panic", recovered),
+					slog.String("panic_type", fmt.Sprintf("%T", recovered)),
 				)
 				writeDomainError(writer, http.StatusInternalServerError, domain.ErrInternal)
 			}

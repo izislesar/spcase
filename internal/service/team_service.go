@@ -81,6 +81,9 @@ func (s *TeamService) Create(ctx context.Context, captainID uuid.UUID, name stri
 		return domain.Team{}, domain.ErrUserNotFound
 	}
 	name = strings.TrimSpace(name)
+	if strings.ContainsRune(name, '\x00') {
+		return domain.Team{}, &ValidationError{Field: "name", Reason: "must not contain NUL characters"}
+	}
 	if name == "" {
 		return domain.Team{}, &ValidationError{Field: "name", Reason: "must not be empty"}
 	}

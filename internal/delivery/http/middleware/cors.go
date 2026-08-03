@@ -14,6 +14,14 @@ type CORSMiddleware struct {
 	allowedOrigins map[string]struct{}
 }
 
+var corsMethods = map[string]struct{}{
+	http.MethodGet: {}, http.MethodPost: {}, http.MethodDelete: {},
+}
+
+var corsHeaders = map[string]struct{}{
+	"accept": {}, "content-type": {},
+}
+
 // NewCORSMiddleware creates restrictive credentialed CORS middleware.
 func NewCORSMiddleware(origins []string) (*CORSMiddleware, error) {
 	if len(origins) == 0 {
@@ -47,6 +55,15 @@ func (m *CORSMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		if request.Method == http.MethodOptions {
+			requestedMethod := strings.TrimSpace(request.Header.Get("Access-Control-Request-Method"))
+			if _, allowed := corsMethods[requestedMethod]; !allowed ||
+				!allowedCORSHeaders(request.Header.Get("Access-Control-Request-Headers")) {
+				writeDomainError(writer, http.StatusForbidden, domain.ErrForbidden)
+				return
+			}
+		}
+
 		headers := writer.Header()
 		headers.Add("Vary", "Origin")
 		headers.Set("Access-Control-Allow-Origin", origin)
@@ -63,4 +80,16 @@ func (m *CORSMiddleware) Middleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(writer, request)
 	})
+}
+
+func allowedCORSHeaders(raw string) bool {
+	if strings.TrimSpace(raw) == "" {
+		return true
+	}
+	for _, header := range strings.Split(raw, ",") {
+		if _, allowed := corsHeaders[strings.ToLower(strings.TrimSpace(header))]; !allowed {
+			return false
+		}
+	}
+	return true
 }

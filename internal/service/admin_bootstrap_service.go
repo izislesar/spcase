@@ -35,6 +35,11 @@ func (s *AdminBootstrapService) Bootstrap(
 	input AdminBootstrapInput,
 ) (domain.User, error) {
 	fullName := strings.TrimSpace(input.FullName)
+	if strings.ContainsRune(fullName, '\x00') {
+		return domain.User{}, &ValidationError{
+			Field: "full_name", Reason: "must not contain NUL characters",
+		}
+	}
 	if fullName == "" || utf8.RuneCountInString(fullName) > maximumProfileLength {
 		return domain.User{}, &ValidationError{
 			Field: "full_name", Reason: "must contain 1 to 255 characters",

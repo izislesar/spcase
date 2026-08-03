@@ -145,6 +145,9 @@ func (s *AuthService) RegisterJury(ctx context.Context, input JuryRegisterInput)
 		return AuthResult{}, domain.ErrInvalidSecretKey
 	}
 	fullName := strings.TrimSpace(input.FullName)
+	if strings.ContainsRune(fullName, '\x00') {
+		return AuthResult{}, &ValidationError{Field: "full_name", Reason: "must not contain NUL characters"}
+	}
 	if fullName == "" || utf8.RuneCountInString(fullName) > maximumProfileLength {
 		return AuthResult{}, &ValidationError{Field: "full_name", Reason: "must contain 1 to 255 characters"}
 	}
@@ -202,7 +205,7 @@ func (s *AuthService) login(
 		return AuthResult{}, domain.ErrInvalidCredentials
 	}
 	if user.IsDisabled() {
-		return AuthResult{}, domain.ErrAccountDisabled
+		return AuthResult{}, domain.ErrInvalidCredentials
 	}
 	return s.authenticate(user)
 }
@@ -320,6 +323,9 @@ func normalizeRegisterInput(input RegisterInput) (RegisterInput, error) {
 	for field, value := range map[string]string{
 		"full_name": input.FullName, "university": input.University, "telegram": input.Telegram,
 	} {
+		if strings.ContainsRune(value, '\x00') {
+			return RegisterInput{}, &ValidationError{Field: field, Reason: "must not contain NUL characters"}
+		}
 		if value == "" {
 			return RegisterInput{}, &ValidationError{Field: field, Reason: "must not be empty"}
 		}

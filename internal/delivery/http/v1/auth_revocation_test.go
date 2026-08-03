@@ -301,7 +301,7 @@ func TestDisabledAndDeletedAccountsCannotAuthenticateOrUseJWT(t *testing.T) {
 			t,
 			disabledLogin,
 			http.StatusUnauthorized,
-			domain.CodeAccountDisabled,
+			domain.CodeInvalidCredentials,
 		)
 	})
 
@@ -331,6 +331,93 @@ func TestDisabledAndDeletedAccountsCannotAuthenticateOrUseJWT(t *testing.T) {
 			domain.CodeInvalidCredentials,
 		)
 	})
+}
+
+func TestLoginHTTPResponseDoesNotEnumerateAccountState(t *testing.T) {
+	t.Parallel()
+
+	type responseFingerprint struct {
+		status       int
+		body         string
+		contentType  string
+		cacheControl string
+		setCookie    string
+	}
+	requestLogin := func(t *testing.T, app revocationTestApplication, email, password string) responseFingerprint {
+		t.Helper()
+		body, err := json.Marshal(LoginRequest{Email: email, Password: password})
+		if err != nil {
+			t.Fatal(err)
+		}
+		handler := httpmiddleware.SecurityHeaders(
+			httpmiddleware.NoStoreSensitiveResponses(http.HandlerFunc(app.authHandler.Login)),
+		)
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", strings.NewReader(string(body)))
+		request.Header.Set("Content-Type", "application/json")
+		recorder := httptest.NewRecorder()
+		handler.ServeHTTP(recorder, request)
+		return responseFingerprint{
+			status: recorder.Code, body: recorder.Body.String(),
+			contentType:  recorder.Header().Get("Content-Type"),
+			cacheControl: recorder.Header().Get("Cache-Control"),
+			setCookie:    recorder.Header().Get("Set-Cookie"),
+		}
+	}
+
+	wrongPasswordApp := newRevocationTestApplication(t)
+	want := requestLogin(t, wrongPasswordApp, revocationTestEmail, "wrong-password")
+	if want.status != http.StatusUnauthorized || want.setCookie != "" {
+		t.Fatalf("wrong-password response = %#v", want)
+	}
+
+	nonexistentApp := newRevocationTestApplication(t)
+	disabledApp := newRevocationTestApplication(t)
+	disabledApp.users.setDisabled(true)
+	responses := map[string]responseFingerprint{
+		"nonexistent": requestLogin(t, nonexistentApp, "missing@example.test", revocationTestPassword),
+		"disabled":    requestLogin(t, disabledApp, revocationTestEmail, revocationTestPassword),
+	}
+	for name, response := range responses {
+		if response != want {
+			t.Errorf("%s response = %#v, want %#v", name, response, want)
+		}
+	}
+}
+
+func TestLogoutClearsCookieButDoesNotRevokeCopiedJWT(t *testing.T) {
+	t.Parallel()
+
+	app := newRevocationTestApplication(t)
+	login, cookie := app.login(t, revocationTestPassword)
+	if login.Code != http.StatusOK || cookie == nil {
+		t.Fatalf("login response = %d %s", login.Code, login.Body.String())
+	}
+	if cookie.Domain != "spcase.ru" || cookie.Path != "/" ||
+		!cookie.HttpOnly || !cookie.Secure || cookie.SameSite != http.SameSiteLaxMode ||
+		cookie.MaxAge != int(service.JWTExpiration/time.Second) {
+		t.Fatalf("unexpected access cookie: %#v", cookie)
+	}
+
+	logoutHandler := app.auth.Middleware(
+		httpmiddleware.RequireRoles(domain.RoleUser)(http.HandlerFunc(app.authHandler.Logout)),
+	)
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/auth/logout", nil)
+	request.AddCookie(cookie)
+	recorder := httptest.NewRecorder()
+	logoutHandler.ServeHTTP(recorder, request)
+	if recorder.Code != http.StatusOK {
+		t.Fatalf("logout response = %d %s", recorder.Code, recorder.Body.String())
+	}
+	cleared := recorder.Result().Cookies()
+	if len(cleared) != 1 || cleared[0].Name != httpmiddleware.AccessTokenCookieName ||
+		cleared[0].Value != "" || cleared[0].MaxAge >= 0 || !cleared[0].HttpOnly ||
+		!cleared[0].Secure || cleared[0].SameSite != http.SameSiteLaxMode {
+		t.Fatalf("unexpected logout cookie: %#v", cleared)
+	}
+
+	if reused := requestWithToken(app.protected(domain.RoleUser), cookie); reused.Code != http.StatusNoContent {
+		t.Fatalf("copied JWT reuse status = %d, want %d", reused.Code, http.StatusNoContent)
+	}
 }
 
 func TestPasswordChangeInvalidatesExistingJWT(t *testing.T) {
