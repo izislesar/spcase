@@ -116,11 +116,17 @@ fresh db role initialization → db healthy → migrator completed → app ready
 
 Containers используют nonroot users, dropped capabilities, `no-new-privileges` и read-only filesystems; writable temporary storage предоставляется только через tmpfs. PostgreSQL data хранится в named volume.
 
-При создании чистого volume PostgreSQL init script оставляет `postgres` единственной administrative superuser-role, создаёт non-superuser `spcase_migrator` и `spcase_app`, передаёт migrator ownership database/schema и отзывает PUBLIC privileges. Production migrator применяет только `migrations/production.txt`; migration `00004` выдаёт runtime role точные grants, development seed исключён.
+При создании чистого volume PostgreSQL init script оставляет `postgres` единственной administrative superuser-role, создаёт non-superuser `spcase_migrator` и `spcase_app`, передаёт migrator ownership database/schema и отзывает PUBLIC privileges. Production migrator применяет только `migrations/production.txt`; migration `00004` выдаёт runtime role точные grants, `00005` изолирует таблицу и sequence Goose metadata, development seed исключён.
 
-Разделение вводится в два шага для безопасной работы с существующими volumes. Migrator уже подключается через `DB_MIGRATOR_*`; Go application и `admin-bootstrap` пока используют совместимые legacy `DB_USER`/`DB_PASSWORD`. После administrative ownership cutover они переключаются на `DB_APP_*`. Поведение Go-приложения при этом не меняется.
+Разделение вводится в два шага для безопасной работы с существующими volumes. Fresh volume использует initdb hook; существующая БД требует отдельного backup, restore rehearsal и ручного `scripts/cutover-postgres-roles.sh`. Cutover переносит ownership application objects и Goose metadata на `spcase_migrator`, задаёт runtime/default ACL и сохраняет legacy runtime role до smoke tests. Tracked Compose подключает migrator через `DB_MIGRATOR_*`, а Go application и `admin-bootstrap` через `DB_APP_*`; Compose отображает их в стандартные `DB_USER`/`DB_PASSWORD`, не передавая runtime container administrative или migrator secrets. Existing installation переходит на это wiring только после ручного database cutover.
 
-Первый ADMIN создаётся отдельно через `cmd/admin-bootstrap`, пароль читается только из stdin. Bootstrap требует только runtime DML и после переключения использует `spcase_app`, а не administrative database credentials.
+Полная disposable-проверка перехода выполняется отдельным
+`scripts/rehearse-existing-db-deployment.sh`: legacy source, verified backup,
+независимый restored volume, idempotent cutover, migration 5, tracked
+app/Nginx runtime, restart и отдельный rollback restore. Сценарий не является
+частью Compose startup и не заменяет production backup approval.
+
+Первый ADMIN создаётся отдельно через `cmd/admin-bootstrap`, пароль читается только из stdin. Bootstrap использует `spcase_app` и требует только runtime DML. Healthcheck обращается к readiness HTTP endpoint и не загружает database credentials самостоятельно.
 
 ## 9. Health and edge behavior
 

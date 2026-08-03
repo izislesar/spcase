@@ -1,6 +1,6 @@
 # spcase v1.0.0 — PostgreSQL Schema
 
-Каноническая схема находится в `migrations/00001_init_schema.sql`, индексы — в `00002_add_indexes.sql`, runtime grants — в `00004_grant_runtime_privileges.sql`. `00003_seed_dev_data.sql` содержит только development fixtures и отсутствует в production allowlist.
+Каноническая схема находится в `migrations/00001_init_schema.sql`, индексы — в `00002_add_indexes.sql`, runtime grants — в `00004_grant_runtime_privileges.sql`, изоляция Goose metadata — в `00005_isolate_goose_metadata.sql`. `00003_seed_dev_data.sql` содержит только development fixtures и отсутствует в production allowlist.
 
 ## 1. Types and tables
 
@@ -147,10 +147,10 @@ Integration tests выполняют `EXPLAIN` критических queries.
 - `evaluations`: `SELECT`, `INSERT`, `UPDATE`;
 - `evaluation_state`: `SELECT`, `UPDATE`;
 - `evaluation_state_events`: `INSERT`;
-- sequences: `USAGE`, `SELECT`, `UPDATE`;
+- application sequences: отсутствуют; UUID defaults используют `gen_random_uuid()` и не требуют sequence privileges;
 - `user_role` type: `USAGE`.
 
-`spcase_app` не получает schema `CREATE`, ownership или доступ к migration metadata. PUBLIC database/schema privileges отозваны. Default privileges объектов, создаваемых `spcase_migrator`, обеспечивают runtime DML и sequence access; каждая schema migration обязана уточнять grants для объектов с более узкой моделью доступа.
+`spcase_app` не получает schema `CREATE`, ownership или доступ к таблице/sequence Goose metadata. PUBLIC database/schema privileges отозваны. Default privileges объектов, создаваемых `spcase_migrator`, обеспечивают runtime DML и sequence access; каждая schema migration обязана уточнять grants для объектов с более узкой моделью доступа.
 
 ## 6. Migrations
 
@@ -160,10 +160,49 @@ Production workflow копирует только файлы из `migrations/pr
 
 - `00001_init_schema.sql`;
 - `00002_add_indexes.sql`;
-- `00004_grant_runtime_privileges.sql`.
+- `00004_grant_runtime_privileges.sql`;
+- `00005_isolate_goose_metadata.sql`.
 
 `00003_seed_dev_data.sql` применяется только локальными development commands и обратим собственной Down-секцией.
 
-На чистом PostgreSQL entrypoint запускает `scripts/init-postgres-roles.sh`: создаёт non-superuser roles, передаёт database/schema ownership migrator и задаёт default privileges. Затем одноразовый migrator применяет production allowlist. На существующем volume роли и ownership должны быть подготовлены отдельной administrative cutover-процедурой до применения `00004`; изменение `POSTGRES_*` variables само по себе не меняет уже созданный cluster.
+PostgreSQL integration harness требует отдельные
+`SPCASE_TEST_MIGRATOR_DATABASE_URL` и `SPCASE_TEST_APP_DATABASE_URL`. Migrator
+создаёт, мигрирует и удаляет случайно именованную isolated schema; runtime pool
+подключается к той же schema как `spcase_app` и используется всеми repositories,
+transactions и concurrency tests. Legacy single-connection variable не используется.
 
-Пока сохраняется переходный режим: migrator уже подключается как `spcase_migrator`, но application и `admin-bootstrap` продолжают читать legacy `DB_USER`/`DB_PASSWORD`. Их переключение на `spcase_app` выполняется после подготовки существующих databases и не является частью этой migration.
+На чистом PostgreSQL entrypoint запускает `scripts/init-postgres-roles.sh`: создаёт non-superuser roles, передаёт database/schema ownership migrator и задаёт default privileges. Затем одноразовый migrator применяет production allowlist.
+
+Существующий volume переводится только вручную через
+`scripts/cutover-postgres-roles.sh`, после verified backup. Требуются explicit
+database, superuser connection, фактический legacy owner и confirmation guard.
+Preflight допускает ownership только у legacy role или `spcase_migrator`
+(`pg_database_owner` также допустим для legacy `public` schema), отклоняет
+неожиданные user schemas/owners, участие target roles в role memberships и
+принимает только production Goose versions 2, 4 или 5; applied development seed
+version 3 отклоняется. Transactional stage переносит non-extension tables, sequences, views, materialized views,
+foreign tables, routines, enums/domains/types и связанные indexes; database
+ownership меняется отдельной командой. Constraints, triggers, defaults, data и
+Goose history не переписываются.
+
+После cutover database, `public`, application objects и Goose metadata принадлежат
+`spcase_migrator`; `spcase_app` получает только документированную DML matrix,
+`user_role` usage и никаких DDL/Goose privileges. Default privileges совпадают с
+fresh-volume model. Для custom legacy owner сохраняются transitional runtime DML
+grants, но ownership/DDL отзываются; role не отключается и не удаляется.
+Повторный запуск сначала проверяет already-converted state и остаётся
+семантически idempotent. `scripts/rehearse-postgres-role-cutover.sh` проверяет это
+на отдельной `pg_dump`/`pg_restore` копии и очищает созданные disposable resources.
+`scripts/rehearse-existing-db-deployment.sh` дополнительно объединяет verified
+custom-format backup, независимые target/rollback restores, cutover, migration 5,
+tracked Compose runtime под `spcase_app`, API smoke и restart/persistence в одной
+явно подтверждаемой disposable-процедуре. Исходный legacy fingerprint должен
+совпасть после restore и rollback; converted fingerprint может отличаться только
+версией миграции и намеренно созданными smoke-test records/events.
+
+Tracked Compose подключает migrator как `spcase_migrator`, а application и
+`admin-bootstrap` как `spcase_app`; role-specific secrets отображаются в
+стандартные `DB_USER`/`DB_PASSWORD` только внутри соответствующего container.
+Legacy variables и role пока сохраняются для явного rollback existing
+installations. Реальное existing-volume deployment требует предварительного
+backup approval и ручного cutover; автоматического credential fallback нет.

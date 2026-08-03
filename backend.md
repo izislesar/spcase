@@ -56,7 +56,7 @@ Optional/defaulted values:
 
 Secrets must be at least 32 characters, have sufficient diversity and must not match known placeholder/weak patterns. Registration deadline must precede submission deadline.
 
-Compose database provisioning additionally requires `POSTGRES_ADMIN_PASSWORD`, fixed role names `DB_MIGRATOR_USER=spcase_migrator` and `DB_APP_USER=spcase_app`, and separate `DB_MIGRATOR_PASSWORD`/`DB_APP_PASSWORD`. Эти credentials не читаются Go configuration. Compose подставляет migrator credentials в существующие `DB_USER`/`DB_PASSWORD` только для migration container; application и `admin-bootstrap` до завершения cutover продолжают использовать legacy connection values.
+Compose database provisioning additionally requires `POSTGRES_ADMIN_PASSWORD`, fixed role names `DB_MIGRATOR_USER=spcase_migrator` and `DB_APP_USER=spcase_app`, and separate `DB_MIGRATOR_PASSWORD`/`DB_APP_PASSWORD`. Эти credentials не читаются Go configuration напрямую. Compose подставляет migrator credentials в `DB_USER`/`DB_PASSWORD` только migration container, а application credentials — только runtime service и запускаемому через него `admin-bootstrap`. Runtime service получает явно перечисленную конфигурацию вместо полного env-файла, поэтому administrative и migrator passwords в его environment отсутствуют. Legacy `DB_USER`/`DB_PASSWORD` сохранены только для rollback/direct-process compatibility и normal Compose не используются.
 
 ## 4. Startup and shutdown
 
@@ -129,7 +129,22 @@ The Docker frontend stage runs `npm ci`, Tailwind and esbuild. Nginx serves the 
 
 App/PostgreSQL are isolated on the internal backend network. Nginx alone binds to host loopback. External TLS termination is deliberately outside Compose.
 
-Production migrations use an explicit allowlist and never apply development seed data. Application startup does not run migrations. `spcase_migrator` owns schema objects and is the intended Goose identity; `spcase_app` has no DDL or ownership privileges and receives explicit per-table grants from `00004_grant_runtime_privileges.sql`. The first ADMIN bootstrap needs the same DML permissions as the application and must use the runtime role after credential cutover.
+Production migrations use an explicit allowlist and never apply development seed data. Application startup does not run migrations. `spcase_migrator` owns schema objects and is the Goose identity; `spcase_app` has no DDL or ownership privileges, receives explicit per-table grants from `00004_grant_runtime_privileges.sql` and is denied access to Goose metadata by `00005_isolate_goose_metadata.sql`. Application and first ADMIN bootstrap both use `spcase_app` in fresh Compose deployments.
+
+Existing databases are converted only by the explicit administrative
+`scripts/cutover-postgres-roles.sh`; it is not part of application startup or
+fresh-volume init. The tool requires a confirmed target database and legacy
+owner, validates all pre-cutover owners, transfers non-extension `public`
+relations/routines/types, applies exact runtime/default ACLs and performs
+post-validation. `scripts/rehearse-postgres-role-cutover.sh` proves the procedure
+against a separate custom-format backup restore, including the full integration
+suite and an idempotent second run. The opt-in
+`scripts/rehearse-existing-db-deployment.sh` adds tracked Compose application,
+admin-bootstrap, Nginx ingress, runtime smoke/restart and an independent rollback
+restore to the same disposable legacy-to-version-5 path. Existing installations
+must complete that manual cutover before deploying the tracked `DB_APP_*` runtime wiring. Legacy
+credentials and role remain available only for an explicitly reverted Compose
+configuration until production smoke tests pass.
 
 ## 10. Testing
 
@@ -148,9 +163,21 @@ npm audit
 PostgreSQL integration suite:
 
 ```bash
-SPCASE_TEST_DATABASE_URL='postgres://...' go test -tags=integration ./internal/...
+SPCASE_TEST_MIGRATOR_DATABASE_URL='postgres://spcase_migrator:...' \
+SPCASE_TEST_APP_DATABASE_URL='postgres://spcase_app:...' \
+go test -race -count=1 -tags=integration ./internal/...
 ```
 
-It creates an isolated schema and covers schema integrity, migrations/seed, concurrent joins, lock ordering, database deadline checks, submission invalidation, evaluation atomicity, query plans, aggregation, timeouts and concurrent ADMIN bootstrap.
+The source database must already be at production migration version 5. The harness verifies both connection roles, creates/migrates/cleans an isolated schema as `spcase_migrator`, and constructs every repository with the `spcase_app` pool. Runtime grants for the isolated objects are copied from the already migrated `public` schema, so tests cannot silently broaden application privileges. It covers schema integrity, migrations/seed, concurrent joins, lock ordering, database deadline checks, submission invalidation, evaluation atomicity, query plans, aggregation, timeouts and concurrent ADMIN bootstrap.
+
+Fresh-database role ACL check:
+
+```bash
+SPCASE_TEST_MIGRATOR_DATABASE_URL='postgres://spcase_migrator:...' \
+SPCASE_TEST_APP_DATABASE_URL='postgres://spcase_app:...' \
+go test -tags=integration ./internal/repository -run '^TestPostgresRolePrivileges$'
+```
+
+`SPCASE_TEST_DATABASE_URL` is rejected when supplied alone because it would collapse the production privilege boundary.
 
 Infrastructure validation uses `docker compose --env-file .env.production config --quiet`, followed by image build and runtime smoke tests described in README.

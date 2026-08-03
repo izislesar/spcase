@@ -43,7 +43,19 @@
 - [ ] 4.1 Повторить `make security-check` на release commit
 - [ ] 4.2 Проверить генерацию, хранение, ротацию и разграничение доступа к секретам
 - [ ] 4.3 Проверить cookie, CORS, TLS, security headers и auth revocation в staging
-- [x] 4.4 Разделить PostgreSQL privileges для app, migrator и administrative operations
+- [ ] 4.4 Завершить разделение PostgreSQL privileges для app, migrator и administrative operations
+  - [x] Fresh-volume roles, migrator ownership, runtime grants и изоляция Goose metadata
+  - [x] Разделить setup/runtime credentials в integration tests
+  - [x] Реализовать и отрепетировать ownership/ACL cutover на disposable `pg_dump`/`pg_restore` копии
+  - [x] Переключить fresh Compose application и admin-bootstrap на `DB_APP_*`
+  - [x] Выполнить restored-existing-database deployment rehearsal с application runtime
+  - [x] Подготовить reviewed operator runbook с go/no-go, observation и rollback gates
+  - [x] Провести final technical review cutover procedure
+  - [ ] Утвердить production backup/rollback plan
+  - [ ] Выполнить реальный ownership/ACL cutover после backup approval
+  - [ ] Завершить утверждённый production observation period
+  - [ ] Удалить transitional credentials после закрытия observation period
+  - [ ] Вывести legacy database role из эксплуатации после отдельного approval
 - [ ] 4.5 Провести abuse-тест регистрации, login rate limits, payload limits и error disclosure
 
 ## 5. Backup and restore

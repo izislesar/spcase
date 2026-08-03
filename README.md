@@ -57,6 +57,96 @@ DATABASE_URL='postgres://...' make migrate-production
 allowlist после review. Не используйте `migrate-up`, `migrate-down` или
 `migrate-reset` в production.
 
+## Existing-volume PostgreSQL cutover
+
+Fresh volume автоматически получает разделённые роли через
+`scripts/init-postgres-roles.sh`. Для существующего volume initdb hooks повторно
+не выполняются: ownership и ACL переводятся только вручную, в maintenance window
+и после проверенного `pg_dump` backup.
+
+Сначала восстановите backup в отдельную БД и выполните автоматическую репетицию:
+
+```bash
+SPCASE_CONFIRM_POSTGRES_ROLE_CUTOVER_REHEARSAL=YES \
+  ./scripts/rehearse-postgres-role-cutover.sh
+
+SPCASE_CONFIRM_EXISTING_DB_DEPLOYMENT_REHEARSAL=YES \
+  ./scripts/rehearse-existing-db-deployment.sh
+```
+
+Первый сценарий изолированно проверяет ownership/ACL procedure. Второй выполняет
+полную production-like цепочку: создаёт валидное legacy state через application
+API, формирует и проверяет новый custom-format `pg_dump`, восстанавливает его в
+отдельный Compose volume, дважды запускает cutover, доводит Goose до version 5,
+запускает separate-role integration suite и tracked app/Nginx под `spcase_app`,
+проверяет smoke/restart и восстанавливает исходный backup в третью rollback-БД.
+Оба сценария используют уникальные resources, требуют локальный Docker и удаляют
+только созданные текущим запуском containers, networks, volumes, images и
+временные backup artifacts. Они не запускаются обычным deployment workflow.
+
+Канонический пошаговый operator runbook: `PRODUCTION-CUTOVER.md`. Краткий обзор
+go/no-go flow:
+
+1. Проверить destination, свободное место, encryption/access policy и срок
+   хранения backup; без approved destination — `NO-GO`.
+2. Остановить или quiesce все writes и убедиться, что фоновых writers нет.
+3. Выполнить `pg_dump --format=custom`, проверить non-empty archive через
+   `pg_restore --list`, зафиксировать размер и SHA-256; mismatch — `NO-GO`.
+4. При необходимости повторить restore rehearsal на независимой инфраструктуре
+   и сверить migration/data/ownership fingerprints.
+5. Запустить confirmed `scripts/cutover-postgres-roles.sh` административной
+   ролью; ошибка preflight/post-validation — `NO-GO`, application не запускать.
+6. Применить `migrations/production.txt` как `spcase_migrator`, получить version
+   5 и повторным запуском подтвердить отсутствие pending migrations.
+7. Запустить tracked Compose с application/admin-bootstrap только под
+   `DB_APP_*`; проверить отсутствие admin/migrator secrets в runtime.
+8. Выполнить health, ingress, login, protected admin и representative business
+   smoke tests. До их завершения deploy остаётся `NO-GO`.
+9. Сверить сохранность pre-existing data и выполнить normal restart с тем же
+   volume; migration version и runtime identity должны сохраниться.
+10. Открыть writes и начать observation только после всех предыдущих `GO`.
+11. Сохранить legacy role и transitional credentials на observation period.
+12. При провале остановить новый runtime, восстановить verified backup в clean
+    target и явно развернуть предыдущую Compose revision с legacy
+    `DB_USER`/`DB_PASSWORD`; автоматического fallback нет.
+
+Реальный запуск требует отдельно утверждённых backup/rollback plan, maintenance
+window и ответственных. Успешная локальная репетиция не является таким approval.
+
+После review backup и rehearsal production-команда вызывается с явным target и
+legacy owner; значения ниже передаются через защищённое окружение:
+
+```bash
+PGHOST='<postgres-host>' \
+PGPORT='5432' \
+PGSSLMODE='require' \
+POSTGRES_ADMIN_USER='<existing-superuser>' \
+POSTGRES_ADMIN_PASSWORD='<admin-password>' \
+SPCASE_CUTOVER_DATABASE='spcase' \
+SPCASE_LEGACY_DB_ROLE='<current-owner-role>' \
+DB_MIGRATOR_PASSWORD='<migrator-password>' \
+DB_APP_PASSWORD='<app-password>' \
+SPCASE_CONFIRM_EXISTING_DB_CUTOVER='YES' \
+./scripts/cutover-postgres-roles.sh
+```
+
+Preflight отклоняет template/maintenance database, отсутствующие schema/Goose
+objects, applied dev seed `00003`, unsafe target roles/memberships, неожиданные
+schemas и третьих object owners. SQL
+transaction переносит `public` tables, sequences, indexes, views, routines и
+types, сохраняя extension-owned objects; затем отдельно меняется database owner.
+Post-validation проверяет точную runtime ACL matrix, default privileges, Goose
+isolation и неизменность application data/migration history. Повторный запуск
+допустим только для уже валидного converted state и не меняет пароли ролей.
+
+Rollback boundary: backup обязателен до cutover. Tracked Compose для fresh
+deployments запускает application/admin-bootstrap как `spcase_app`; existing
+installation можно перевести на эту версию только после ownership/ACL cutover.
+Legacy role и `DB_USER`/`DB_PASSWORD` пока не удаляются: при rollback требуется
+вернуть предыдущую Compose-конфигурацию явно, автоматического credential fallback
+нет. Ownership/ACL можно вернуть только административной процедурой, а при ошибке
+проверки безопаснее восстановить backup в отдельную БД и не продолжать deploy.
+
 После production-миграций первый ADMIN создаётся отдельной одноразовой
 CLI-командой. Пароль принимается только через stdin и не передаётся аргументом
 или переменной окружения:
@@ -75,16 +165,25 @@ systemd-ask-password "Initial ADMIN password:" |
   ./admin-bootstrap -full-name "Production Administrator" -email "admin@example.com"
 ```
 
-Команда использует конфигурацию приложения из ENV/`.env`, создаёт аккаунт только
-при отсутствии роли `ADMIN` и завершает повторный запуск ошибкой. В stdout не
-выводятся имя, email или пароль.
+Команда использует стандартный Go-интерфейс `DB_USER`/`DB_PASSWORD`. В Compose
+эти значения формируются только из `DB_APP_USER`/`DB_APP_PASSWORD`, поэтому и
+application, и one-shot admin bootstrap подключаются как `spcase_app`. При прямом
+host-запуске оператор обязан передать те же runtime credentials явно. Команда
+создаёт аккаунт только при отсутствии роли `ADMIN` и завершает повторный запуск
+ошибкой. В stdout не выводятся имя, email или пароль.
 
-Интеграционные тесты создают и удаляют изолированную схему в указанной БД:
+Интеграционные тесты требуют уже мигрированную disposable-БД версии 5. Harness создаёт
+и удаляет изолированную схему через `spcase_migrator`, а repositories и application
+queries выполняет только через `spcase_app`:
 
 ```bash
-SPCASE_TEST_DATABASE_URL='postgres://postgres:postgres@127.0.0.1:5432/spcase_test?sslmode=disable' \
-  go test -tags=integration ./internal/...
+SPCASE_TEST_MIGRATOR_DATABASE_URL='postgres://spcase_migrator:<password>@127.0.0.1:5432/spcase_test?sslmode=disable' \
+SPCASE_TEST_APP_DATABASE_URL='postgres://spcase_app:<password>@127.0.0.1:5432/spcase_test?sslmode=disable' \
+  go test -race -count=1 -tags=integration ./internal/...
 ```
+
+Legacy-переменная `SPCASE_TEST_DATABASE_URL` намеренно не принимается: один
+DDL-capable connection не воспроизводит production privilege boundary.
 
 ## Local staging
 
@@ -102,7 +201,9 @@ openssl rand -base64 48
 openssl rand -base64 48
 ```
 
-Заполните `DB_PASSWORD`, `JWT_SECRET` и `JURY_REGISTRATION_KEY`, затем:
+Заполните administrative, migrator, application, JWT и jury secrets. Legacy
+`DB_USER`/`DB_PASSWORD` для fresh staging оставьте пустыми: Compose их не читает.
+Затем:
 
 ```bash
 docker compose \
@@ -126,8 +227,9 @@ docker compose \
 curl --fail http://127.0.0.1:18080/api/v1/health/live
 curl --fail http://127.0.0.1:18080/api/v1/health/ready
 
-SPCASE_TEST_DATABASE_URL='postgres://spcase_staging:<password>@127.0.0.1:15432/spcase_staging?sslmode=disable' \
-  go test -tags=integration ./internal/...
+SPCASE_TEST_MIGRATOR_DATABASE_URL='postgres://spcase_migrator:<password>@127.0.0.1:15432/spcase_staging?sslmode=disable' \
+SPCASE_TEST_APP_DATABASE_URL='postgres://spcase_app:<password>@127.0.0.1:15432/spcase_staging?sslmode=disable' \
+  go test -race -count=1 -tags=integration ./internal/...
 ```
 
 Первый ADMIN создаётся существующим CLI внутри application image:
@@ -242,6 +344,13 @@ docker compose --env-file .env.production up --detach --wait
 и только после его readiness — Nginx. Migrator использует
 `migrations/production.txt`, поэтому dev seed `00003` не применяется.
 
+Compose явно передаёт migrator-роли только `DB_MIGRATOR_*`, а application и
+запускаемому через service `app` admin-bootstrap — только `DB_APP_*`, отображая
+их в ожидаемые Go-переменные `DB_USER`/`DB_PASSWORD`. Полный env-файл в runtime
+container не монтируется: `POSTGRES_ADMIN_PASSWORD` и
+`DB_MIGRATOR_PASSWORD` приложению недоступны. Legacy `DB_USER`/`DB_PASSWORD`
+сохранены только для контролируемого rollback существующих installations.
+
 Nginx раздаёт собранные `/static/*` напрямую с immutable cache, а
 server-rendered страницы и `/api/v1/*` проксирует в `app:8000`. Для login и
 registration endpoints включены отдельные per-IP rate limits. Входные
@@ -274,3 +383,8 @@ docker compose --env-file .env.production up --detach --wait
 Named volume `spcase_postgres_data` при `down` сохраняется. Флаг `--volumes`
 удаляет базу без возможности восстановления и для обычного deploy/restart
 использоваться не должен.
+
+Для existing database эта версия не является автоматическим cutover: сначала
+нужны approved backup/rollback plan и ручной ownership/ACL cutover. При rollback
+tracked Compose возвращается на предыдущую версию; legacy role не отключается до
+успешных production smoke tests.
