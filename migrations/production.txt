@@ -2,3 +2,4 @@
 00001_init_schema.sql
 00002_add_indexes.sql
 00004_grant_runtime_privileges.sql
+00005_isolate_goose_metadata.sql
