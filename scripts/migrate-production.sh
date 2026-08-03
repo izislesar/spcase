@@ -8,9 +8,15 @@ database_url=${3:?database URL is required}
 migrations_dir=${4:?migrations directory is required}
 manifest=${5:?production migration manifest is required}
 
-if [ ! -f "$manifest" ]; then
-    echo "production migration manifest not found: $manifest" >&2
+# fail emits a stable, machine-grep-able migration_failed event for operators
+# and log pipelines, then exits nonzero.
+fail() {
+    echo "migration_failed: $*" >&2
     exit 1
+}
+
+if [ ! -f "$manifest" ]; then
+    fail "production migration manifest not found: $manifest"
 fi
 
 temporary_dir=$(mktemp -d "${TMPDIR:-/tmp}/spcase-production-migrations.XXXXXX")
@@ -29,25 +35,21 @@ while IFS= read -r migration || [ -n "$migration" ]; do
             continue
             ;;
         */*|*".."*)
-            echo "invalid production migration entry: $migration" >&2
-            exit 1
+            fail "invalid production migration entry: $migration"
             ;;
         00003.sql|00003_*.sql)
-            echo "refusing to run development seed migration in production" >&2
-            exit 1
+            fail "refusing to run development seed migration in production"
             ;;
         *.sql)
             ;;
         *)
-            echo "invalid production migration entry: $migration" >&2
-            exit 1
+            fail "invalid production migration entry: $migration"
             ;;
     esac
 
     source_file="$migrations_dir/$migration"
     if [ ! -f "$source_file" ]; then
-        echo "production migration not found: $source_file" >&2
-        exit 1
+        fail "production migration not found: $source_file"
     fi
 
     cp "$source_file" "$temporary_dir/$migration"
@@ -57,8 +59,7 @@ while IFS= read -r migration || [ -n "$migration" ]; do
     migration_version=$(printf '%s\n' "$migration_version" | sed 's/^0*//; s/^$/0/')
     case "$migration_version" in
         ""|*[!0-9]*)
-            echo "invalid versioned production migration: $migration" >&2
-            exit 1
+            fail "invalid versioned production migration: $migration"
             ;;
     esac
     if [ "$migration_version" -gt "$expected_version" ]; then
@@ -67,22 +68,23 @@ while IFS= read -r migration || [ -n "$migration" ]; do
 done < "$manifest"
 
 if [ "$migration_count" -eq 0 ]; then
-    echo "production migration manifest is empty" >&2
-    exit 1
+    fail "production migration manifest is empty"
 fi
 
-"$goose_bin" -dir "$temporary_dir" "$goose_driver" "$database_url" up
+if ! "$goose_bin" -dir "$temporary_dir" "$goose_driver" "$database_url" up; then
+    fail "goose up failed"
+fi
 
-version_output=$("$goose_bin" -dir "$temporary_dir" "$goose_driver" "$database_url" version 2>&1)
+if ! version_output=$("$goose_bin" -dir "$temporary_dir" "$goose_driver" "$database_url" version 2>&1); then
+    fail "unable to verify production migration version: $version_output"
+fi
 current_version=${version_output##* }
 case "$current_version" in
     ""|*[!0-9]*)
-        echo "unable to verify production migration version: $version_output" >&2
-        exit 1
+        fail "unable to verify production migration version: $version_output"
         ;;
 esac
 
 if [ "$current_version" -ne "$expected_version" ]; then
-    echo "production database version $current_version does not match allowed version $expected_version" >&2
-    exit 1
+    fail "production database version $current_version does not match allowed version $expected_version"
 fi

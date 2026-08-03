@@ -69,6 +69,8 @@ Services:
 ```text
 SecurityHeaders
   → NoStoreSensitiveResponses
+  → RequestID
+  → RequestLogging
   → CORS
   → Recovery
   → APIErrorResponses
@@ -79,7 +81,7 @@ SecurityHeaders
 
 Submission, scoring и destructive team mutations разделяют team row как lifecycle lock. Scoring использует порядок team → evaluation state → submission; membership paths начинают с той же team row, затем блокируют users в UUID-порядке. Это не сериализует независимые команды. Evaluations принадлежат team как исторические записи: invalidation текущего submission их сохраняет, disband удаляет каскадно.
 
-HTTP server имеет read/write/header/idle timeouts, лимит заголовков и graceful shutdown до 15 секунд. Логи приложения — JSON через `slog` в stdout.
+HTTP server имеет read/write/header/idle timeouts, лимит заголовков и graceful shutdown до 15 секунд. Логи приложения — JSON через `slog` в stdout. `RequestID` принимает строго валидный входящий `X-Request-ID` (8–64 символа из `[A-Za-z0-9._-]`, в том числе `$request_id` от Nginx) либо генерирует UUIDv4, возвращает его в response header и помещает в request context. `RequestLogging` пишет одно событие `http_request_completed` на запрос с полями `request_id`, `method`, `route` (шаблон маршрута, не сырой path), `status` и `duration_ms`; `status >= 500` логируется на уровне ERROR. Operational runbook со стабильными event names и alert definitions — `OBSERVABILITY.md`.
 
 ## 6. Authentication and authorization
 
@@ -133,8 +135,10 @@ app/Nginx runtime, restart и отдельный rollback restore. Сценар�
 ## 9. Health and edge behavior
 
 - `GET /api/v1/health/live` проверяет только живой Go-процесс.
-- `GET /api/v1/health/ready` выполняет PostgreSQL ping с timeout 2 секунды.
+- `GET /api/v1/health/ready` выполняет PostgreSQL ping с timeout 2 секунды; при ошибке возвращает стабильный `503 NOT_READY` без деталей БД и пишет событие `database_readiness_failed`.
 - Application healthcheck вызывает readiness endpoint.
-- Nginx формирует request ID, ограничивает login/registration, задаёт proxy timeouts, gzip и единый JSON для edge errors.
+- Nginx формирует request ID, ограничивает login/registration, задаёт proxy timeouts, gzip и единый JSON для edge errors. Приложение принимает этот ID через middleware `RequestID` и включает его во все request-scoped логи, что даёт end-to-end корреляцию Nginx ↔ application logs.
+- Все Compose services используют ограниченную локальную ротацию логов (`json-file`, 10 MiB × 5 файлов на service); это не заменяет централизованное хранение.
+- Failure-mode rehearsal `scripts/rehearse-observability.sh` воспроизводимо проверяет startup, health semantics при потере PostgreSQL, видимость 5xx и restart, observability migration failure и graceful shutdown на disposable resources.
 
 Внешний ingress обязан завершать TLS и безопасно доставлять трафик на loopback Nginx. Модель trusted client IP должна проверяться в deployment environment.

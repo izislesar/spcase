@@ -3,9 +3,11 @@ package v1
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 	"time"
 
+	"spcase.ru/backend/internal/delivery/http/middleware"
 	"spcase.ru/backend/internal/domain"
 	"spcase.ru/backend/internal/service"
 )
@@ -26,14 +28,18 @@ type DatabasePinger interface {
 type PublicHandler struct {
 	public PublicUseCases
 	db     DatabasePinger
+	logger *slog.Logger
 	now    func() time.Time
 }
 
-func NewPublicHandler(public PublicUseCases, db DatabasePinger) (*PublicHandler, error) {
+func NewPublicHandler(public PublicUseCases, db DatabasePinger, logger *slog.Logger) (*PublicHandler, error) {
 	if public == nil || db == nil {
 		return nil, errors.New("public dependencies cannot be nil")
 	}
-	return &PublicHandler{public: public, db: db, now: time.Now}, nil
+	if logger == nil {
+		logger = slog.Default()
+	}
+	return &PublicHandler{public: public, db: db, logger: logger, now: time.Now}, nil
 }
 
 func (h *PublicHandler) Live(writer http.ResponseWriter, _ *http.Request) {
@@ -44,6 +50,13 @@ func (h *PublicHandler) Ready(writer http.ResponseWriter, request *http.Request)
 	ctx, cancel := context.WithTimeout(request.Context(), readinessTimeout)
 	defer cancel()
 	if err := h.db.Ping(ctx); err != nil {
+		h.logger.WarnContext(
+			request.Context(),
+			"database readiness check failed",
+			slog.String("event", "database_readiness_failed"),
+			slog.String("request_id", middleware.RequestIDFromContext(request.Context())),
+			slog.String("error", err.Error()),
+		)
 		writeError(writer, http.StatusServiceUnavailable, domain.CodeNotReady, domain.ErrNotReady.Message)
 		return
 	}

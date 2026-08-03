@@ -59,9 +59,20 @@ func run(logger *slog.Logger) error {
 	defer cancelStartup()
 	pool, err := postgrespool.New(startupCtx, cfg.DB)
 	if err != nil {
+		logger.Error(
+			"database startup failed",
+			slog.String("event", "database_startup_failed"),
+			slog.String("error", err.Error()),
+		)
 		return err
 	}
-	defer pool.Close()
+	defer func() {
+		pool.Close()
+		logger.Info(
+			"database connection pool closed",
+			slog.String("event", "database_pool_closed"),
+		)
+	}()
 
 	handler, err := buildHandler(cfg, pool, logger)
 	if err != nil {
@@ -81,7 +92,7 @@ func run(logger *slog.Logger) error {
 
 	serverErrors := make(chan error, 1)
 	go func() {
-		logger.Info("HTTP server started", slog.Int("port", cfg.Port))
+		logger.Info("HTTP server started", slog.String("event", "http_server_started"), slog.Int("port", cfg.Port))
 		serverErrors <- server.ListenAndServe()
 	}()
 
@@ -92,20 +103,25 @@ func run(logger *slog.Logger) error {
 		}
 		return fmt.Errorf("serve HTTP: %w", err)
 	case <-signalCtx.Done():
-		logger.Info("shutdown signal received")
+		logger.Info("graceful shutdown started", slog.String("event", "graceful_shutdown_started"))
 	}
 
 	shutdownCtx, cancelShutdown := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancelShutdown()
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		_ = server.Close()
+		logger.Error(
+			"graceful shutdown failed",
+			slog.String("event", "graceful_shutdown_failed"),
+			slog.String("error", err.Error()),
+		)
 		return fmt.Errorf("shutdown HTTP server: %w", err)
 	}
 
 	if err := <-serverErrors; err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("serve HTTP during shutdown: %w", err)
 	}
-	logger.Info("HTTP server stopped")
+	logger.Info("graceful shutdown completed", slog.String("event", "graceful_shutdown_completed"))
 	return nil
 }
 
@@ -201,7 +217,7 @@ func buildHandler(cfg config.Config, pool *pgxpool.Pool, logger *slog.Logger) (h
 	if err != nil {
 		return nil, err
 	}
-	publicHandler, err := v1.NewPublicHandler(publicService, pool)
+	publicHandler, err := v1.NewPublicHandler(publicService, pool, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -223,6 +239,7 @@ func buildHandler(cfg config.Config, pool *pgxpool.Pool, logger *slog.Logger) (h
 		return nil, err
 	}
 	recoveryMiddleware := httpmiddleware.NewRecoveryMiddleware(logger)
+	requestLoggingMiddleware := httpmiddleware.NewRequestLogging(logger)
 	webHandler, err := web.NewHandler()
 	if err != nil {
 		return nil, err
@@ -278,8 +295,12 @@ func buildHandler(cfg config.Config, pool *pgxpool.Pool, logger *slog.Logger) (h
 
 	return httpmiddleware.SecurityHeaders(
 		httpmiddleware.NoStoreSensitiveResponses(
-			corsMiddleware.Middleware(
-				recoveryMiddleware.Middleware(httpmiddleware.APIErrorResponses(mux)),
+			httpmiddleware.RequestID(
+				requestLoggingMiddleware.Middleware(
+					corsMiddleware.Middleware(
+						recoveryMiddleware.Middleware(httpmiddleware.APIErrorResponses(mux)),
+					),
+				),
 			),
 		),
 	), nil

@@ -72,5 +72,10 @@
 - [x] 6.2 Liveness/readiness endpoints и container health checks
 - [x] 6.3 Nginx access/error logs и request ID
 - [ ] 6.4 Настроить сбор и срок хранения application, Nginx и PostgreSQL logs
+  - [x] Ограниченная локальная ротация Docker logs для всех services (`json-file`, 10 MiB × 5)
+  - [ ] Централизованный log destination и долгосрочное хранение
 - [ ] 6.5 Добавить внешние uptime/readiness checks и alerting
+  - [x] Alert definitions с placeholder thresholds задокументированы (`OBSERVABILITY.md`)
+  - [ ] Доставка alert-ов и утверждённые production thresholds
 - [ ] 6.6 Определить минимальные operational dashboards и thresholds до production deploy
+- [x] 6.7 Минимальный observability baseline: signal inventory, request correlation, стабильные event names, backup freshness checker (`scripts/check-backup-freshness.sh`), failure-mode rehearsal (`scripts/rehearse-observability.sh`) и runbook `OBSERVABILITY.md`

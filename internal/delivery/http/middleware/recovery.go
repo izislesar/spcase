@@ -33,6 +33,8 @@ func (m *RecoveryMiddleware) Middleware(next http.Handler) http.Handler {
 				m.logger.ErrorContext(
 					request.Context(),
 					"HTTP handler panic",
+					slog.String("event", "panic_recovered"),
+					slog.String("request_id", RequestIDFromContext(request.Context())),
 					slog.String("method", request.Method),
 					slog.String("path", request.URL.Path),
 					slog.String("panic_type", fmt.Sprintf("%T", recovered)),

@@ -388,3 +388,31 @@ Named volume `spcase_postgres_data` при `down` сохраняется. Фла
 нужны approved backup/rollback plan и ручной ownership/ACL cutover. При rollback
 tracked Compose возвращается на предыдущую версию; legacy role не отключается до
 успешных production smoke tests.
+
+## Observability
+
+Operational baseline описан в `OBSERVABILITY.md`: signal inventory, семантика
+health endpoints, структурированные события логов, request correlation,
+alert definitions и backup freshness contract. Ключевые механики:
+
+- приложение пишет JSON-логи со стабильными event names
+  (`http_request_completed`, `database_readiness_failed`, `panic_recovered`,
+  `graceful_shutdown_*`, `database_startup_failed`); production migrator при
+  ошибке печатает `migration_failed` и завершается ненулевым кодом, поэтому app
+  при неуспешной миграции не стартует;
+- `X-Request-ID` от Nginx принимается приложением после строгой валидации и
+  включается во все request-scoped логи, что даёт сквозную корреляцию;
+- все Compose services используют ограниченную локальную ротацию логов
+  (`json-file`, 10 MiB × 5 файлов на service, до ~50 MiB на service); это не
+  централизованное хранение;
+- свежесть backup проверяется через machine-readable manifest:
+  `scripts/check-backup-freshness.sh <manifest> <max-age-seconds>`;
+- failure modes воспроизводимо проверяются на disposable resources:
+
+```bash
+SPCASE_CONFIRM_OBSERVABILITY_REHEARSAL=YES ./scripts/rehearse-observability.sh
+```
+
+Централизованный сбор логов, внешняя доставка alert-ов и production thresholds
+ещё не настроены и перечислены в `OBSERVABILITY.md` разделом «Remaining
+external requirements».

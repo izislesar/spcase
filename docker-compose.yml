@@ -26,10 +26,20 @@ x-container-hardening: &container-hardening
   security_opt:
     - no-new-privileges:true
 
+# Bounded local log retention: at most 5 rotated files of 10 MiB per service
+# (~50 MiB per service, ~200 MiB for the whole stack). This is local rotation
+# only; it is not centralized log storage or long-term retention.
+x-log-retention: &log-retention
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   db:
     image: postgres:16-bookworm@sha256:92620daddcd947f8d5ab5ba66e848702fe443d87fed30c4cea8e389fd78dfc55
     restart: unless-stopped
+    logging: *log-retention
     environment:
       POSTGRES_DB: ${DB_NAME:?DB_NAME must be set}
       POSTGRES_USER: postgres
@@ -56,6 +66,7 @@ services:
 
   migrator:
     image: ${SPCASE_MIGRATOR_IMAGE:-spcase-migrator:production}
+    logging: *log-retention
     build:
       context: .
       target: migrator
@@ -77,6 +88,7 @@ services:
 
   app:
     image: ${SPCASE_APP_IMAGE:-spcase:production}
+    logging: *log-retention
     build:
       context: .
       target: runtime
@@ -105,6 +117,7 @@ services:
 
   nginx:
     image: ${SPCASE_NGINX_IMAGE:-spcase-nginx:production}
+    logging: *log-retention
     build:
       context: .
       target: nginx
