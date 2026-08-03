@@ -25,7 +25,7 @@ func TestEvaluationBatchUpsertIsAtomicAndComplete(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create score repository: %v", err)
 	}
-	if _, err := integrationPool.Exec(context.Background(), `
+	if _, err := integrationMigratorPool.Exec(context.Background(), `
 		ALTER TABLE evaluations
 		ADD CONSTRAINT integration_reject_criterion_four
 		CHECK (criterion_id <> 4)
@@ -41,7 +41,7 @@ func TestEvaluationBatchUpsertIsAtomicAndComplete(t *testing.T) {
 	if got := countIntegrationRows(t, "evaluations"); got != 0 {
 		t.Fatalf("failed batch persisted %d partial evaluation rows", got)
 	}
-	if _, err := integrationPool.Exec(context.Background(), `
+	if _, err := integrationMigratorPool.Exec(context.Background(), `
 		ALTER TABLE evaluations DROP CONSTRAINT integration_reject_criterion_four
 	`); err != nil {
 		t.Fatalf("drop integration failure constraint: %v", err)

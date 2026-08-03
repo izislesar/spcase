@@ -134,7 +134,7 @@ func TestCanonicalSchemaIntegrity(t *testing.T) {
 		`, adminID); err != nil {
 			t.Fatalf("append evaluation state event: %v", err)
 		}
-		_, err = integrationPool.Exec(ctx,
+		_, err = integrationMigratorPool.Exec(ctx,
 			`UPDATE users SET role = 'JURY' WHERE id = $1`,
 			adminID,
 		)
@@ -142,27 +142,27 @@ func TestCanonicalSchemaIntegrity(t *testing.T) {
 	})
 
 	t.Run("state is singleton and events are append only", func(t *testing.T) {
-		_, err := integrationPool.Exec(ctx,
+		_, err := integrationMigratorPool.Exec(ctx,
 			`DELETE FROM evaluation_state WHERE singleton_id = 1`,
 		)
 		requirePostgresCode(t, err, "55000")
 
-		_, err = integrationPool.Exec(ctx,
+		_, err = integrationMigratorPool.Exec(ctx,
 			`UPDATE evaluation_state_events SET action = 'OPEN'`,
 		)
 		requirePostgresCode(t, err, "55000")
 
-		_, err = integrationPool.Exec(ctx,
+		_, err = integrationMigratorPool.Exec(ctx,
 			`DELETE FROM evaluation_state_events`,
 		)
 		requirePostgresCode(t, err, "55000")
 
-		_, err = integrationPool.Exec(ctx,
+		_, err = integrationMigratorPool.Exec(ctx,
 			`TRUNCATE evaluation_state_events`,
 		)
 		requirePostgresCode(t, err, "55000")
 
-		_, err = integrationPool.Exec(ctx,
+		_, err = integrationMigratorPool.Exec(ctx,
 			`TRUNCATE evaluation_state`,
 		)
 		requirePostgresCode(t, err, "55000")
@@ -172,7 +172,7 @@ func TestCanonicalSchemaIntegrity(t *testing.T) {
 func TestDevelopmentSeedMigration(t *testing.T) {
 	resetIntegrationDatabase(t)
 	ctx := context.Background()
-	if err := applyUpMigration(ctx, integrationPool, "00003_seed_dev_data.sql"); err != nil {
+	if err := applySetupUpMigration(ctx, "00003_seed_dev_data.sql"); err != nil {
 		t.Fatalf("apply development seed migration: %v", err)
 	}
 
@@ -254,7 +254,7 @@ func TestDevelopmentSeedMigration(t *testing.T) {
 func TestDevelopmentSeedCanBeRevertedAfterUse(t *testing.T) {
 	resetIntegrationDatabase(t)
 	ctx := context.Background()
-	if err := applyUpMigration(ctx, integrationPool, "00003_seed_dev_data.sql"); err != nil {
+	if err := applySetupUpMigration(ctx, "00003_seed_dev_data.sql"); err != nil {
 		t.Fatalf("apply development seed migration: %v", err)
 	}
 	const (
@@ -277,7 +277,7 @@ func TestDevelopmentSeedCanBeRevertedAfterUse(t *testing.T) {
 		t.Fatalf("use seeded accounts before rollback: %v", err)
 	}
 
-	if err := applyDownMigration(ctx, integrationPool, "00003_seed_dev_data.sql"); err != nil {
+	if err := applySetupDownMigration(ctx, "00003_seed_dev_data.sql"); err != nil {
 		t.Fatalf("revert used development seed: %v", err)
 	}
 	if got := countIntegrationRows(t, "users"); got != 0 {
@@ -289,7 +289,7 @@ func TestDevelopmentSeedCanBeRevertedAfterUse(t *testing.T) {
 	if got := countIntegrationRows(t, "evaluations"); got != 0 {
 		t.Fatalf("expected seed rollback to remove evaluations, got %d", got)
 	}
-	if got := countIntegrationRows(t, "evaluation_state_events"); got != 0 {
+	if got := countIntegrationRowsAsMigrator(t, "evaluation_state_events"); got != 0 {
 		t.Fatalf("expected seed rollback to remove state events, got %d", got)
 	}
 	var closed bool

@@ -20,71 +20,115 @@ import (
 	"spcase.ru/backend/internal/domain"
 )
 
-const integrationDatabaseEnvironment = "SPCASE_TEST_DATABASE_URL"
+const (
+	integrationMigratorDatabaseEnvironment = "SPCASE_TEST_MIGRATOR_DATABASE_URL"
+	integrationAppDatabaseEnvironment      = "SPCASE_TEST_APP_DATABASE_URL"
+	integrationLegacyDatabaseEnvironment   = "SPCASE_TEST_DATABASE_URL"
+)
 
 var (
-	integrationPool    *pgxpool.Pool
-	integrationEnabled bool
-	integrationSchema  string
+	integrationMigratorPool *pgxpool.Pool
+	integrationPool         *pgxpool.Pool
+	integrationEnabled      bool
+	integrationSchema       string
 )
 
 func TestMain(m *testing.M) {
-	databaseURL := os.Getenv(integrationDatabaseEnvironment)
-	if databaseURL == "" {
+	migratorURL := os.Getenv(integrationMigratorDatabaseEnvironment)
+	appURL := os.Getenv(integrationAppDatabaseEnvironment)
+	if migratorURL == "" && appURL == "" {
+		if os.Getenv(integrationLegacyDatabaseEnvironment) != "" {
+			fatalIntegrationSetup("configure test database credentials",
+				fmt.Errorf("%s is no longer accepted; set %s and %s",
+					integrationLegacyDatabaseEnvironment,
+					integrationMigratorDatabaseEnvironment,
+					integrationAppDatabaseEnvironment,
+				))
+		}
 		os.Exit(m.Run())
+	}
+	if migratorURL == "" {
+		fatalIntegrationSetup("configure test database credentials",
+			fmt.Errorf("%s is required when %s is set",
+				integrationMigratorDatabaseEnvironment, integrationAppDatabaseEnvironment))
+	}
+	if appURL == "" {
+		fatalIntegrationSetup("configure test database credentials",
+			fmt.Errorf("%s is required when %s is set",
+				integrationAppDatabaseEnvironment, integrationMigratorDatabaseEnvironment))
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	adminConfig, err := pgxpool.ParseConfig(databaseURL)
+	migratorConfig, err := pgxpool.ParseConfig(migratorURL)
 	if err != nil {
-		fatalIntegrationSetup("parse test database URL", err)
+		fatalIntegrationSetup("parse migrator test database URL", err)
 	}
-	adminPool, err := pgxpool.NewWithConfig(ctx, adminConfig)
+	migratorPool, err := pgxpool.NewWithConfig(ctx, migratorConfig)
 	if err != nil {
-		fatalIntegrationSetup("connect to test database", err)
+		fatalIntegrationSetup("connect with migrator test credentials", err)
+	}
+	if err := verifyIntegrationRole(ctx, migratorPool, "spcase_migrator"); err != nil {
+		migratorPool.Close()
+		fatalIntegrationSetup("verify migrator test connection", err)
+	}
+	if err := verifyProductionMigrationState(ctx, migratorPool); err != nil {
+		migratorPool.Close()
+		fatalIntegrationSetup("verify production migration state", err)
 	}
 
 	integrationSchema = "spcase_test_" + strings.ReplaceAll(uuid.NewString(), "-", "")
 	quotedSchema := pgx.Identifier{integrationSchema}.Sanitize()
-	if _, err := adminPool.Exec(ctx, "CREATE SCHEMA "+quotedSchema); err != nil {
-		adminPool.Close()
+	if _, err := migratorPool.Exec(ctx, "CREATE SCHEMA "+quotedSchema); err != nil {
+		migratorPool.Close()
 		fatalIntegrationSetup("create isolated test schema", err)
 	}
 
-	testConfig, err := pgxpool.ParseConfig(databaseURL)
+	integrationMigratorPool, err = newIntegrationSchemaPool(ctx, migratorURL, quotedSchema, 4)
 	if err != nil {
-		dropIntegrationSchema(ctx, adminPool, quotedSchema)
-		fatalIntegrationSetup("parse isolated test database URL", err)
+		_ = dropIntegrationSchema(ctx, migratorPool, quotedSchema)
+		migratorPool.Close()
+		fatalIntegrationSetup("connect migrator to isolated test schema", err)
 	}
-	testConfig.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
-	testConfig.ConnConfig.RuntimeParams["search_path"] = integrationSchema + ",public"
-	testConfig.MaxConns = 12
-	integrationPool, err = pgxpool.NewWithConfig(ctx, testConfig)
+	if err := applySetupUpMigration(ctx, "00001_init_schema.sql"); err != nil {
+		cleanupFailedIntegrationSetup(ctx, migratorPool, quotedSchema)
+		fatalIntegrationSetup("apply isolated schema migration", err)
+	}
+	if err := applySetupUpMigration(ctx, "00002_add_indexes.sql"); err != nil {
+		cleanupFailedIntegrationSetup(ctx, migratorPool, quotedSchema)
+		fatalIntegrationSetup("apply isolated index migration", err)
+	}
+	if err := copyRuntimePrivileges(ctx, migratorPool, quotedSchema); err != nil {
+		cleanupFailedIntegrationSetup(ctx, migratorPool, quotedSchema)
+		fatalIntegrationSetup("grant isolated runtime privileges", err)
+	}
+
+	integrationPool, err = newIntegrationSchemaPool(ctx, appURL, quotedSchema, 12)
 	if err != nil {
-		dropIntegrationSchema(ctx, adminPool, quotedSchema)
-		fatalIntegrationSetup("connect to isolated test schema", err)
+		cleanupFailedIntegrationSetup(ctx, migratorPool, quotedSchema)
+		fatalIntegrationSetup("connect application to isolated test schema", err)
 	}
-	if err := applyUpMigration(ctx, integrationPool, "00001_init_schema.sql"); err != nil {
+	if err := verifyRuntimeIntegrationPool(ctx); err != nil {
 		integrationPool.Close()
-		dropIntegrationSchema(ctx, adminPool, quotedSchema)
-		fatalIntegrationSetup("apply schema migration", err)
-	}
-	if err := applyUpMigration(ctx, integrationPool, "00002_add_indexes.sql"); err != nil {
-		integrationPool.Close()
-		dropIntegrationSchema(ctx, adminPool, quotedSchema)
-		fatalIntegrationSetup("apply index migration", err)
+		cleanupFailedIntegrationSetup(ctx, migratorPool, quotedSchema)
+		fatalIntegrationSetup("verify runtime repository connection", err)
 	}
 	integrationEnabled = true
 
 	exitCode := m.Run()
 	integrationPool.Close()
+	integrationMigratorPool.Close()
 
 	cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 15*time.Second)
-	dropIntegrationSchema(cleanupCtx, adminPool, quotedSchema)
+	if err := dropIntegrationSchema(cleanupCtx, migratorPool, quotedSchema); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "database integration cleanup: %v\n", err)
+		if exitCode == 0 {
+			exitCode = 1
+		}
+	}
 	cleanupCancel()
-	adminPool.Close()
+	migratorPool.Close()
 	os.Exit(exitCode)
 }
 
@@ -93,36 +137,171 @@ func fatalIntegrationSetup(operation string, err error) {
 	os.Exit(1)
 }
 
-func dropIntegrationSchema(ctx context.Context, pool *pgxpool.Pool, quotedSchema string) {
-	if _, err := pool.Exec(ctx, "DROP SCHEMA IF EXISTS "+quotedSchema+" CASCADE"); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "database integration cleanup: %v\n", err)
+func newIntegrationSchemaPool(
+	ctx context.Context,
+	databaseURL string,
+	quotedSchema string,
+	maxConnections int32,
+) (*pgxpool.Pool, error) {
+	config, err := pgxpool.ParseConfig(databaseURL)
+	if err != nil {
+		return nil, err
 	}
+	config.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
+	config.ConnConfig.RuntimeParams["search_path"] = quotedSchema + ",public"
+	config.MaxConns = maxConnections
+	pool, err := pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		return nil, err
+	}
+	if err := pool.Ping(ctx); err != nil {
+		pool.Close()
+		return nil, err
+	}
+	return pool, nil
+}
+
+func verifyIntegrationRole(ctx context.Context, pool *pgxpool.Pool, expected string) error {
+	var role string
+	if err := pool.QueryRow(ctx, `SELECT current_user`).Scan(&role); err != nil {
+		return err
+	}
+	if role != expected {
+		return fmt.Errorf("connected as role %q, expected %q", role, expected)
+	}
+	return nil
+}
+
+func verifyProductionMigrationState(ctx context.Context, pool *pgxpool.Pool) error {
+	var version int64
+	if err := pool.QueryRow(ctx, `
+		SELECT COALESCE(MAX(version_id) FILTER (WHERE is_applied), 0)
+		FROM public.goose_db_version
+	`).Scan(&version); err != nil {
+		return fmt.Errorf("read Goose migration version as spcase_migrator: %w", err)
+	}
+	if version != 5 {
+		return fmt.Errorf("production migration version is %d, expected 5", version)
+	}
+	return nil
+}
+
+func verifyRuntimeIntegrationPool(ctx context.Context) error {
+	var role, schema, usersOwner string
+	if err := integrationPool.QueryRow(ctx, `
+		SELECT current_user, current_schema(), pg_get_userbyid(c.relowner)
+		FROM pg_class c
+		JOIN pg_namespace n ON n.oid = c.relnamespace
+		WHERE n.nspname = current_schema() AND c.relname = 'users'
+	`).Scan(&role, &schema, &usersOwner); err != nil {
+		return err
+	}
+	if role != "spcase_app" {
+		return fmt.Errorf("repository pool connected as role %q, expected %q", role, "spcase_app")
+	}
+	if schema != integrationSchema {
+		return fmt.Errorf("repository pool resolved schema %q, expected isolated schema", schema)
+	}
+	if usersOwner != "spcase_migrator" {
+		return fmt.Errorf("isolated application objects owned by %q, expected %q", usersOwner, "spcase_migrator")
+	}
+	return nil
+}
+
+func copyRuntimePrivileges(ctx context.Context, sourcePool *pgxpool.Pool, quotedSchema string) error {
+	if _, err := sourcePool.Exec(ctx, "GRANT USAGE ON SCHEMA "+quotedSchema+" TO spcase_app"); err != nil {
+		return err
+	}
+
+	rows, err := sourcePool.Query(ctx, `
+		SELECT table_name, privilege_type
+		FROM information_schema.role_table_grants
+		WHERE table_schema = 'public' AND grantee = 'spcase_app'
+		ORDER BY table_name, privilege_type
+	`)
+	if err != nil {
+		return err
+	}
+	type tablePrivilege struct{ table, privilege string }
+	var grants []tablePrivilege
+	for rows.Next() {
+		var grant tablePrivilege
+		if err := rows.Scan(&grant.table, &grant.privilege); err != nil {
+			rows.Close()
+			return err
+		}
+		switch grant.privilege {
+		case "SELECT", "INSERT", "UPDATE", "DELETE":
+		default:
+			rows.Close()
+			return fmt.Errorf("refuse to copy unexpected runtime privilege %q", grant.privilege)
+		}
+		grants = append(grants, grant)
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return err
+	}
+	rows.Close()
+	if len(grants) == 0 {
+		return errors.New("production runtime table privileges are missing")
+	}
+	for _, grant := range grants {
+		table := pgx.Identifier{integrationSchema, grant.table}.Sanitize()
+		if _, err := sourcePool.Exec(ctx,
+			"GRANT "+grant.privilege+" ON TABLE "+table+" TO spcase_app",
+		); err != nil {
+			return fmt.Errorf("copy %s privilege for %s: %w", grant.privilege, grant.table, err)
+		}
+	}
+	typeName := pgx.Identifier{integrationSchema, "user_role"}.Sanitize()
+	if _, err := sourcePool.Exec(ctx, "GRANT USAGE ON TYPE "+typeName+" TO spcase_app"); err != nil {
+		return err
+	}
+	return nil
+}
+
+func cleanupFailedIntegrationSetup(ctx context.Context, migratorPool *pgxpool.Pool, quotedSchema string) {
+	if integrationPool != nil {
+		integrationPool.Close()
+	}
+	if integrationMigratorPool != nil {
+		integrationMigratorPool.Close()
+	}
+	_ = dropIntegrationSchema(ctx, migratorPool, quotedSchema)
+	migratorPool.Close()
+}
+
+func dropIntegrationSchema(ctx context.Context, pool *pgxpool.Pool, quotedSchema string) error {
+	_, err := pool.Exec(ctx, "DROP SCHEMA IF EXISTS "+quotedSchema+" CASCADE")
+	return err
 }
 
 func requireIntegration(t *testing.T) {
 	t.Helper()
 	if !integrationEnabled {
-		t.Skipf("set %s to run PostgreSQL integration tests", integrationDatabaseEnvironment)
+		t.Skipf("set %s and %s to run PostgreSQL integration tests",
+			integrationMigratorDatabaseEnvironment, integrationAppDatabaseEnvironment)
 	}
 }
 
-func applyUpMigration(ctx context.Context, pool *pgxpool.Pool, name string) error {
+func applySetupUpMigration(ctx context.Context, name string) error {
 	up, _, err := readMigrationSections(name)
 	if err != nil {
 		return err
 	}
-	if _, err := pool.Exec(ctx, up); err != nil {
+	if _, err := integrationMigratorPool.Exec(ctx, up); err != nil {
 		return fmt.Errorf("execute %s Up section: %w", name, err)
 	}
 	return nil
 }
 
-func applyDownMigration(ctx context.Context, pool *pgxpool.Pool, name string) error {
+func applySetupDownMigration(ctx context.Context, name string) error {
 	_, down, err := readMigrationSections(name)
 	if err != nil {
 		return err
 	}
-	if _, err := pool.Exec(ctx, down); err != nil {
+	if _, err := integrationMigratorPool.Exec(ctx, down); err != nil {
 		return fmt.Errorf("execute %s Down section: %w", name, err)
 	}
 	return nil
@@ -166,7 +345,7 @@ func resetIntegrationDatabase(t *testing.T) {
 			ENABLE TRIGGER trg_evaluation_state_no_truncate;
 		INSERT INTO evaluation_state (singleton_id) VALUES (1);
 	`
-	if _, err := integrationPool.Exec(ctx, reset); err != nil {
+	if _, err := integrationMigratorPool.Exec(ctx, reset); err != nil {
 		t.Fatalf("reset integration database: %v", err)
 	}
 }
@@ -279,6 +458,20 @@ func countIntegrationRows(t *testing.T, table string) int {
 	var count int
 	if err := integrationPool.QueryRow(context.Background(), "SELECT COUNT(*) FROM "+table).Scan(&count); err != nil {
 		t.Fatalf("count %s: %v", table, err)
+	}
+	return count
+}
+
+func countIntegrationRowsAsMigrator(t *testing.T, table string) int {
+	t.Helper()
+	if table != "evaluation_state_events" {
+		t.Fatalf("migrator count is not permitted for %q", table)
+	}
+	var count int
+	if err := integrationMigratorPool.QueryRow(
+		context.Background(), "SELECT COUNT(*) FROM "+table,
+	).Scan(&count); err != nil {
+		t.Fatalf("count %s as migrator: %v", table, err)
 	}
 	return count
 }

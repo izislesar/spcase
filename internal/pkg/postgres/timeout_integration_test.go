@@ -15,7 +15,7 @@ import (
 	"spcase.ru/backend/internal/config"
 )
 
-const integrationDatabaseEnvironment = "SPCASE_TEST_DATABASE_URL"
+const integrationDatabaseEnvironment = "SPCASE_TEST_APP_DATABASE_URL"
 
 func TestStatementTimeoutCancelsLongRunningQuery(t *testing.T) {
 	pool := timeoutTestPool(t, 50*time.Millisecond, time.Second)
@@ -80,6 +80,13 @@ func timeoutTestPool(
 	t.Cleanup(pool.Close)
 	if err := pool.Ping(ctx); err != nil {
 		t.Fatalf("ping integration database: %v", err)
+	}
+	var role string
+	if err := pool.QueryRow(ctx, `SELECT current_user`).Scan(&role); err != nil {
+		t.Fatalf("verify timeout test database role: %v", err)
+	}
+	if role != "spcase_app" {
+		t.Fatalf("timeout test pool connected as %q, want spcase_app", role)
 	}
 	return pool
 }
