@@ -52,6 +52,8 @@ Read the document matching your task before editing:
 | Business rules, lifecycles, scoring, deadlines | `docs/domain/business-rules.md` |
 | HTTP endpoints, auth cookie, error contract | `docs/contracts/http-api.md` |
 | Frontend target direction and stack | `docs/frontend/architecture.md`, `docs/frontend/design-direction.md` |
+| Legacy frontend behavioral parity contract | `docs/frontend/legacy-contract.md` |
+| Frontend cutover topology and mechanics | `docs/frontend/cutover-plan.md` |
 | Frontend replacement decision | `docs/decisions/0001-frontend-v2.md` |
 | Observability operations | `docs/runbooks/observability.md` |
 | PostgreSQL production cutover | `docs/runbooks/postgres-cutover.md` |
