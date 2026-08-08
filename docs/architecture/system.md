@@ -47,6 +47,67 @@ pgxpool / PostgreSQL
 
 Handlers не выполняют SQL. Services не зависят от HTTP. Repositories не формируют HTTP responses.
 
+### Stack
+
+- Go `net/http` and `http.ServeMux`;
+- PostgreSQL through `pgx/v5` and `pgxpool`;
+- bcrypt password hashes;
+- HS256 JWT through `golang-jwt/jwt/v5`;
+- UUID identities;
+- XLSX export through `excelize`;
+- embedded HTML/templates/static assets;
+- Docker Compose and Nginx.
+
+### Repository structure
+
+```text
+cmd/
+  app/                 application and dependency wiring
+  healthcheck/         readiness probe binary
+  admin-bootstrap/     one-time first ADMIN creation
+internal/
+  config/              .env/ENV loading and validation
+  domain/              entities, rules and stable errors
+  pkg/postgres/        pgxpool setup
+  repository/          PostgreSQL implementations
+  service/             use cases and validation
+  delivery/http/
+    middleware/        cross-cutting HTTP controls
+    v1/                DTO, handlers and response mapping
+migrations/            Goose schema, indexes and dev seed
+scripts/               production migration wrapper
+web/
+  template/            server-rendered pages
+  src/                 Tailwind/JavaScript sources
+  static/              compiled embedded assets
+```
+
+### Configuration
+
+Application reads optional local `.env`; existing environment variables win.
+
+Required runtime values:
+
+- `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`;
+- `JWT_SECRET`, `JURY_REGISTRATION_KEY`;
+- `CORS_ALLOWED_ORIGINS` containing HTTPS origins;
+- `REGISTRATION_DEADLINE`, `SUBMISSION_DEADLINE` in RFC3339;
+- `NO_TEAM_TELEGRAM_URL` as HTTPS URL.
+
+Optional/defaulted values: `PORT=8000`, `APP_DOMAIN=spcase.ru`, `DB_STATEMENT_TIMEOUT=15s`, `DB_LOCK_TIMEOUT=5s`.
+
+Secrets must be at least 32 characters, have sufficient diversity and must not match known placeholder/weak patterns. Registration deadline must precede submission deadline.
+
+Compose database provisioning additionally requires `POSTGRES_ADMIN_PASSWORD`, fixed role names `DB_MIGRATOR_USER=spcase_migrator` and `DB_APP_USER=spcase_app`, and separate `DB_MIGRATOR_PASSWORD`/`DB_APP_PASSWORD`. Эти credentials не читаются Go configuration напрямую. Compose подставляет migrator credentials в `DB_USER`/`DB_PASSWORD` только migration container, а application credentials — только runtime service и запускаемому через него `admin-bootstrap`. Runtime service получает явно перечисленную конфигурацию вместо полного env-файла, поэтому administrative и migrator passwords в его environment отсутствуют. Legacy `DB_USER`/`DB_PASSWORD` сохранены только для rollback/direct-process compatibility и normal Compose не используются.
+
+### Startup, pool and HTTP limits
+
+`cmd/app` loads configuration, creates and pings a PostgreSQL pool, constructs all dependencies, parses embedded templates and starts HTTP. Startup is bounded by 10 seconds.
+
+Pool defaults: max 10, min 2 connections, one-hour lifetime, 30-minute idle time and one-minute health checks. PostgreSQL session statement/lock timeouts are configured on every connection.
+
+HTTP limits: 5s header read, 15s read, 30s write, 60s idle and 1 MiB headers. SIGINT/SIGTERM initiates graceful shutdown with a 15-second timeout.
+
 ## 4. Repositories and services
 
 Repositories:
@@ -81,7 +142,7 @@ SecurityHeaders
 
 Submission, scoring и destructive team mutations разделяют team row как lifecycle lock. Scoring использует порядок team → evaluation state → submission; membership paths начинают с той же team row, затем блокируют users в UUID-порядке. Это не сериализует независимые команды. Evaluations принадлежат team как исторические записи: invalidation текущего submission их сохраняет, disband удаляет каскадно.
 
-HTTP server имеет read/write/header/idle timeouts, лимит заголовков и graceful shutdown до 15 секунд. Логи приложения — JSON через `slog` в stdout. `RequestID` принимает строго валидный входящий `X-Request-ID` (8–64 символа из `[A-Za-z0-9._-]`, в том числе `$request_id` от Nginx) либо генерирует UUIDv4, возвращает его в response header и помещает в request context. `RequestLogging` пишет одно событие `http_request_completed` на запрос с полями `request_id`, `method`, `route` (шаблон маршрута, не сырой path), `status` и `duration_ms`; `status >= 500` логируется на уровне ERROR. Operational runbook со стабильными event names и alert definitions — `OBSERVABILITY.md`.
+HTTP server имеет read/write/header/idle timeouts, лимит заголовков и graceful shutdown до 15 секунд. Логи приложения — JSON через `slog` в stdout. `RequestID` принимает строго валидный входящий `X-Request-ID` (8–64 символа из `[A-Za-z0-9._-]`, в том числе `$request_id` от Nginx) либо генерирует UUIDv4, возвращает его в response header и помещает в request context. `RequestLogging` пишет одно событие `http_request_completed` на запрос с полями `request_id`, `method`, `route` (шаблон маршрута, не сырой path), `status` и `duration_ms`; `status >= 500` логируется на уровне ERROR. Operational runbook со стабильными event names и alert definitions — `../runbooks/observability.md`.
 
 ## 6. Authentication and authorization
 
@@ -98,9 +159,11 @@ RBAC-роли: `USER`, `JURY`, `ADMIN`. Team membership — отдельное �
 
 ## 7. Frontend
 
-`web/handler.go` встраивает `web/template` и `web/static` через `go:embed`. Templates парсятся при старте; ошибка останавливает приложение. Известные страницы обслуживаются точными маршрутами, неизвестные получают 404.
+Текущий frontend — server-rendered и встроен в Go-бинарник: `web/handler.go` встраивает `web/template` и `web/static` через `go:embed`. Templates парсятся при старте; ошибка останавливает приложение. Известные страницы обслуживаются точными маршрутами, неизвестные получают 404.
 
 Tailwind CSS и JavaScript bundle собираются Node/esbuild stage. Asset hash добавляется к URL для cache busting. Nginx раздаёт `/static/*` с immutable cache; Go handler содержит те же assets для прямого запуска без Nginx. HTML и sensitive API responses имеют `no-store`.
+
+Этот server-rendered frontend является legacy и запланирован к замене на независимое frontend-приложение (см. `../frontend/architecture.md` и решение `../decisions/0001-frontend-v2.md`). До завершения parity и cutover он остаётся текущей реализацией и поведенческим эталоном; его поведение не меняется в рамках подготовки миграции.
 
 ## 8. Docker deployment flow
 

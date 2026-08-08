@@ -12,7 +12,7 @@ Roles are mutually exclusive. Team membership state (`NO_TEAM`, `IN_TEAM`, `CAPT
 
 USER requires full name, university, email, Telegram and password. JURY requires secret key, full name, email and password. The first ADMIN is created only by the bootstrap CLI.
 
-Participant registration is allowed strictly before `REGISTRATION_DEADLINE`. Jury registration is controlled by `JURY_REGISTRATION_KEY`, not that deadline.
+Participant registration is allowed strictly before `REGISTRATION_DEADLINE`. Jury registration is controlled by `JURY_REGISTRATION_KEY`, not that deadline; the key is verified with a SHA-256-backed constant-time comparison. The bootstrap CLI serializes creation of the first ADMIN through a PostgreSQL advisory transaction lock and accepts the password only from stdin.
 
 ## 2. Authentication and revocation
 

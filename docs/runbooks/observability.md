@@ -173,7 +173,7 @@ production value.
 | Alert | Signal source | Condition | Severity | Operator action | Escalation |
 |---|---|---|---|---|---|
 | Liveness failure | external probe of `/api/v1/health/live` | probe fails 3 consecutive times | critical | check `docker compose ps`, `docker compose logs app`; restart the app container if the process is wedged | if restarts repeat, roll back to the previous approved image |
-| Readiness failure | external probe of `/api/v1/health/ready`, container health | unhealthy longer than `<APPROVED_READINESS_GRACE>` | critical | check `database_readiness_failed` events and the `db` container health; restore PostgreSQL first, do not restart the app blindly | sustained failure after DB recovery → rollback procedure in PRODUCTION-CUTOVER.md |
+| Readiness failure | external probe of `/api/v1/health/ready`, container health | unhealthy longer than `<APPROVED_READINESS_GRACE>` | critical | check `database_readiness_failed` events and the `db` container health; restore PostgreSQL first, do not restart the app blindly | sustained failure after DB recovery → rollback procedure in `postgres-cutover.md` |
 | Repeated container restart | Docker `RestartCount` | increase above `<APPROVED_RESTART_THRESHOLD>` within one hour | high | inspect logs for `panic_recovered`/`database_startup_failed`; check host memory | recurring crash loop → roll back image, escalate to engineering |
 | Nginx upstream failure | Nginx error log, edge 503 responses | `upstream` errors or 503 from `@api_unavailable` | high | check app container health and backend network | if app healthy but upstream fails → investigate DNS resolver/network |
 
@@ -192,7 +192,7 @@ production value.
 |---|---|---|---|---|---|
 | Connection failure | `database_readiness_failed`, `pg_isready` health check | continuous failures | critical | check `db` container, volume, host disk | DB not recoverable in place → restore from latest verified backup |
 | Pool acquisition timeout | `http_request_completed` 5xx correlated with DB errors | above `<APPROVED_POOL_FAILURE_THRESHOLD>` | high | check pool saturation (`pg_stat_activity`), slow queries, `statement_timeout` hits | persistent saturation → capacity review before any config change |
-| Migration failure | migrator exit code, `migration_failed` events | any nonzero migrator exit | critical | the app does not start by design; read migrator logs; do not force-start the app | follow the failed-migration path in PRODUCTION-CUTOVER.md |
+| Migration failure | migrator exit code, `migration_failed` events | any nonzero migrator exit | critical | the app does not start by design; read migrator logs; do not force-start the app | follow the failed-migration path in `postgres-cutover.md` |
 | Disk usage threshold | host `df`, `docker system df` | above `<APPROVED_DISK_THRESHOLD>` | high | free space, verify log rotation is active, check volume growth | below headroom for a backup + restore → emergency capacity action |
 | Database container unhealthy | Docker health check | unhealthy longer than `<APPROVED_DB_GRACE>` | critical | `docker compose logs db`; check data volume integrity | corrupted volume → restore from latest verified backup |
 
@@ -244,7 +244,8 @@ integration exists. What exists is a provider-agnostic freshness contract:
   future alerting stack.
 
 Production backups themselves are **not** marked implemented: destination,
-schedule, encryption, retention, and RPO remain TODO section 5 approvals.
+schedule, encryption, retention, and RPO remain roadmap approvals (see
+`../../ROADMAP.md`, backup and restore section).
 
 ## 9. Failure-mode rehearsal
 

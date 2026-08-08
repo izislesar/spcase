@@ -1,7 +1,5 @@
 # Project documentation used for local agent context
 .docs/
-AGENTS.md
-architecture.md
 frontend.md
 
 # Local environment files (keep the public template)

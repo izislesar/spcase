@@ -325,7 +325,7 @@ document. During the period, verify:
 - backup artifact integrity, access and retention.
 
 Signal sources, stable event names, log queries and alert definitions for each
-of these checks are documented in `OBSERVABILITY.md`.
+of these checks are documented in `observability.md`.
 
 Legacy credentials and the legacy role remain available until the rollback
 decision owner explicitly closes observation.

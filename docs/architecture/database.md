@@ -173,6 +173,26 @@ PostgreSQL integration harness требует отдельные
 подключается к той же schema как `spcase_app` и используется всеми repositories,
 transactions и concurrency tests. Legacy single-connection variable не используется.
 
+Исходная база должна уже быть на production migration version 5. Harness
+проверяет обе connection roles; runtime grants для isolated objects копируются из
+уже мигрированной `public` schema, поэтому тесты не могут незаметно расширить
+privileges приложения. Suite покрывает schema integrity, migrations/seed,
+concurrent joins, database deadline checks, historical evaluation retention,
+deterministic scoring против leave/kick/disband и submission races,
+evaluation-state serialization, per-team lock independence, query plans,
+aggregation, timeouts и concurrent ADMIN bootstrap.
+
+Fresh-database role ACL check:
+
+```bash
+SPCASE_TEST_MIGRATOR_DATABASE_URL='postgres://spcase_migrator:...' \
+SPCASE_TEST_APP_DATABASE_URL='postgres://spcase_app:...' \
+go test -tags=integration ./internal/repository -run '^TestPostgresRolePrivileges$'
+```
+
+`SPCASE_TEST_DATABASE_URL` отклоняется при одиночной передаче, потому что один
+DDL-capable connection схлопывает production privilege boundary.
+
 На чистом PostgreSQL entrypoint запускает `scripts/init-postgres-roles.sh`: создаёт non-superuser roles, передаёт database/schema ownership migrator и задаёт default privileges. Затем одноразовый migrator применяет production allowlist.
 
 Существующий volume переводится только вручную через
