@@ -55,6 +55,7 @@ Read the document matching your task before editing:
 | Legacy frontend behavioral parity contract | `docs/frontend/legacy-contract.md` |
 | Frontend cutover topology and mechanics | `docs/frontend/cutover-plan.md` |
 | Frontend replacement decision | `docs/decisions/0001-frontend-v2.md` |
+| New frontend implementation (`frontend/`) | `frontend/AGENTS.md` |
 | Observability operations | `docs/runbooks/observability.md` |
 | PostgreSQL production cutover | `docs/runbooks/postgres-cutover.md` |
 | Phased plan and current stage | `ROADMAP.md` |

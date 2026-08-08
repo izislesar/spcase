@@ -410,9 +410,9 @@ All must pass, in order, with evidence recorded:
 
 ## 19. Open architecture risks / decisions deferred to implementation
 
-1. **Asset prefix**: plan assumes `/assets/` (Vite default). Any other
-   prefix is fine as long as it gets its own `^~` location and immutable
-   cache entry — confirm at foundation stage.
+1. **Asset prefix**: **confirmed at foundation stage.** The Vite build emits
+   fingerprinted assets under `dist/assets/` with the default `assetsDir`
+   (`assets`), so the `/assets/` prefix stands as planned.
 2. **`/jury` redirect**: React Router redirect vs nginx 307 — defaulted to
    router, low risk either way.
 3. **CSP introduction**: valuable hardening, deliberately out of cutover

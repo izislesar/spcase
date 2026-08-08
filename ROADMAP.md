@@ -35,9 +35,9 @@ Staging acceptance и production deployment НЕ являются ближайш
 
 ## Фаза 3. Новый frontend foundation
 
-- [ ] 3.1 Создать независимое frontend-приложение по утверждённому стеку (`docs/frontend/architecture.md`)
-- [ ] 3.2 Настроить toolchain, проверки и интеграцию с существующим `/api/v1`
-- [ ] 3.3 Настроить Playwright-окружение для end-to-end проверок
+- [x] 3.1 Создать независимое frontend-приложение по утверждённому стеку (`docs/frontend/architecture.md`) — реализовано в `frontend/`: только foundation (маршрутный skeleton, API-транспорт, CSS-примитивы), НЕ parity, НЕ design, НЕ cutover
+- [x] 3.2 Настроить toolchain, проверки и интеграцию с существующим `/api/v1` — pnpm, Vite 8, TypeScript strict, Biome, dev-proxy к `localhost:8000`
+- [x] 3.3 Настроить Playwright-окружение для end-to-end проверок — desktop/mobile projects и routing smoke tests; прогон требует установленных браузеров
 
 ## Фаза 4. Публичная визуальная система
 

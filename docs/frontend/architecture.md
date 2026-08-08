@@ -1,11 +1,16 @@
 # Frontend target architecture
 
-> **Status: approved target direction, NOT implemented.**
+> **Status: approved target direction; foundation scaffolded (roadmap phase 3).**
 > The current frontend is the server-rendered implementation in `web/`,
 > embedded in the Go binary. It remains the running system and the behavioral
-> reference until parity is captured and cutover is accepted. This document
-> describes where the frontend is going, not what exists today.
+> reference until parity is captured and cutover is accepted.
 > See `../decisions/0001-frontend-v2.md` for the decision record.
+>
+> Phase 3 delivered `frontend/`: a Vite 8 + React 19 + TypeScript (strict)
+> application with React Router 8 (data mode) covering the legacy route map
+> as placeholders, the `/api/v1` fetch transport, CSS token/base primitives,
+> Biome and Playwright configuration. This is foundation only — no parity,
+> no visual design, no production wiring. Details: `../../frontend/AGENTS.md`.
 
 ## Direction
 

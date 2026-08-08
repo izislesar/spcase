@@ -18,6 +18,12 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# New frontend build and test artifacts
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+
 # Go build and test artifacts
 /app
 /spcase
