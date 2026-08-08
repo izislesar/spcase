@@ -1,6 +1,5 @@
 {
   "file_hashes": {
-    "-files AGENTS.md": "acb52355950d7d3ef206e43828c7cdf9560f59624d4a49de08a3105ad361611a",
     "AGENTS.md": "d4fe4ff0ad8e3a4301e0938d3aaac3a73ad497ea4dc37b72b143737f0ce7921a",
     "Dockerfile": "e8ea1ebb2033759e69ccd251757cfe256aa9e895b55ec102a7dfe4cac84636f7",
     "README.md": "a3297c6f693b7af14a2bb3ffa84121845e118b325ace591ed0e4225578496ca8",
@@ -16,6 +15,7 @@
     "docs/domain/business-rules.md": "9d6dfb368eeaa068ee1f202b3e16153a24f0e71891d538460b3da32ce5f919c7",
     "docs/frontend/architecture.md": "a266909f3165b2a03ba7fdf5aee2a7b400a522ee8027ce3e6188ab469d759190",
     "docs/frontend/design-direction.md": "6d40f6be27396ca3bb8ac8f9c3828e89eceaea7a7dfdc164bca58588730672dc",
+    "docs/frontend/legacy-contract.md": "370baf60efc70af4c0a5f4eebb4d5785d3f4ed61ba25755235f33d54b040b0c4",
     "docs/runbooks/observability.md": "7661161e8d94c48152953a248833eba676b53188e502100444b24dff0b627f22",
     "docs/runbooks/postgres-cutover.md": "c69ead7b2f808616a1513a4e6aeb3269eddd57ca9a455cabd51aa8618c23fbc6",
     "internal/config/config.go": "aadef110c9dfe0dcdfa47e3c87464a6a0a906a7d67991b81969384de5572983c",
@@ -118,13 +118,13 @@
     "web/src/interactions/focus.js": "f23347b0f4fe8cc838d64e732b423fd08a8fb34bf7ff69ad749967dee95a8861",
     "web/static/js/app.js": "274b9a3ea24efd6ba71e745530aead062b1801e67ffaebae6f7e3b9df7293385"
   },
-  "indexed_at_commit": "69102f6fd28d3531e07a2cf7c9ca3d869f1eb315",
-  "indexed_at_timestamp": "2026-08-08T13:03:08.336548487+00:00",
+  "indexed_at_commit": "a06ed5aaf5f54738260576c7135aa7ba3aa083d5",
+  "indexed_at_timestamp": "2026-08-08T13:15:51.184593454+00:00",
   "schema_version": 3,
   "stats": {
-    "total_edges": 1599,
+    "total_edges": 1618,
     "total_files": 117,
-    "total_nodes": 1193
+    "total_nodes": 1212
   },
   "vexp_version": "2.5.2"
 }
