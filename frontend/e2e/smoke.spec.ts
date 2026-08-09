@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const routes: { path: string; heading: string }[] = [
-  { path: "/", heading: "Главная" },
+  { path: "/", heading: "СПК кейс-чемпионат" },
   { path: "/schedule", heading: "Расписание" },
   { path: "/no-team", heading: "Нет команды" },
   { path: "/login", heading: "Вход" },

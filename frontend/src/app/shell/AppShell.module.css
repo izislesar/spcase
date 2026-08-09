@@ -1,0 +1,191 @@
+.shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+}
+
+.header {
+  border-block-end: 1px solid var(--color-line);
+  background: var(--color-paper);
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+/* Accent square — the recurring brand mark. */
+.brandMark {
+  inline-size: 0.65em;
+  block-size: 0.65em;
+  background: var(--color-accent);
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  text-decoration-thickness: 2px;
+}
+
+.navLink:hover {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.navLinkActive {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.desktopNav {
+  display: none;
+}
+
+.menuToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Mobile menu: a flat dark-field overlay, the accent square repeated. */
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--color-field);
+  color: var(--color-on-field);
+}
+
+.menuPanel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: var(--space-3) var(--gutter) var(--space-8);
+}
+
+.menuClose {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--color-on-field);
+  font: inherit;
+  cursor: pointer;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  margin-block: auto;
+}
+
+.mobileNav .navLink {
+  padding-block: var(--space-3);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-on-field);
+  border-block-end: 1px solid color-mix(in oklch, var(--color-on-field) 18%, transparent);
+}
+
+.mobileNav .navLink:hover {
+  color: var(--color-on-field);
+  text-decoration: none;
+}
+
+.mobileNav .navLinkActive {
+  color: var(--color-on-field);
+}
+
+/* The active marker in the dark menu is the accent square, not a color swap. */
+.mobileNav .navLinkActive::before {
+  content: "";
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  margin-inline-end: var(--space-3);
+  background: var(--color-accent);
+}
+
+.main:focus {
+  outline: none;
+}
+
+.footer {
+  border-block-start: 1px solid var(--color-line);
+  padding-block: var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-6);
+}
+
+.footerBrand {
+  margin: 0;
+}
+
+.footerNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+}
+
+.footerNav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+}
+
+.footerNav a:hover {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+@media (width > 64rem) {
+  .desktopNav {
+    display: flex;
+    gap: var(--space-2) var(--space-6);
+  }
+
+  .menuToggle,
+  .menuOverlay {
+    display: none;
+  }
+}

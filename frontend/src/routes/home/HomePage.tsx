@@ -1,8 +1,15 @@
+import { FaqPreview } from "./FaqPreview";
+import { FormatSection } from "./FormatSection";
+import { Hero } from "./Hero";
+import { SchedulePreview } from "./SchedulePreview";
+
 export function HomePage() {
   return (
-    <section>
-      <h1>Главная</h1>
-      <p>Кейс-чемпионат СПК.</p>
-    </section>
+    <>
+      <Hero />
+      <FormatSection />
+      <SchedulePreview />
+      <FaqPreview />
+    </>
   );
 }

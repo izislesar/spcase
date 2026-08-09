@@ -53,3 +53,20 @@ USER/JURY/ADMIN workflows are operational tools: they prioritize **clarity
 and efficiency over theatrical animation**. The editorial visual identity
 applies, but motion and decorative gestures are minimized where users perform
 repeated task-focused work.
+
+## Established visual rules (Stage 4)
+
+The public homepage implementation fixed these reusable rules; they are the
+defaults for later stages (token values live in `frontend/src/styles/tokens.css`):
+
+- Palette: warm paper background, warm ink, one vermilion accent, one dark
+  warm field, one light tint; all colors are OKLCH tokens with AA-checked
+  text pairs. Accent is never used for body text on the dark field.
+- Typography: system sans stack (no webfont payload), fluid `clamp()` scale,
+  uppercase letter-spaced eyebrows, weight/tracking carry the hierarchy.
+- Brand mark: a small flat accent square, repeated sparingly.
+- Signature mechanism: the progression path — an SVG stroke connecting the
+  championship stages, drawn by a CSS scroll-driven animation; the fully
+  drawn static path is the baseline for reduced motion and unsupported
+  browsers. One such gesture per page.
+- Dark flat fields are used for single sections (schedule), not whole pages.
