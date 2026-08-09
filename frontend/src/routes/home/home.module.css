@@ -8,7 +8,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-ink-muted);
 }
 
 .eyebrowOnField {
@@ -21,11 +21,11 @@
 
 .sectionTitle {
   margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
   font-size: var(--text-2xl);
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   overflow-wrap: break-word;
-  hyphens: auto;
 }
 
 .sectionIntro {
@@ -43,36 +43,84 @@
   color: var(--color-on-field-muted);
 }
 
-/* ---------- hero ---------- */
+/* ---------- hero: a graphic poster, not a template ---------- */
 
 .hero {
-  padding-block: clamp(2.5rem, 1.5rem + 5vw, 6rem) var(--section-gap);
+  padding-block: clamp(2rem, 1rem + 5vw, 5rem) var(--section-gap);
   overflow: clip;
 }
 
 .heroInner {
+  position: relative;
   display: grid;
-  gap: var(--space-8);
-  align-items: center;
-}
-
-.heroText {
-  max-width: 40rem;
 }
 
 .display {
-  margin: 0 0 var(--space-4);
-  font-size: var(--text-display);
+  position: relative;
+  z-index: 1;
+  margin: 0 0 var(--space-8);
+  font-family: var(--font-display);
+}
+
+.displayTop {
+  display: block;
+  font-size: var(--text-poster);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.02;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+
+/* The team disc doubling as the full stop of the first title line. */
+.displayDot {
+  display: inline-block;
+  inline-size: 0.24em;
+  block-size: 0.24em;
+  margin-inline-start: 0.16em;
+}
+
+.displayMain {
+  display: block;
+  margin-block-start: var(--space-3);
+  margin-inline-start: clamp(0rem, 6vw, 6rem);
+  font-size: clamp(1.3rem, 0.55rem + 3.75vw, 3.35rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0;
+  color: var(--color-accent);
   overflow-wrap: break-word;
-  hyphens: auto;
+}
+
+/*
+ * The case ring + scattered team elements sit behind the type (z-index 0).
+ * The ring's left arc stops just short of the second title line — tension
+ * and adjacency instead of overlap, so text never sits on the ink stroke.
+ * On small viewports the composition shrinks into the top corner and the
+ * ink block drops out: mobile keeps the ring and two elements.
+ */
+.heroGraphic {
+  position: absolute;
+  z-index: 0;
+  inset-block-start: calc(-1 * var(--space-6));
+  inset-inline-end: calc(-1 * var(--gutter));
+  inline-size: clamp(9.5rem, 40vw, 36rem);
+  pointer-events: none;
+}
+
+@media (width <= 48rem) {
+  .heroFormBlock {
+    display: none;
+  }
+}
+
+.heroLead {
+  position: relative;
+  z-index: 1;
+  max-width: 34rem;
 }
 
 .lead {
   margin: 0 0 var(--space-6);
-  max-width: 34ch;
+  max-width: 32ch;
   color: var(--color-ink-muted);
   font-size: var(--text-lg);
 }
@@ -95,25 +143,20 @@
 
 .heroFact strong {
   color: var(--color-ink);
+  font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
-.heroGraphic {
-  inline-size: min(100%, 20rem);
-  justify-self: center;
-}
-
+/* Countdown: a hairline strip, not a pill — minimal chrome. */
 .countdown {
-  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--space-2) var(--space-4);
-  padding: var(--space-4) var(--space-6);
-  border-radius: var(--radius);
-  background: var(--color-tint);
+  gap: var(--space-2) var(--space-6);
+  margin-top: var(--space-12);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-line);
 }
 
 .countdownLabel {
@@ -131,58 +174,72 @@
   font-variant-numeric: tabular-nums;
 }
 
-@media (width > 48rem) {
-  .heroInner {
-    grid-template-columns: 7fr 5fr;
-    column-gap: var(--space-12);
-  }
-
-  .heroGraphic {
-    inline-size: 100%;
-  }
-}
-
-/* ---------- format: three stages + the progression path ---------- */
+/* ---------- format: the transformation story on a sun field ---------- */
 
 .format {
-  padding-block: 0 var(--section-gap);
+  padding-block: var(--section-gap);
+  background: var(--color-sun);
+  overflow: clip;
 }
 
 .stages {
   position: relative;
-  margin-top: var(--space-8);
+  margin-top: var(--space-12);
 }
 
 .stageList {
   position: relative;
   display: grid;
-  gap: var(--space-8);
+  gap: var(--space-12) var(--space-8);
   margin: 0;
-  padding: 0 0 0 var(--space-12);
+  padding: 0 0 0 var(--space-8);
   list-style: none;
 }
 
 .stage {
+  position: relative;
+  z-index: 1;
   max-width: 34rem;
 }
 
 .stageNumber {
-  display: block;
-  font-size: var(--text-numeral);
+  position: absolute;
+  z-index: 2;
+  inset-block-start: calc(-1 * var(--space-3));
+  inset-inline-start: calc(-1 * var(--space-2));
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
   font-weight: 800;
-  letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.stageVignette {
+  display: block;
+  inline-size: min(58%, 12.5rem);
+  block-size: auto;
+  margin-block-end: var(--space-4);
+}
+
+/* Resolved mark tinted for the sun field. */
+.stageMark {
+  --gm-ring: var(--color-ink);
+  --gm-dome: var(--color-accent);
+  --gm-block: var(--color-ink);
+  --gm-disc: var(--color-sun);
 }
 
 .stageName {
-  margin: var(--space-3) 0 var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .stageAlias {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
   color: var(--color-ink-muted);
   font-weight: 600;
 }
@@ -193,19 +250,17 @@
   overflow-wrap: break-word;
 }
 
-/* The progression path: fully drawn by default (static baseline). */
+/* The trajectory: always fully drawn (static baseline). */
 .path {
   position: absolute;
   pointer-events: none;
-  color: var(--color-accent);
+  color: var(--color-ink);
 }
 
 .pathLine {
   stroke: currentColor;
   stroke-width: 3;
   stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 0;
 }
 
 .pathHorizontal {
@@ -215,46 +270,57 @@
 .pathVertical {
   inset-block: 0;
   inset-inline-start: 0;
-  inline-size: 1.5rem;
+  inline-size: 1.75rem;
   block-size: 100%;
 }
 
 /*
- * Progressive enhancement: where CSS scroll-driven animations exist and the
- * user allows motion, the stroke draws itself while the section crosses the
- * viewport. Unsupported engines and reduced motion keep the static path.
+ * Progressive enhancement: the accent disc rides the desktop trajectory via
+ * offset-path + a scroll-driven timeline. The resting state is the finish
+ * (offset-distance 100%); unsupported engines keep the circle's cx/cy,
+ * which are the same end point. Reduced motion keeps the rest state too.
  */
+@supports (offset-path: path("M0 0")) {
+  .traveller {
+    transform-box: view-box;
+    offset-anchor: center;
+    offset-path: path(
+      "M 40 118 C 120 118 160 42 240 42 C 320 42 330 118 440 118 C 520 118 560 42 640 42 C 720 42 730 118 840 118 C 920 118 960 42 1040 42 C 1120 42 1140 96 1170 108"
+    );
+    offset-distance: 100%;
+  }
+}
+
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .pathLine {
-      animation-name: path-draw;
+    .traveller {
+      animation-name: travel;
       animation-duration: 1ms; /* duration is driven by the scroll timeline */
       animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: view();
-      animation-range: entry 10% cover 60%;
+      animation-range: entry 10% cover 55%;
     }
   }
 }
 
-@keyframes path-draw {
+@keyframes travel {
   from {
-    stroke-dashoffset: 100;
+    offset-distance: 0%;
   }
 
   to {
-    stroke-dashoffset: 0;
+    offset-distance: 100%;
   }
 }
 
 @media (width > 64rem) {
   .stages {
-    padding-block-start: var(--space-12);
+    padding-block-start: var(--space-6);
   }
 
   .stageList {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-6);
     padding-inline-start: 0;
   }
 
@@ -262,11 +328,17 @@
     max-width: none;
   }
 
+  .stageVignette {
+    inline-size: min(80%, 13.5rem);
+  }
+
   .pathHorizontal {
     display: block;
-    inset-block-start: calc(-1 * var(--space-4));
+    inset-block-start: calc(-1 * var(--space-2));
     inset-inline: 0;
     inline-size: 100%;
+    /* Natural 1200:140 aspect is kept so the travelling disc stays round. */
+    block-size: auto;
   }
 
   .pathVertical {
@@ -274,12 +346,26 @@
   }
 }
 
-/* ---------- schedule preview: the dark flat field ---------- */
+/* ---------- schedule: the dark flat field, editorial not administrative ---------- */
 
 .schedule {
+  position: relative;
   padding-block: var(--section-gap);
   background: var(--color-field);
   color: var(--color-on-field);
+  overflow: clip;
+}
+
+.scheduleAnchor {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--space-12));
+  inset-inline-end: calc(-1 * var(--space-16));
+  inline-size: clamp(16rem, 30vw, 26rem);
+  pointer-events: none;
+}
+
+.scheduleInner {
+  position: relative;
 }
 
 .timeline {
@@ -291,10 +377,10 @@
 
 .timelineItem {
   display: grid;
-  grid-template-columns: 3rem 1fr;
+  grid-template-columns: 2rem 1fr;
   grid-template-areas:
-    "index time"
-    "index body";
+    "marker meta"
+    "marker body";
   column-gap: var(--space-4);
   padding-block: var(--space-4);
   border-block-start: 1px solid color-mix(in oklch, var(--color-on-field) 18%, transparent);
@@ -304,17 +390,33 @@
   border-block-end: 1px solid color-mix(in oklch, var(--color-on-field) 18%, transparent);
 }
 
+.timelineMarker {
+  grid-area: marker;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin-block-start: var(--space-1);
+}
+
+.timelineMeta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  min-width: 0;
+}
+
 .timelineIndex {
-  grid-area: index;
-  font-size: var(--text-lg);
-  font-weight: 800;
+  font-size: var(--text-sm);
+  font-weight: 700;
   color: var(--color-accent);
 }
 
 .timelineTime {
-  grid-area: time;
-  color: var(--color-on-field-muted);
-  font-size: var(--text-sm);
+  color: var(--color-on-field);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .timelineBody {
@@ -324,7 +426,10 @@
 
 .timelineTitle {
   margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
   font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--color-on-field);
   overflow-wrap: break-word;
 }
@@ -357,26 +462,31 @@
 
 @media (width > 64rem) {
   .timelineItem {
-    grid-template-columns: 4rem 17rem 1fr;
-    grid-template-areas: "index time body";
+    grid-template-columns: 3rem 16rem 1fr;
+    grid-template-areas: "marker meta body";
     column-gap: var(--space-6);
     align-items: baseline;
   }
+
+  .timelineMarker {
+    margin-block-start: 0;
+  }
 }
 
-/* ---------- FAQ preview ---------- */
+/* ---------- FAQ: quiet decompression on a mint field ---------- */
 
 .faq {
   padding-block: var(--section-gap);
+  background: var(--color-mint);
 }
 
 .faqList {
   margin-top: var(--space-6);
-  border-block-start: 1px solid var(--color-line);
+  border-block-start: 1px solid var(--color-mint-line);
 }
 
 .faqItem {
-  border-block-end: 1px solid var(--color-line);
+  border-block-end: 1px solid var(--color-mint-line);
 }
 
 .faqQuestion {
@@ -396,6 +506,7 @@
   background: none;
   color: var(--color-ink);
   font: inherit;
+  font-family: var(--font-sans);
   font-weight: 700;
   text-align: start;
   overflow-wrap: break-word;
@@ -404,7 +515,7 @@
 
 .faqIcon {
   flex-shrink: 0;
-  color: var(--color-accent);
+  color: var(--color-ink);
   transition: rotate 200ms ease;
 }
 

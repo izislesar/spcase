@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router";
+import { BrandMark, CaseArc, Disc, ResolvedMark } from "../../components/graphics/grammar";
 import styles from "./AppShell.module.css";
 
 const NAV_ITEMS = [
@@ -75,12 +76,12 @@ export function AppShell() {
   return (
     <div className={styles.shell}>
       <a className="skip-link" href="#main-content">
-        К содержанию
+        К содержимому
       </a>
       <header className={styles.header}>
         <div className={`container ${styles.headerInner}`}>
           <NavLink to="/" className={styles.brand} aria-label="СПК кейс-чемпионат, на главную">
-            <span className={styles.brandMark} aria-hidden="true" />
+            <BrandMark className={styles.brandMark} />
             СПК
           </NavLink>
           <nav className={styles.desktopNav} aria-label="Основная навигация">
@@ -115,6 +116,27 @@ export function AppShell() {
       </header>
       {menuOpen && (
         <div className={styles.menuOverlay}>
+          {/*
+            The dark menu echoes the grammar: the still-open case ring and one
+            team disc. Decorative → aria-hidden.
+          */}
+          <svg
+            className={styles.menuEcho}
+            viewBox="0 0 400 400"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <CaseArc
+              cx={110}
+              cy={310}
+              r={140}
+              width={24}
+              gap={70}
+              rotate={-140}
+              stroke="color-mix(in oklch, var(--color-on-field) 16%, transparent)"
+            />
+            <Disc cx={336} cy={84} r={24} fill="var(--color-accent)" />
+          </svg>
           <div
             ref={panelRef}
             id={menuId}
@@ -165,6 +187,11 @@ export function AppShell() {
       </main>
       <footer className={styles.footer} inert={menuOpen}>
         <div className={`container ${styles.footerInner}`}>
+          {/*
+            The story completes here: the resolved mark (closed ring, assembled
+            elements) tinted for the accent field.
+          */}
+          <ResolvedMark className={styles.footerMark} />
           <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
           <nav className={styles.footerNav} aria-label="Дополнительная навигация">
             <NavLink to="/register">Регистрация</NavLink>

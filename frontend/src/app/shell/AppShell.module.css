@@ -4,8 +4,12 @@
   min-height: 100dvh;
 }
 
+/*
+ * Header: no hairline, no chrome — it merges into the paper field so the
+ * page reads as one poster surface. The brand pairs the grammar mark with
+ * the wordmark in the display face.
+ */
 .header {
-  border-block-end: 1px solid var(--color-line);
   background: var(--color-paper);
 }
 
@@ -21,38 +25,54 @@
   align-items: center;
   gap: var(--space-2);
   min-height: 44px;
-  font-size: var(--text-lg);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
   color: var(--color-ink);
   text-decoration: none;
 }
 
-/* Accent square — the recurring brand mark. */
 .brandMark {
-  inline-size: 0.65em;
-  block-size: 0.65em;
-  background: var(--color-accent);
+  inline-size: 1.75rem;
+  block-size: auto;
 }
 
+/*
+ * Desktop nav: small uppercase letter-spaced links; the active item is
+ * marked by the accent square from the grammar. The square's space is
+ * reserved (visibility, not display) so activation never shifts layout.
+ */
 .navLink {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   color: var(--color-ink-muted);
   text-decoration: none;
-  text-decoration-thickness: 2px;
+}
+
+.navLink::before {
+  content: "";
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  margin-inline-end: var(--space-2);
+  background: var(--color-accent);
+  visibility: hidden;
 }
 
 .navLink:hover {
   color: var(--color-ink);
   text-decoration: underline;
+  text-decoration-thickness: 2px;
   text-underline-offset: 0.3em;
 }
 
 .navLinkActive {
-  color: var(--color-accent);
+  color: var(--color-ink);
   font-weight: 600;
+}
+
+.navLinkActive::before {
+  visibility: visible;
 }
 
 .desktopNav {
@@ -73,7 +93,7 @@
   cursor: pointer;
 }
 
-/* Mobile menu: a flat dark-field overlay, the accent square repeated. */
+/* Mobile menu: the dark flat field with a quiet grammar echo behind. */
 .menuOverlay {
   position: fixed;
   inset: 0;
@@ -82,7 +102,20 @@
   color: var(--color-on-field);
 }
 
+.menuEcho {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+}
+
+.menuOverlay :focus-visible {
+  outline-color: var(--color-on-field);
+}
+
 .menuPanel {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
@@ -110,11 +143,16 @@
 
 .mobileNav .navLink {
   padding-block: var(--space-3);
+  font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: 0;
   color: var(--color-on-field);
   border-block-end: 1px solid color-mix(in oklch, var(--color-on-field) 18%, transparent);
+}
+
+.mobileNav .navLink::before {
+  margin-inline-end: var(--space-3);
 }
 
 .mobileNav .navLink:hover {
@@ -124,38 +162,50 @@
 
 .mobileNav .navLinkActive {
   color: var(--color-on-field);
-}
-
-/* The active marker in the dark menu is the accent square, not a color swap. */
-.mobileNav .navLinkActive::before {
-  content: "";
-  inline-size: 0.5em;
-  block-size: 0.5em;
-  margin-inline-end: var(--space-3);
-  background: var(--color-accent);
+  font-weight: 700;
 }
 
 .main:focus {
   outline: none;
 }
 
+/*
+ * Footer: the closing gesture of the page — the accent field carrying the
+ * resolved mark. Links are on-accent; the focus ring switches to on-accent
+ * so it stays visible on the vermilion field.
+ */
 .footer {
-  border-block-start: 1px solid var(--color-line);
-  padding-block: var(--space-6);
+  padding-block: var(--space-8);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   font-size: var(--text-sm);
-  color: var(--color-ink-muted);
+}
+
+.footer :focus-visible {
+  outline-color: var(--color-on-accent);
 }
 
 .footerInner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-6);
+  gap: var(--space-3) var(--space-6);
+}
+
+.footerMark {
+  --gm-ring: var(--color-on-accent);
+  --gm-dome: var(--color-on-accent);
+  --gm-block: var(--color-ink);
+  --gm-disc: var(--color-ink);
+  inline-size: 3.5rem;
+  block-size: auto;
 }
 
 .footerBrand {
   margin: 0;
+  margin-inline-end: auto;
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 
 .footerNav {
@@ -168,12 +218,12 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--color-ink-muted);
+  color: var(--color-on-accent);
   text-decoration: none;
 }
 
 .footerNav a:hover {
-  color: var(--color-ink);
+  color: var(--color-on-accent);
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
@@ -181,7 +231,11 @@
 @media (width > 64rem) {
   .desktopNav {
     display: flex;
-    gap: var(--space-2) var(--space-6);
+    gap: var(--space-2) var(--space-8);
+    text-transform: uppercase;
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
   }
 
   .menuToggle,

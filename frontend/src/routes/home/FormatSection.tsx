@@ -1,3 +1,4 @@
+import { Block, CaseArc, Disc, HalfDisc, ResolvedMark } from "../../components/graphics/grammar";
 import styles from "./home.module.css";
 
 const STAGES = [
@@ -35,13 +36,14 @@ export function FormatSection() {
           </p>
         </header>
         <div className={styles.stages}>
-          <ProgressionPath />
+          <Trajectory />
           <ol className={styles.stageList}>
             {STAGES.map((stage) => (
               <li key={stage.index} className={styles.stage}>
                 <span className={styles.stageNumber} aria-hidden="true">
                   {stage.index}
                 </span>
+                <StageVignette index={stage.index} />
                 <h3 className={styles.stageName}>
                   {stage.name} <span className={styles.stageAlias}>/ {stage.alias}</span>
                 </h3>
@@ -56,37 +58,75 @@ export function FormatSection() {
 }
 
 /*
- * Signature interaction: the progression path connecting the three stages.
- * The stroke draws itself via a CSS scroll-driven animation as the section
- * crosses the viewport (no JS). The fully drawn path is the baseline:
- * without `animation-timeline` support or under prefers-reduced-motion the
- * animation simply does not apply and the static path is shown.
- * Marker dots sit exactly on the quadratic path joints (T-commands pass
- * through their endpoints). Both variants are decorative → aria-hidden.
+ * The grammar story told in three states of the SAME forms: the team
+ * elements (disc, block, half-disc) scatter around the open case ring,
+ * converge while the ring's gap narrows, and finally assemble into the
+ * resolved mark inside the now-closed ring. All decorative → aria-hidden.
  */
-function ProgressionPath() {
+function StageVignette({ index }: { index: (typeof STAGES)[number]["index"] }) {
+  if (index === "03") {
+    return <ResolvedMark className={`${styles.stageVignette} ${styles.stageMark}`} />;
+  }
+  if (index === "02") {
+    return (
+      <svg
+        className={styles.stageVignette}
+        viewBox="0 0 200 160"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <CaseArc cx={100} cy={80} r={44} width={9} gap={30} rotate={-8} stroke="var(--color-ink)" />
+        <Disc cx={58} cy={100} r={13} fill="var(--color-accent)" />
+        <Block cx={144} cy={58} size={22} rotate={45} fill="var(--color-ink)" />
+        <HalfDisc cx={126} cy={116} r={14} rotate={-28} fill="var(--color-paper)" />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      className={styles.stageVignette}
+      viewBox="0 0 200 160"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <CaseArc cx={100} cy={80} r={44} width={9} gap={70} rotate={-24} stroke="var(--color-ink)" />
+      <Disc cx={32} cy={128} r={13} fill="var(--color-accent)" />
+      <Block cx={168} cy={32} size={22} rotate={12} fill="var(--color-ink)" />
+      <HalfDisc cx={162} cy={128} r={14} rotate={8} fill="var(--color-paper)" />
+    </svg>
+  );
+}
+
+/*
+ * Signature interaction: the trajectory one team element travels between the
+ * three states. Desktop draws a horizontal path with three hops; the accent
+ * disc rides it via `offset-path` driven by a CSS scroll timeline (no JS,
+ * no render loop). Baselines stay fully understandable without motion:
+ * the path is always drawn and the disc rests at the finish — browsers
+ * without offset-path, without animation-timeline or with reduced motion
+ * all keep that static end state. Mobile gets a native vertical wavy path.
+ * Both variants are decorative → aria-hidden.
+ */
+function Trajectory() {
   return (
     <>
       <svg
         className={`${styles.path} ${styles.pathHorizontal}`}
-        viewBox="0 0 1200 96"
+        viewBox="0 0 1200 140"
         aria-hidden="true"
         focusable="false"
       >
         <path
           data-testid="progression-path-horizontal"
           className={styles.pathLine}
-          d="M 24 66 Q 112 66 200 60 T 600 36 T 1000 60 T 1176 56"
-          pathLength={100}
+          d="M 40 118 C 120 118 160 42 240 42 C 320 42 330 118 440 118 C 520 118 560 42 640 42 C 720 42 730 118 840 118 C 920 118 960 42 1040 42 C 1120 42 1140 96 1170 108"
           fill="none"
         />
-        <circle cx="200" cy="60" r="6" fill="var(--color-accent)" />
-        <circle cx="600" cy="36" r="6" fill="var(--color-accent)" />
-        <circle cx="1000" cy="60" r="6" fill="var(--color-accent)" />
+        <circle className={styles.traveller} cx={1170} cy={108} r={9} fill="var(--color-accent)" />
       </svg>
       <svg
         className={`${styles.path} ${styles.pathVertical}`}
-        viewBox="0 0 48 640"
+        viewBox="0 0 60 720"
         preserveAspectRatio="none"
         aria-hidden="true"
         focusable="false"
@@ -94,14 +134,10 @@ function ProgressionPath() {
         <path
           data-testid="progression-path-vertical"
           className={styles.pathLine}
-          d="M 24 16 Q 22 56 20 96 T 28 320 T 20 544 T 24 620"
-          pathLength={100}
+          d="M 30 16 C 44 100 14 160 32 250 C 50 340 12 400 30 490 C 48 580 18 640 30 704"
           fill="none"
           vectorEffect="non-scaling-stroke"
         />
-        <circle cx="20" cy="96" r="6" fill="var(--color-accent)" />
-        <circle cx="28" cy="320" r="6" fill="var(--color-accent)" />
-        <circle cx="20" cy="544" r="6" fill="var(--color-accent)" />
       </svg>
     </>
   );
