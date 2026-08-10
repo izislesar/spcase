@@ -1,11 +1,15 @@
 # Frontend cutover architecture plan
 
-> **Status: defined, not implemented.** This document fixes the exact
+> **Status: defined, not executed.** This document fixes the exact
 > current → target topology and the migration mechanics for replacing the
 > embedded server-rendered frontend (`web/`) with the independent React
 > application decided in `../decisions/0001-frontend-v2.md` and specified in
-> `architecture.md`. Behavioral parity requirements live in
-> `legacy-contract.md`; this plan covers ownership, delivery, build and
+> `architecture.md`. The React frontend foundation now exists under
+> `frontend/` and its expected Vite output structure (`dist/index.html` +
+> fingerprinted `dist/assets/*`) has been validated against this plan, but
+> the production cutover itself has NOT been executed: nginx/Go production
+> topology remains future cutover work. Behavioral parity requirements live
+> in `legacy-contract.md`; this plan covers ownership, delivery, build and
 > deployment mechanics only. Nothing here changes running code.
 
 ## 1. Current URL ownership
@@ -143,8 +147,10 @@ Current mechanism (verified in `internal/delivery/http/v1/auth.go` and
   Domain=<APP_DOMAIN>`, set by the API on register/login, expired on logout;
   every protected request revalidates role/`auth_version`/`disabled_at`
   against PostgreSQL.
-- The frontend never touches the token; all API calls use
-  `credentials: "include"` against the same origin.
+- The frontend never touches the token; the legacy frontend uses
+  `credentials: "include"` against the same origin, and the new React
+  frontend uses `credentials: "same-origin"` for its same-origin `/api/v1`
+  requests. Both are compatible with the cookie contract below.
 
 Cutover compatibility: the React app is served from **the same origin** as
 the API (nginx terminates both). Cookies, `SameSite=Lax` CSRF posture, the
@@ -369,14 +375,13 @@ All must pass, in order, with evidence recorded:
 
 ## 18. File-by-file migration surface
 
-**Created by future stages (new frontend foundation):**
+**Created by the completed foundation stages (already present):**
 
-- `frontend/` — new application: `package.json`, `pnpm-lock.yaml`,
+- `frontend/` — the new application: `package.json`, `pnpm-lock.yaml`,
   `vite.config.ts`, `tsconfig.json`, `index.html`, `src/`, Playwright
-  config, Biome config (exact layout settled at foundation stage).
-- `frontend/AGENTS.md` — frontend-specific agent context (planned in
-  roadmap phase 3).
-- Updates to `.gitignore` for `frontend/dist/` and pnpm artifacts.
+  config, Biome config.
+- `frontend/AGENTS.md` — frontend-specific agent context.
+- `.gitignore` entries for `frontend/dist/` and pnpm artifacts.
 
 **Modified at cutover (delivery layer):**
 
@@ -388,7 +393,7 @@ All must pass, in order, with evidence recorded:
 - `Makefile` — `frontend-build` target points at the new toolchain;
   `security-check` swaps `npm audit` for the pnpm equivalent.
 - `README.md` — development instructions (Vite dev topology).
-- `AGENTS.md` — doc-map/pointers once `frontend/` exists.
+- `AGENTS.md` — doc-map/status pointers as migration stages land.
 - `docs/frontend/architecture.md`, `ROADMAP.md` — status updates.
 
 **Deleted at final cutover (after §17 gates):**

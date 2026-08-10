@@ -5,8 +5,9 @@ server-rendered frontend, PostgreSQL как хранилище состояни�
 production-окружение с Nginx как единственной точкой входа.
 
 Текущий статус: production candidate в переходном периоде. Server-rendered
-frontend (`web/`) — действующая реализация и поведенческий эталон; утверждена
-его будущая замена на независимое frontend-приложение
+frontend (`web/`) — действующая реализация и поведенческий эталон; выполняется
+его замена на независимое React-приложение (`frontend/`) — migration target,
+production cutover ещё НЕ выполнен
 (`docs/decisions/0001-frontend-v2.md`, `ROADMAP.md`).
 
 ## Компоненты
@@ -15,7 +16,9 @@ frontend (`web/`) — действующая реализация и повед�
 - `cmd/admin-bootstrap` — одноразовое создание первого ADMIN;
 - `cmd/healthcheck` — readiness-проба для контейнера;
 - `web/` — server-rendered frontend (templates, Tailwind/esbuild assets,
-  встраиваются в бинарник);
+  встраиваются в бинарник) — текущий legacy frontend;
+- `frontend/` — независимое React-приложение (Vite, TypeScript), цель
+  frontend-миграции; в production-delivery пока не подключено;
 - `migrations/` — Goose-миграции и production allowlist;
 - `scripts/` — production migration, PostgreSQL role cutover и rehearsals;
 - `Dockerfile`, `docker-compose*.yml`, `nginx.conf` — deployment.
@@ -32,6 +35,18 @@ make frontend-build
 
 Во время разработки CSS и JavaScript пересобираются раздельно:
 `npm run watch:css` и `npm run watch:js`.
+
+Новый React-frontend (`frontend/`) разрабатывается независимо (pnpm, Vite;
+dev-server проксирует `/api/v1` на Go backend `localhost:8000`):
+
+```bash
+cd frontend
+pnpm install
+pnpm dev          # Vite dev server на :5173
+pnpm typecheck
+pnpm check        # Biome lint + format
+pnpm build
+```
 
 Миграции используют `DATABASE_URL` либо DB-переменные из локального `.env`:
 
@@ -178,8 +193,8 @@ systemd-ask-password "Initial ADMIN password:" |
   PostgreSQL;
 - `docs/domain/business-rules.md` — бизнес-правила и lifecycle;
 - `docs/contracts/http-api.md` — HTTP API и browser routes;
-- `docs/frontend/` — утверждённое целевое направление frontend (не
-  реализовано);
+- `docs/frontend/` — архитектура и design direction нового frontend
+  (`frontend/`), поведенческий контракт legacy и план cutover;
 - `docs/decisions/0001-frontend-v2.md` — решение о замене frontend;
 - `docs/runbooks/observability.md` — observability baseline и alert
   definitions;

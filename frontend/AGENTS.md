@@ -1,9 +1,11 @@
 # AGENTS.md — SPCase frontend agent context
 
-Independent React application for SPCase (spcase.ru). Scaffolded in roadmap
-phase 3 as a foundation: routing skeleton, API transport and CSS primitives
-only. NOT wired into production; the legacy server-rendered `web/` remains
-the running frontend and the behavioral authority until cutover.
+Independent React application for SPCase (spcase.ru). The foundation was
+scaffolded in roadmap phase 3; since then a working public visual
+implementation (home, schedule and the other public routes) has been built
+and iterated through Stage 4/4A/4B. NOT wired into production; the legacy
+server-rendered `web/` remains the running frontend and the behavioral
+authority until cutover.
 
 ## Approved stack
 
@@ -35,12 +37,18 @@ the running frontend and the behavioral authority until cutover.
 - TypeScript strict: `tsc --noEmit` covers `src`, `vite.config.ts`,
   `playwright.config.ts`, `e2e`. Keep it green (`pnpm typecheck`).
 - Russian UI copy; `lang="ru"`.
-- Mobile is first-class: compose from 320 px, touch targets ≥ 44 px, no
-  hover-dependent functionality.
+- Mobile is first-class: mobile-first functional parity, compose from
+  320 px, touch targets ≥ 44 px, no hover-dependent functionality.
+- Accessibility is mandatory, not optional: keep the ACCESSIBILITY
+  requirements of `docs/frontend/legacy-contract.md` satisfied in every
+  change.
 - Respect `prefers-reduced-motion`; `scroll-behavior: smooth` is the only
   default motion. Experimental features (container queries, `color-mix()`,
   view transitions) must progressively enhance a usable baseline.
 - SVG/DOM/CSS-first graphics.
+- No unjustified runtime dependencies (see Dependencies below); no backend
+  contract invention — the API contract in `docs/contracts/http-api.md` and
+  the error envelope are fixed.
 
 ## Dependencies
 
@@ -53,6 +61,20 @@ when a concrete feature justifies them. No Tailwind, no component libraries.
 Graphic-editorial / illustrative-modernist. Explicitly rejected: generic
 B2B SaaS look, glassmorphism, arbitrary purple/blue gradients, decorative
 WebGL, excessive motion. See `docs/frontend/design-direction.md`.
+
+Before any visual work, read BOTH:
+
+- `docs/frontend/design-direction.md` — the stable visual north star;
+- `docs/frontend/visual-acceptance.md` — the current human visual review
+  state (what is accepted, what is rejected, what the next stage must
+  improve, and the gate before Stage 5).
+
+Important: the current DOM/CSS/component structure is NOT automatically a
+visual source of truth. When human visual acceptance rejects an
+implementation pattern, agents may substantially recompose the visual layer
+(markup structure, CSS, illustration components) while preserving behavior
+and accessibility. A technically valid, committed implementation is not
+necessarily a visually accepted one.
 
 ## Behavioral parity
 

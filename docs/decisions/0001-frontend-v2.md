@@ -1,6 +1,6 @@
 # ADR 0001: Replace the server-rendered frontend with an independent frontend application
 
-- Status: **Approved — migration not yet executed**
+- Status: **Approved — migration in progress**
 - Date: 2026-08
 
 ## Context

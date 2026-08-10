@@ -7,10 +7,13 @@ server-rendered frontend, Docker Compose production environment with Nginx.
 
 Current state: **production candidate in transition**. Backend, database and
 production infrastructure are complete. An approved decision
-(`docs/decisions/0001-frontend-v2.md`) will replace the server-rendered
-frontend with an independent frontend application. That migration has NOT
-started: the existing `web/` frontend is the current implementation and the
-behavioral reference until parity is captured and cutover is accepted.
+(`docs/decisions/0001-frontend-v2.md`) replaces the server-rendered frontend
+with an independent frontend application. That migration is **in progress**:
+the existing `web/` frontend remains the current implementation and the
+behavioral reference until parity is captured and cutover is accepted, while
+`frontend/` is an active independent React application that is the migration
+target. Production cutover has NOT happened. Current phase and status are
+defined by `ROADMAP.md`; frontend-specific work must read `frontend/AGENTS.md`.
 
 ## Architectural boundaries
 
@@ -23,9 +26,9 @@ HTTP Handler → Service → Repository → PostgreSQL
 - Repositories contain persistence logic (no HTTP responses).
 - Domain contains entities, rules and stable errors.
 - Frontend (current): server-rendered templates/assets embedded via `web/`.
-- Frontend (future): independent application consuming `/api/v1` — see
-  `docs/frontend/architecture.md`. Do not implement it outside the roadmap
-  stages.
+- Frontend (migration target): independent React application in `frontend/`
+  consuming `/api/v1` — see `docs/frontend/architecture.md` and
+  `frontend/AGENTS.md`. Work on it follows the roadmap stages.
 
 Do not move logic between layers or introduce new abstractions without a
 strong, stated reason. Existing working code is preferred over theoretical
@@ -52,6 +55,7 @@ Read the document matching your task before editing:
 | Business rules, lifecycles, scoring, deadlines | `docs/domain/business-rules.md` |
 | HTTP endpoints, auth cookie, error contract | `docs/contracts/http-api.md` |
 | Frontend target direction and stack | `docs/frontend/architecture.md`, `docs/frontend/design-direction.md` |
+| Human visual acceptance state (frontend stages) | `docs/frontend/visual-acceptance.md` |
 | Legacy frontend behavioral parity contract | `docs/frontend/legacy-contract.md` |
 | Frontend cutover topology and mechanics | `docs/frontend/cutover-plan.md` |
 | Frontend replacement decision | `docs/decisions/0001-frontend-v2.md` |

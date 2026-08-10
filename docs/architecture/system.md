@@ -80,6 +80,7 @@ web/
   template/            server-rendered pages
   src/                 Tailwind/JavaScript sources
   static/              compiled embedded assets
+frontend/              independent React application (migration target)
 ```
 
 ### Configuration
@@ -163,7 +164,15 @@ RBAC-роли: `USER`, `JURY`, `ADMIN`. Team membership — отдельное �
 
 Tailwind CSS и JavaScript bundle собираются Node/esbuild stage. Asset hash добавляется к URL для cache busting. Nginx раздаёт `/static/*` с immutable cache; Go handler содержит те же assets для прямого запуска без Nginx. HTML и sensitive API responses имеют `no-store`.
 
-Этот server-rendered frontend является legacy и запланирован к замене на независимое frontend-приложение (см. `../frontend/architecture.md` и решение `../decisions/0001-frontend-v2.md`). До завершения parity и cutover он остаётся текущей реализацией и поведенческим эталоном; его поведение не меняется в рамках подготовки миграции.
+Этот server-rendered frontend является legacy и заменяется на независимое
+frontend-приложение (см. `../frontend/architecture.md` и решение
+`../decisions/0001-frontend-v2.md`). Целевое React SPA уже существует в
+`frontend/` (Vite build → `dist/index.html` + fingerprinted `assets/`), но
+ещё НЕ подключено к production delivery: nginx по-прежнему проксирует все
+browser routes в Go, а cutover-топология описана в
+`../frontend/cutover-plan.md` как будущая работа. До завершения parity и
+cutover legacy `web/` остаётся текущей реализацией и поведенческим эталоном;
+его поведение не меняется в рамках миграции.
 
 ## 8. Docker deployment flow
 

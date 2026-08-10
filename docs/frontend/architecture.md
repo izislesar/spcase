@@ -1,16 +1,18 @@
 # Frontend target architecture
 
-> **Status: approved target direction; foundation scaffolded (roadmap phase 3).**
-> The current frontend is the server-rendered implementation in `web/`,
-> embedded in the Go binary. It remains the running system and the behavioral
-> reference until parity is captured and cutover is accepted.
+> **Status: approved target direction; migration in progress.**
+> The current production frontend is the server-rendered implementation in
+> `web/`, embedded in the Go binary. It remains the running system and the
+> behavioral reference until parity is captured and cutover is accepted.
 > See `../decisions/0001-frontend-v2.md` for the decision record.
 >
-> Phase 3 delivered `frontend/`: a Vite 8 + React 19 + TypeScript (strict)
-> application with React Router 8 (data mode) covering the legacy route map
-> as placeholders, the `/api/v1` fetch transport, CSS token/base primitives,
-> Biome and Playwright configuration. This is foundation only — no parity,
-> no visual design, no production wiring. Details: `../../frontend/AGENTS.md`.
+> The independent `frontend/` project exists and is the migration target:
+> a Vite 8 + React 19 + TypeScript (strict) application with React Router
+> (data mode), TanStack Query, the `/api/v1` fetch transport, CSS
+> token/base primitives, Biome and Playwright configuration, and a working
+> public visual implementation iterated through roadmap Stage 4/4A/4B
+> (visual status: `visual-acceptance.md`). Production cutover is defined
+> (`cutover-plan.md`) but NOT executed. Details: `../../frontend/AGENTS.md`.
 
 ## Direction
 
@@ -70,12 +72,24 @@ Experimental browser features (View Transitions, scroll-driven animations,
 Container Queries, `color-mix()`, Subgrid) must **progressively enhance a
 usable baseline**. Core functionality must remain fully usable without them.
 
+## Current implementation state
+
+- The independent `frontend/` project exists (pnpm, Vite 8, React 19,
+  TypeScript strict, Biome, Playwright).
+- Vite builds `dist/index.html` plus fingerprinted assets under
+  `dist/assets/*` — the output structure expected by the cutover plan.
+- Routing: React Router Data Mode (`createBrowserRouter`); framework mode
+  is not used.
+- API requests go to the relative path `/api/v1` through a single fetch
+  client; in development a Vite proxy forwards `/api/v1` to the Go backend
+  on `localhost:8000`, keeping calls same-origin.
+- Browser credential model: `credentials: "same-origin"`; the
+  `access_token` HttpOnly cookie is never read or stored by the frontend.
+- Behavioral requirements are fixed in `legacy-contract.md`; production
+  delivery topology is defined in `cutover-plan.md`. The cutover is defined
+  but NOT yet executed.
+
 ## What is not decided yet
 
-- exact project layout and build/deploy wiring for the new frontend;
-- how static frontend delivery is separated from the Go service in Compose;
-- the behavioral-parity checklist (produced by the contract-audit stage).
-
-Do not treat this document as permission to start the implementation: the
-migration begins only after the existing frontend's behavioral contract is
-captured (see `../../ROADMAP.md`).
+- exact build/deploy wiring of the new frontend into the production Compose
+  stack (settled at the cutover stage per `cutover-plan.md`).

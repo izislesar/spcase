@@ -1,10 +1,16 @@
 # spcase — Roadmap
 
-Текущий статус: production candidate на паузе перед staging acceptance.
+Текущий статус: production candidate; выполняется frontend-миграция.
 Backend, database и production-инфраструктура реализованы и проверены.
 Принято решение заменить server-rendered frontend на независимое современное
 frontend-приложение до продолжения staging/production cutover
 (см. `docs/decisions/0001-frontend-v2.md`).
+
+Frontend-миграция находится на этапе публичной визуальной системы (фаза 4):
+технический foundation и поведенческий контракт завершены, публичная
+визуальная реализация прошла итерации Stage 4 / 4A / 4B. Stage 4B технически
+принят, но визуально НЕ принят — статус `ITERATE` (текущее состояние human
+review: `docs/frontend/visual-acceptance.md`). Следующий шаг — Stage 4C.
 
 Staging acceptance и production deployment НЕ являются ближайшей фазой: они
 возобновляются только после завершения frontend-миграции.
@@ -29,20 +35,25 @@ Staging acceptance и production deployment НЕ являются ближайш
 
 ## Фаза 2. Frontend behavioral contract
 
-- [ ] 2.1 Провести аудит существующего server-rendered frontend (`web/`)
-- [ ] 2.2 Зафиксировать поведенческий контракт: маршруты, состояния, формы, ошибки, role-specific flows USER/JURY/ADMIN
-- [ ] 2.3 Определить критерии parity для будущего cutover
+- [x] 2.1 Провести аудит существующего server-rendered frontend (`web/`)
+- [x] 2.2 Зафиксировать поведенческий контракт: маршруты, состояния, формы, ошибки, role-specific flows USER/JURY/ADMIN — `docs/frontend/legacy-contract.md`
+- [x] 2.3 Определить критерии parity для будущего cutover — `docs/frontend/legacy-contract.md`, acceptance gates в `docs/frontend/cutover-plan.md`
 
 ## Фаза 3. Новый frontend foundation
 
-- [x] 3.1 Создать независимое frontend-приложение по утверждённому стеку (`docs/frontend/architecture.md`) — реализовано в `frontend/`: только foundation (маршрутный skeleton, API-транспорт, CSS-примитивы), НЕ parity, НЕ design, НЕ cutover
+- [x] 3.1 Создать независимое frontend-приложение по утверждённому стеку (`docs/frontend/architecture.md`) — реализовано в `frontend/` (Vite 8, React 19, TypeScript strict, React Router data mode, TanStack Query, CSS Modules); production cutover НЕ выполнен
 - [x] 3.2 Настроить toolchain, проверки и интеграцию с существующим `/api/v1` — pnpm, Vite 8, TypeScript strict, Biome, dev-proxy к `localhost:8000`
 - [x] 3.3 Настроить Playwright-окружение для end-to-end проверок — desktop/mobile projects и routing smoke tests; прогон требует установленных браузеров
 
 ## Фаза 4. Публичная визуальная система
 
-- [ ] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`)
-- [ ] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion
+- [~] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — реализация существует и прошла итерации Stage 4 / 4A / 4B; Stage 4B технически принят, human visual acceptance: **ITERATE** (не ACCEPT), см. `docs/frontend/visual-acceptance.md`
+- [~] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — механизмы реализованы; финальная композиция 320/375 px пересматривается в Stage 4C
+- [ ] 4.3 Stage 4C — визуальная итерация по результатам human review (`docs/frontend/visual-acceptance.md`): wide/full-bleed композиция, heterogeneous editorial scenes, сокращение card chrome, mobile 320/375 recomposition
+
+**Gate:** фаза 5 НЕ начинается, пока human review явно не зафиксирует visual
+ACCEPT в `docs/frontend/visual-acceptance.md`. Технически валидный commit не
+равен визуально принятому.
 
 ## Фаза 5. Миграция USER/JURY/ADMIN
 
