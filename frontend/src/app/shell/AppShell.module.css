@@ -53,7 +53,7 @@
   cursor: pointer;
 }
 
-/* Mobile menu: the navy flat field with a quiet pennant scene behind. */
+/* Mobile menu: the navy flat field with the quiet finish scene behind. */
 .menuOverlay {
   position: fixed;
   inset: 0;
@@ -66,9 +66,9 @@
 .menuEcho {
   position: absolute;
   inset-block-end: calc(-1 * var(--space-8));
-  inset-inline-end: calc(-1 * var(--space-8));
-  inline-size: min(70vw, 20rem);
-  opacity: 0.5;
+  inset-inline-end: calc(-1 * var(--space-12));
+  inline-size: min(96vw, 30rem);
+  opacity: 0.55;
   pointer-events: none;
 }
 
@@ -162,8 +162,9 @@
 }
 
 /*
- * Footer: the closing scene on the navy field. The oversized statement and
- * the pennant artwork complete the page; the meta row sits beneath.
+ * Footer: the closing poster on the navy field. The oversized statement
+ * and the wide finish scene complete the page; the meta row sits beneath.
+ * The scene bleeds off the right gutter and the bottom edge.
  */
 .footer {
   padding-block: var(--space-12) var(--space-8);
@@ -210,9 +211,10 @@
 }
 
 .footerScene {
-  inline-size: min(62vw, 17rem);
+  inline-size: min(96vw, 34rem);
   justify-self: end;
-  margin-block-start: calc(-1 * var(--space-16));
+  margin-block-start: calc(-1 * var(--space-4));
+  margin-inline-end: calc(-1 * var(--gutter-wide));
   pointer-events: none;
 }
 
@@ -272,6 +274,10 @@
     display: none;
   }
 
+  /*
+   * The bottom bar: thin, quiet, mostly whitespace — a hairline rule and
+   * small caps links that do not compete with the page composition.
+   */
   .bottomBar {
     position: fixed;
     inset-block-end: 0;
@@ -281,18 +287,36 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-6);
-    padding: 0 var(--gutter);
+    padding: 0 var(--gutter-wide);
     background: var(--color-canvas);
     border-block-start: 1px solid var(--color-line);
+  }
+
+  .barBrand {
+    font-size: 1.0625rem;
   }
 
   .barLinks {
     display: flex;
     gap: var(--space-2) var(--space-8);
     text-transform: uppercase;
-    font-size: var(--text-eyebrow);
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
+  }
+
+  /* Desktop footer: statement left, the finish scene bleeding right. */
+  .footerInner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .footerMeta {
+    grid-column: 1 / -1;
+  }
+
+  .footerScene {
+    inline-size: min(46vw, 42rem);
   }
 
   /* Keep page content clear of the fixed bar. */

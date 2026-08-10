@@ -1,15 +1,22 @@
-import { CaseMachine } from "../../components/graphics/illustrations";
+import { HeroScene } from "../../components/graphics/scenes/HeroScene";
 import { ArrowLink, ButtonLink } from "../../components/ui/ActionLinks";
 import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
 import { errorMessage, usePublicInfo } from "./api";
-import styles from "./home.module.css";
+import styles from "./Hero.module.css";
 import { formatCountdown, useCountdown } from "./useCountdown";
 
+/*
+ * The hero as a page-scale poster: headline block, artwork and body are
+ * three separate regions of one grid. On desktop the artwork occupies the
+ * whole right half and bleeds off the viewport edge; on mobile it moves
+ * between the headline and the body as a full-bleed strip. Typography and
+ * illustration carry comparable visual weight.
+ */
 export function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="home-heading">
-      <div className={`container ${styles.heroInner}`}>
-        <div className={styles.heroCopy}>
+      <div className={`container-wide ${styles.heroInner}`}>
+        <div className={styles.heroHead}>
           <p className={styles.eyebrow}>Санкт-Петербург · 2026</p>
           {/*
             Heavy grotesk headline with two deliberate line breaks; the second
@@ -20,6 +27,18 @@ export function Hero() {
             <span className={styles.displayTop}>СПК</span>
             <span className={styles.displayMain}>кейс-чемпионат</span>
           </h1>
+        </div>
+        {/*
+          The one hero artwork: the case-solving machine as a wide editorial
+          scene. Documents fly in, the machine works them over, the pennant
+          comes out. One-shot entrance assembly (CSS, staggered groups);
+          reduced motion gets the final static composition. Decorative → the
+          svg is aria-hidden.
+        */}
+        <div className={styles.heroArtWrap}>
+          <HeroScene className={styles.heroArt} />
+        </div>
+        <div className={styles.heroBody}>
           <p className={styles.lead}>
             Практический кейс, командная работа и защита решения перед экспертами.
           </p>
@@ -32,14 +51,6 @@ export function Hero() {
           </p>
           <Countdown />
         </div>
-        {/*
-          The one hero artwork: the case-solving machine. Documents fly in,
-          the machine works them over, the championship pennant comes out.
-          The scene plays a one-shot entrance assembly (CSS, staggered
-          groups); reduced motion and unsupported engines get the final
-          static composition. Decorative → the svg is aria-hidden.
-        */}
-        <CaseMachine className={styles.heroArt} />
       </div>
     </section>
   );

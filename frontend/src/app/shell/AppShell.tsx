@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { FlagScene, Mark } from "../../components/graphics/illustrations";
+import { Mark } from "../../components/graphics/Mark";
+import { ClosingScene } from "../../components/graphics/scenes/ClosingScene";
 import { ButtonLink } from "../../components/ui/ActionLinks";
 import styles from "./AppShell.module.css";
 
@@ -115,7 +116,7 @@ export function AppShell() {
       </header>
       {menuOpen && (
         <div className={styles.menuOverlay}>
-          <FlagScene className={styles.menuEcho} />
+          <ClosingScene className={styles.menuEcho} />
           <div
             ref={panelRef}
             id={menuId}
@@ -165,11 +166,11 @@ export function AppShell() {
         <Outlet />
       </main>
       {/*
-        Footer: the closing scene — an oversized statement and one clear
-        action on the navy field, the pennant raised beside it.
+        Footer: the closing poster — the oversized statement and one clear
+        action beside the wide finish scene, cropped by the footer edges.
       */}
       <footer className={styles.footer} inert={menuOpen}>
-        <div className={`container ${styles.footerInner}`}>
+        <div className={`container-wide ${styles.footerInner}`}>
           <div className={styles.footerCta}>
             <p className={styles.footerStatement}>
               Собери команду.
@@ -180,7 +181,7 @@ export function AppShell() {
               Подать заявку
             </ButtonLink>
           </div>
-          <FlagScene className={styles.footerScene} />
+          <ClosingScene className={styles.footerScene} />
           <div className={styles.footerMeta}>
             <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
             <nav className={styles.footerNav} aria-label="Дополнительная навигация">

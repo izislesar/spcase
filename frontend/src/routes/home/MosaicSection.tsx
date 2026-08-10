@@ -1,45 +1,53 @@
 import { Link } from "react-router";
-import { CalendarArt, ChatArt, CupArt, StageSheet } from "../../components/graphics/illustrations";
-import styles from "./home.module.css";
+import { GearScene } from "../../components/graphics/scenes/GearScene";
+import { PodiumScene } from "../../components/graphics/scenes/PodiumScene";
+import styles from "./MosaicSection.module.css";
 
 /*
- * Editorial mosaic: a small set of large heterogeneous tiles — visual
- * navigation and poster surfaces for the real public destinations and
- * content, not SaaS feature cards. Tiles differ in size, dominant color
- * and artwork; one is pure illustration. Only tiles with a real
- * destination are links.
+ * Editorial collage: four heterogeneous surfaces plus one deliberate blank
+ * region — a curated wall, not a Bento grid. Each piece has its own
+ * anatomy (typographic navigation field, pure artwork field, quiet
+ * hairline teaser, dark celebration scene); there is no shared tile
+ * component, no shared padding/radius/shadow recipe. Only pieces with a
+ * real destination are links.
  */
 export function MosaicSection() {
   return (
     <section className={styles.mosaic} aria-label="Разделы чемпионата">
-      <div className={`container ${styles.mosaicGrid}`}>
-        <Link to="/register" className={`${styles.tile} ${styles.tileJoin}`}>
-          <span className={styles.tileKicker}>Участие</span>
-          <span className={styles.tileTitle}>Подать заявку</span>
-          <span className={styles.tileText}>Команды из двух—четырёх участников.</span>
-          <StageSheet className={styles.tileArt} />
+      <div className={`container-wide ${styles.mosaicGrid}`}>
+        <Link to="/register" className={styles.pieceJoin}>
+          <span className={styles.joinKicker}>Участие</span>
+          <span className={styles.joinTitle}>
+            Подать
+            <br />
+            заявку
+          </span>
+          <span className={styles.joinText}>
+            Команды из двух—четырёх участников.
+            <span className={styles.joinArrow} aria-hidden="true">
+              →
+            </span>
+          </span>
         </Link>
-        <Link to="/schedule" className={`${styles.tile} ${styles.tileSchedule}`}>
-          <span className={styles.tileKicker}>Даты</span>
-          <span className={styles.tileTitle}>Расписание</span>
-          <span className={styles.tileText}>Все этапы и дедлайны чемпионата.</span>
-          <CalendarArt className={styles.tileArt} />
+        {/* Pure artwork field: the gears at full bleed, cropped by the piece. */}
+        <div className={styles.pieceArt} aria-hidden="true">
+          <GearScene className={styles.artScene} />
+        </div>
+        <Link to="/schedule" className={styles.pieceDates}>
+          <span className={styles.datesKicker}>Даты и дедлайны</span>
+          <span className={styles.datesTitle}>Расписание</span>
+          <span className={styles.datesText}>
+            Все этапы чемпионата в хронологии — на отдельной странице.
+            <span className={styles.datesArrow} aria-hidden="true">
+              ↗
+            </span>
+          </span>
         </Link>
-        <div className={`${styles.tile} ${styles.tileFinal}`}>
-          <span className={styles.tileKicker}>Защита</span>
-          <span className={styles.tileTitle}>Финал и жюри</span>
-          <span className={styles.tileText}>Оценка решения по шести критериям.</span>
-          <CupArt className={styles.tileArt} />
-        </div>
-        <div className={`${styles.tile} ${styles.tileFaq}`}>
-          <span className={styles.tileKicker}>Детали</span>
-          <span className={styles.tileTitle}>Вопросы и ответы</span>
-          <span className={styles.tileText}>Коротко о главном — ниже на странице.</span>
-          <ChatArt className={styles.tileArt} />
-        </div>
-        {/* Pure illustration tile: the cup at large scale, no text at all. */}
-        <div className={`${styles.tile} ${styles.tileArtOnly}`} aria-hidden="true">
-          <CupArt className={styles.tileArtLarge} />
+        <div className={styles.pieceFinal}>
+          <PodiumScene className={styles.finalScene} />
+          <p className={styles.finalCaption}>
+            Финал — защита решения перед экспертным жюри и оценка по шести критериям.
+          </p>
         </div>
       </div>
     </section>

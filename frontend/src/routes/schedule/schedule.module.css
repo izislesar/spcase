@@ -1,4 +1,4 @@
-/* Dedicated /schedule page — a large vertical storytelling timeline. */
+/* Dedicated /schedule page — a large vertical storytelling composition. */
 
 .page {
   padding-block: clamp(2rem, 1rem + 5vw, 5rem) var(--section-gap);
@@ -16,19 +16,19 @@
 
 .header {
   display: grid;
-  gap: var(--space-6);
-  align-items: center;
-  margin-bottom: var(--space-16);
+  gap: var(--space-8);
+  align-items: end;
+  margin-bottom: clamp(4rem, 3rem + 6vw, 9rem);
 }
 
 .headerCopy {
-  max-width: 44rem;
+  max-width: 48rem;
 }
 
 .title {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  font-size: var(--text-display);
+  font-size: var(--text-poster);
   font-weight: 800;
   line-height: 0.96;
   letter-spacing: -0.035em;
@@ -43,9 +43,9 @@
 }
 
 .headerArt {
-  inline-size: min(52vw, 13rem);
+  inline-size: min(80vw, 26rem);
   block-size: auto;
-  justify-self: end;
+  justify-self: start;
   pointer-events: none;
 }
 
@@ -103,7 +103,7 @@
 
 .items {
   display: grid;
-  gap: var(--space-16);
+  gap: clamp(4rem, 3rem + 8vw, 9rem);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -135,7 +135,7 @@
 .day {
   display: block;
   font-family: var(--font-display);
-  font-size: var(--text-numeral);
+  font-size: clamp(3.5rem, 2.4rem + 5.5vw, 7.5rem);
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.03em;
@@ -144,9 +144,9 @@
 
 .month {
   display: block;
-  margin-block-start: var(--space-1);
+  margin-block-start: var(--space-2);
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--color-accent-strong);
@@ -164,12 +164,13 @@
 .body {
   min-width: 0;
   max-width: 38rem;
+  align-self: center;
 }
 
 .eventTitle {
   margin: 0 0 var(--space-2);
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   font-weight: 800;
   letter-spacing: -0.02em;
   overflow-wrap: break-word;
@@ -177,28 +178,37 @@
 
 .eventDescription {
   margin: 0;
+  font-size: var(--text-lg);
   color: var(--color-ink-muted);
   overflow-wrap: break-word;
 }
 
+/* The closing poster: the finish scene on a flat navy band. */
+.closingBand {
+  margin-top: clamp(4rem, 3rem + 8vw, 9rem);
+  background: var(--color-navy);
+  overflow: clip;
+}
+
 .closingArt {
-  inline-size: min(60vw, 16rem);
-  block-size: auto;
-  margin: var(--space-16) auto 0;
   display: block;
+  inline-size: min(100%, 52rem);
+  block-size: auto;
+  margin-inline: auto;
+  margin-block-end: -2px;
   pointer-events: none;
 }
 
 .empty {
   display: grid;
   justify-items: center;
-  gap: var(--space-6);
+  gap: var(--space-8);
   padding-block: var(--space-16);
   text-align: center;
 }
 
 .emptyArt {
-  inline-size: min(64vw, 16rem);
+  inline-size: min(88vw, 28rem);
   block-size: auto;
 }
 
@@ -216,6 +226,11 @@
 
   .header {
     grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .headerArt {
+    inline-size: min(38vw, 30rem);
+    justify-self: end;
   }
 
   .line,

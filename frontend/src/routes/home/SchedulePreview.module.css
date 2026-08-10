@@ -1,0 +1,110 @@
+/* Schedule preview — typographic rows on the full-bleed turquoise field. */
+
+.schedule {
+  padding-block: var(--section-gap);
+  background: var(--color-turquoise);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--color-ink) 68%, var(--color-turquoise));
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  overflow-wrap: break-word;
+}
+
+.scheduleHeader {
+  margin-bottom: var(--space-12);
+}
+
+.eventRows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-block-start: 2px solid var(--color-ink);
+}
+
+.eventRow {
+  display: grid;
+  gap: var(--space-1) var(--space-8);
+  padding-block: var(--space-6);
+  border-block-end: 1px solid color-mix(in oklch, var(--color-ink) 26%, transparent);
+}
+
+.eventTime {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.eventBody {
+  min-width: 0;
+}
+
+.eventTitle {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+}
+
+.eventDescription {
+  margin: 0;
+  max-width: 62ch;
+  color: color-mix(in oklch, var(--color-ink) 74%, var(--color-turquoise));
+  overflow-wrap: break-word;
+}
+
+.scheduleEmpty {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: color-mix(in oklch, var(--color-ink) 74%, var(--color-turquoise));
+}
+
+.scheduleFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  margin-top: var(--space-8);
+}
+
+.scheduleNote {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--text-sm);
+  color: color-mix(in oklch, var(--color-ink) 74%, var(--color-turquoise));
+}
+
+.scheduleLink {
+  color: var(--color-ink);
+}
+
+@media (width > 64rem) {
+  .eventRow {
+    grid-template-columns: minmax(19rem, max-content) 1fr;
+    align-items: baseline;
+  }
+
+  .eventTime {
+    font-size: var(--text-2xl);
+    letter-spacing: -0.02em;
+  }
+}

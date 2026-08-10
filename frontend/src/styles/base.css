@@ -105,6 +105,19 @@
     padding-inline: var(--gutter);
   }
 
+  /*
+   * Wide editorial primitive for public page compositions: sections get
+   * close to the viewport width so artwork and color fields can breathe,
+   * crop and break the grid. Readable text inside still uses constrained
+   * measures — the wide frame is for graphics, not paragraphs.
+   */
+  .container-wide {
+    container-type: inline-size;
+    max-width: var(--container-wide-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter-wide);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

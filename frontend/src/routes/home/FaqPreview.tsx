@@ -1,9 +1,15 @@
 import { useId, useState } from "react";
-import { ChatArt } from "../../components/graphics/illustrations";
+import { BubbleScene } from "../../components/graphics/scenes/BubbleScene";
 import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
 import { errorMessage, useFaq } from "./api";
-import styles from "./home.module.css";
+import styles from "./FaqPreview.module.css";
 
+/*
+ * FAQ — the quiet decompression after the louder sections: hairline rows
+ * and one large conversation scene beside them. Accordion semantics are
+ * unchanged: one open item at a time, collapsed regions stay in the DOM
+ * hidden visually and from AT.
+ */
 export function FaqPreview() {
   const faq = useFaq();
   const idPrefix = useId();
@@ -20,9 +26,9 @@ export function FaqPreview() {
           <p className={styles.sectionIntro}>
             Если ответа здесь нет, организаторы помогут уточнить детали до начала чемпионата.
           </p>
+          {/* One large quiet scene under the header; the rows stay calm. */}
+          <BubbleScene className={styles.faqArt} />
         </header>
-        {/* One quiet illustration beside the rows; the section stays calm. */}
-        <ChatArt className={styles.faqArt} />
         {faq.isPending && <LoadingState label="Загружаем вопросы…" />}
         {faq.isError && <ErrorNotice message={errorMessage(faq.error)} />}
         {faq.isSuccess &&
@@ -61,9 +67,6 @@ export function FaqPreview() {
                         </svg>
                       </button>
                     </h3>
-                    {/* One open item at a time; collapsed regions stay in the
-                        DOM but are hidden visually and from AT. The labelled
-                        section carries the implicit region role. */}
                     <section
                       id={regionId}
                       aria-labelledby={buttonId}

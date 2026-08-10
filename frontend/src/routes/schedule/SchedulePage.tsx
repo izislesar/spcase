@@ -1,4 +1,5 @@
-import { CalendarArt, FlagScene } from "../../components/graphics/illustrations";
+import { ClosingScene } from "../../components/graphics/scenes/ClosingScene";
+import { RouteScene } from "../../components/graphics/scenes/RouteScene";
 import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
 import { errorMessage, eventDateTimeAttr, useSchedule } from "../home/api";
 import styles from "./schedule.module.css";
@@ -18,18 +19,19 @@ function dateParts(value: string): { day: string; month: string; time: string } 
 }
 
 /*
- * Dedicated schedule: a large vertical storytelling timeline. Oversized
- * dates sit off a single ink line; a coral progress line fills with page
- * scroll (native CSS scroll timeline, fully guarded — the plain line is
- * the baseline). The composition intentionally occupies space, so the
- * page stays designed even with few events.
+ * Dedicated schedule: a large vertical storytelling page. Oversized dates
+ * sit off a single ink line; a coral progress line fills with page scroll
+ * (native CSS scroll timeline, fully guarded — the plain line is the
+ * baseline). Artwork between the segments and the wide closing scene make
+ * the composition occupy space intentionally, so the page stays designed
+ * even with few events.
  */
 export function SchedulePage() {
   const schedule = useSchedule();
 
   return (
     <section className={styles.page} aria-labelledby="schedule-heading">
-      <div className="container">
+      <div className="container-wide">
         <header className={styles.header}>
           <div className={styles.headerCopy}>
             <p className={styles.eyebrow}>СПК кейс-чемпионат · 2026</p>
@@ -41,7 +43,7 @@ export function SchedulePage() {
               поясе участника.
             </p>
           </div>
-          <CalendarArt className={styles.headerArt} />
+          <RouteScene className={styles.headerArt} />
         </header>
         {schedule.isPending && <LoadingState label="Загружаем расписание…" />}
         {schedule.isError && <ErrorNotice message={errorMessage(schedule.error)} />}
@@ -75,11 +77,14 @@ export function SchedulePage() {
                   );
                 })}
               </ol>
-              <FlagScene className={styles.closingArt} />
+              {/* The closing poster: the finish scene on its navy band. */}
+              <div className={styles.closingBand}>
+                <ClosingScene className={styles.closingArt} />
+              </div>
             </div>
           ) : (
             <div className={styles.empty}>
-              <CalendarArt className={styles.emptyArt} />
+              <RouteScene className={styles.emptyArt} />
               <p className={styles.emptyText}>События пока не опубликованы. Загляните позже.</p>
             </div>
           ))}

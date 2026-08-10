@@ -1,8 +1,14 @@
+import { PodiumScene } from "../../components/graphics/scenes/PodiumScene";
+import { PublicAuthShell } from "../../components/layout/PublicAuthShell";
+
 export function JuryLoginPage() {
   return (
-    <section>
-      <h1>Вход для жюри</h1>
-      <p>Вход для членов жюри.</p>
-    </section>
+    <PublicAuthShell
+      eyebrow="Жюри"
+      title="Вход для жюри"
+      lead="Вход для членов экспертного жюри — к списку команд и оценке решений."
+      field="navy"
+      art={<PodiumScene />}
+    />
   );
 }

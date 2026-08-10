@@ -1,8 +1,14 @@
+import { SheetStack } from "../../components/graphics/scenes/SheetStack";
+import { PublicAuthShell } from "../../components/layout/PublicAuthShell";
+
 export function RegisterPage() {
   return (
-    <section>
-      <h1>Регистрация</h1>
-      <p>Регистрация участника чемпионата.</p>
-    </section>
+    <PublicAuthShell
+      eyebrow="Участникам"
+      title="Регистрация"
+      lead="Профиль участника — первый шаг к команде и подаче решения на чемпионат."
+      field="mustard"
+      art={<SheetStack />}
+    />
   );
 }

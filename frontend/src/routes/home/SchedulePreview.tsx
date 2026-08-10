@@ -1,7 +1,7 @@
 import { ArrowLink } from "../../components/ui/ActionLinks";
 import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
 import { errorMessage, eventDateTimeAttr, formatEventTime, useSchedule } from "./api";
-import styles from "./home.module.css";
+import styles from "./SchedulePreview.module.css";
 
 /*
  * Homepage schedule preview on the turquoise field: concise typographic
@@ -13,7 +13,7 @@ export function SchedulePreview() {
 
   return (
     <section className={styles.schedule} aria-labelledby="schedule-preview-heading">
-      <div className={`container ${styles.scheduleInner}`}>
+      <div className={`container-wide ${styles.scheduleInner}`}>
         <header className={styles.scheduleHeader}>
           <p className={styles.eyebrow}>02 · По времени</p>
           <h2 id="schedule-preview-heading" className={styles.sectionTitle}>

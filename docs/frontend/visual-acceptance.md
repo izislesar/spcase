@@ -12,11 +12,17 @@
 
 ## Current status
 
-**Stage 4B — TECHNICALLY ACCEPTED / VISUALLY ITERATE**
+**Stage 4C implemented — awaiting human visual review**
 
-The Stage 4B implementation is committed and technically sound (behavior,
-accessibility mechanisms, responsiveness machinery). Human visual review did
-not accept the result; the next design step is Stage 4C.
+The Stage 4C implementation is committed and technically validated
+(typecheck, Biome, production build, Playwright test discovery). It
+addresses the REWORK/REPLACE items below: wide/full-bleed composition,
+a heterogeneous scene library, removal of card anatomy from the format
+section and the mosaic, reduced radius/shadow chrome, amplified
+`/schedule`, a poster-scale hero, a wide closing footer scene and visual
+shells for the public auth routes. Human visual review has NOT yet
+accepted the result; the verdict remains **ITERATE** until a human records
+**ACCEPT** below.
 
 ## KEEP
 
