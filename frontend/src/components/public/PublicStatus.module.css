@@ -1,0 +1,65 @@
+/* PublicStatus — editorial loading/error/empty block for public sections. */
+
+.status {
+  max-width: 40rem;
+  padding-block-start: var(--space-4);
+  border-block-start: 2px solid var(--color-ink);
+}
+
+/* Small accent square: the graphic marker; pulses only while loading. */
+.marker {
+  display: block;
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  margin-block-end: var(--space-3);
+  background: var(--color-accent);
+}
+
+/* Frozen to a static mark under reduced motion by the global rule in base.css. */
+.markerLoading {
+  animation: status-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.detail {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--color-ink-muted);
+}
+
+/* Secondary textual retry — never a competing primary button. */
+.retry {
+  min-height: 44px;
+  margin-block-start: var(--space-3);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent-strong);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  cursor: pointer;
+}
+
+.retry:hover {
+  color: var(--color-accent);
+}

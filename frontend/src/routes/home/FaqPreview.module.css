@@ -87,26 +87,18 @@
   rotate: 45deg;
 }
 
+/*
+ * The answer's open/close is a Motion height animation (see FaqPreview.tsx);
+ * the CSS only clips the collapsing region. Closed regions stay in the DOM
+ * (aria-hidden) — the clip keeps them out of the visual flow.
+ */
 .faqAnswer {
-  display: grid;
-  grid-template-rows: 0fr;
-  visibility: hidden;
-  transition:
-    grid-template-rows 240ms ease,
-    visibility 0s linear 240ms;
-}
-
-.faqAnswerOpen {
-  grid-template-rows: 1fr;
-  visibility: visible;
-  transition: grid-template-rows 240ms ease;
+  overflow: clip;
 }
 
 .faqAnswerText {
-  min-height: 0;
   margin: 0;
   padding-block-end: var(--space-4);
-  overflow: hidden;
   max-width: 62ch;
   color: var(--color-ink-muted);
   overflow-wrap: break-word;

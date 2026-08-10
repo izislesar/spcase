@@ -12,17 +12,22 @@
 
 ## Current status
 
-**Stage 4C implemented — awaiting human visual review**
+**Stage 4D implemented — awaiting human visual review**
 
-The Stage 4C implementation is committed and technically validated
-(typecheck, Biome, production build, Playwright test discovery). It
-addresses the REWORK/REPLACE items below: wide/full-bleed composition,
-a heterogeneous scene library, removal of card anatomy from the format
-section and the mosaic, reduced radius/shadow chrome, amplified
-`/schedule`, a poster-scale hero, a wide closing footer scene and visual
-shells for the public auth routes. Human visual review has NOT yet
-accepted the result; the verdict remains **ITERATE** until a human records
-**ACCEPT** below.
+The Stage 4D implementation is committed and technically validated
+(typecheck, Biome, production build, Playwright test discovery). It adds
+the interaction/motion/UX-polish layer on top of the accepted Stage 4C
+static baseline WITHOUT redesigning it: a shared editorial motion layer
+(Motion, reduced-motion aware), route view transitions with named surface
+morphs (schedule title, coral register field, turquoise login field),
+the bottom-navigation traveling marker and partial scroll-direction
+response, the authored hero entrance with layered scene assembly, pointer
+and scroll depth, individualized format-stage choreography, per-surface
+mosaic interactions, /schedule scroll storytelling and the orphan-letter
+title fix, the PublicStatus editorial loading/error/empty component,
+FAQ layout animation, footer and auth-shell motion, and CTA/link
+microinteractions. Human visual review has NOT yet accepted the result;
+the verdict remains **ITERATE** until a human records **ACCEPT** below.
 
 ## KEEP
 

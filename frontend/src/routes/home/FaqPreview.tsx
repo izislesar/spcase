@@ -1,36 +1,74 @@
+import { motion, type Transition, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
 import { BubbleScene } from "../../components/graphics/scenes/BubbleScene";
-import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
+import { PublicStatus } from "../../components/public/PublicStatus";
+import { EDITORIAL_EASE, VIEWPORT_ONCE } from "../../lib/motion";
 import { errorMessage, useFaq } from "./api";
 import styles from "./FaqPreview.module.css";
 
 /*
  * FAQ — the quiet decompression after the louder sections: hairline rows
  * and one large conversation scene beside them. Accordion semantics are
- * unchanged: one open item at a time, collapsed regions stay in the DOM
- * hidden visually and from AT.
+ * unchanged: one open item at a time, aria-expanded/aria-controls wiring
+ * intact, and collapsed regions stay in the DOM hidden visually and from
+ * AT. The answer now reveals through a Motion height animation (~300ms,
+ * near-instant under reduced motion), so neighboring items move smoothly
+ * instead of jumping.
  */
 export function FaqPreview() {
   const faq = useFaq();
+  const reduced = useReducedMotion();
   const idPrefix = useId();
   const [openId, setOpenId] = useState<number | null>(null);
+
+  const answerTransition: Transition = reduced
+    ? { duration: 0.01 }
+    : { duration: 0.3, ease: EDITORIAL_EASE };
 
   return (
     <section className={styles.faq} aria-labelledby="faq-heading">
       <div className={`container ${styles.faqInner}`}>
         <header className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>03 · Вопросы</p>
-          <h2 id="faq-heading" className={styles.sectionTitle}>
+          <motion.p
+            className={styles.eyebrow}
+            initial={reduced ? false : { opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT_ONCE}
+            transition={{ duration: 0.45, ease: EDITORIAL_EASE }}
+          >
+            03 · Вопросы
+          </motion.p>
+          <motion.h2
+            id="faq-heading"
+            className={styles.sectionTitle}
+            initial={reduced ? false : { opacity: 0, y: 20, clipPath: "inset(0 0 100% 0)" }}
+            whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
+            viewport={VIEWPORT_ONCE}
+            transition={{ duration: 0.6, ease: EDITORIAL_EASE, delay: 0.06 }}
+          >
             Коротко о главном
-          </h2>
-          <p className={styles.sectionIntro}>
+          </motion.h2>
+          <motion.p
+            className={styles.sectionIntro}
+            initial={reduced ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={VIEWPORT_ONCE}
+            transition={{ duration: 0.5, ease: EDITORIAL_EASE, delay: 0.16 }}
+          >
             Если ответа здесь нет, организаторы помогут уточнить детали до начала чемпионата.
-          </p>
+          </motion.p>
           {/* One large quiet scene under the header; the rows stay calm. */}
           <BubbleScene className={styles.faqArt} />
         </header>
-        {faq.isPending && <LoadingState label="Загружаем вопросы…" />}
-        {faq.isError && <ErrorNotice message={errorMessage(faq.error)} />}
+        {faq.isPending && <PublicStatus kind="loading" title="Загружаем вопросы…" />}
+        {faq.isError && (
+          <PublicStatus
+            kind="error"
+            title="Не удалось загрузить ответы"
+            detail={errorMessage(faq.error)}
+            onRetry={() => faq.refetch()}
+          />
+        )}
         {faq.isSuccess &&
           (faq.data.faq.length > 0 ? (
             <div className={styles.faqList}>
@@ -67,22 +105,30 @@ export function FaqPreview() {
                         </svg>
                       </button>
                     </h3>
-                    <section
+                    <motion.section
                       id={regionId}
                       aria-labelledby={buttonId}
                       aria-hidden={!open}
-                      className={
-                        open ? `${styles.faqAnswer} ${styles.faqAnswerOpen}` : styles.faqAnswer
-                      }
+                      className={styles.faqAnswer}
+                      initial={false}
+                      animate={{
+                        height: open ? "auto" : 0,
+                        opacity: open ? 1 : 0,
+                      }}
+                      transition={answerTransition}
                     >
                       <p className={styles.faqAnswerText}>{item.answer}</p>
-                    </section>
+                    </motion.section>
                   </div>
                 );
               })}
             </div>
           ) : (
-            <p className={styles.sectionIntro}>Ответы появятся позже.</p>
+            <PublicStatus
+              kind="empty"
+              title="Ответы появятся позже"
+              detail="Организаторы соберут частые вопросы ближе к старту чемпионата."
+            />
           ))}
       </div>
     </section>

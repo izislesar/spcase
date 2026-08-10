@@ -39,6 +39,13 @@ test("skip-ссылка переносит фокус к основному со
   await expect(page.locator("#main-content")).toBeFocused();
 });
 
+test("публичные состояния загрузки имеют status-семантику", async ({ page }) => {
+  await page.goto("/");
+  // Публичные секции начинают с загрузки: PublicStatus с role="status"
+  // присутствует в DOM независимо от доступности бэкенда.
+  await expect(page.getByRole("status").first()).toBeVisible();
+});
+
 test("редуцированная анимация не ломает страницу", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");

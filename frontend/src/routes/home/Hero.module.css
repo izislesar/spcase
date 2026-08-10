@@ -30,6 +30,8 @@
   font-weight: 800;
   line-height: 0.94;
   letter-spacing: -0.035em;
+  /* Mask for the Motion line reveal (the inner span slides inside). */
+  overflow: clip;
 }
 
 .displayMain {
@@ -42,6 +44,12 @@
   letter-spacing: -0.025em;
   color: var(--color-accent-strong);
   overflow-wrap: break-word;
+  /* Mask for the lateral Motion line reveal. */
+  overflow: clip;
+}
+
+.displayLine {
+  display: block;
 }
 
 /*
@@ -118,42 +126,6 @@
   font-weight: 800;
   letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
-}
-
-/*
- * One-shot staggered entrance of the scene groups. The hooks live inside
- * the svg (HeroScene), so they are addressed as :global here. Reduced
- * motion collapses the animation via the global rule in base.css.
- */
-.heroArt :global(.scene-field),
-.heroArt :global(.scene-docs),
-.heroArt :global(.scene-machine),
-.heroArt :global(.scene-flag) {
-  animation: hero-assemble 640ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
-}
-
-.heroArt :global(.scene-docs) {
-  animation-delay: 140ms;
-}
-
-.heroArt :global(.scene-machine) {
-  animation-delay: 240ms;
-}
-
-.heroArt :global(.scene-flag) {
-  animation-delay: 360ms;
-}
-
-@keyframes hero-assemble {
-  from {
-    opacity: 0;
-    translate: 0 18px;
-  }
-
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
 }
 
 @media (width > 64rem) {

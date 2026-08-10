@@ -31,7 +31,20 @@
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.03em;
-  overflow-wrap: break-word;
+  /* Oversized single words (e.g. «Регистрация») never break mid-word. */
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+/* Mask for the Motion line reveal. */
+.titleMask {
+  display: block;
+  overflow: clip;
+}
+
+.titleLine {
+  display: block;
 }
 
 .lead {
@@ -58,7 +71,11 @@
   overflow: clip;
 }
 
-.field > svg {
+.fieldArt {
+  display: grid;
+}
+
+.fieldArt > svg {
   align-self: end;
   justify-self: center;
   inline-size: min(82%, 22rem);
@@ -97,7 +114,7 @@
     min-height: 30rem;
   }
 
-  .field > svg {
+  .fieldArt > svg {
     inline-size: min(88%, 28rem);
   }
 }

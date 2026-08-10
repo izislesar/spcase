@@ -9,6 +9,7 @@ export function RegisterPage() {
       lead="Профиль участника — первый шаг к команде и подаче решения на чемпионат."
       field="mustard"
       art={<SheetStack />}
+      vtName="vt-coral"
     />
   );
 }

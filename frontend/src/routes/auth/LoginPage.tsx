@@ -9,6 +9,7 @@ export function LoginPage() {
       lead="Вход для участников чемпионата — в личный кабинет команды и к отправке решения."
       field="turquoise"
       art={<GearScene />}
+      vtName="vt-turquoise"
     />
   );
 }

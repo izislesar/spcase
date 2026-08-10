@@ -21,7 +21,10 @@
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.03em;
-  overflow-wrap: break-word;
+  /* Single word: never break it mid-word, at any viewport. */
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
 }
 
 .scheduleHeader {

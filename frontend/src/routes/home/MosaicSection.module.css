@@ -21,12 +21,16 @@
   background: var(--color-accent-strong);
   color: var(--color-on-accent);
   text-decoration: none;
-  transition: translate 160ms ease-out;
+  transition:
+    translate 160ms ease-out,
+    background-color 160ms ease-out;
 }
 
 .pieceJoin:hover {
   color: var(--color-on-accent);
   translate: 0 -4px;
+  /* Subtle contrast response: the coral deepens a step on hover. */
+  background-color: color-mix(in oklch, var(--color-accent-strong) 90%, var(--color-navy));
 }
 
 .joinKicker {
@@ -55,11 +59,6 @@
 .joinArrow {
   display: inline-block;
   margin-inline-start: var(--space-2);
-  transition: translate 160ms ease-out;
-}
-
-.pieceJoin:hover .joinArrow {
-  translate: var(--space-1) 0;
 }
 
 /* Pure artwork field: artwork full-bleed, cropped on the left/bottom. */
@@ -80,15 +79,25 @@
 
 /*
  * The dates teaser: the quiet counterpoint — white, hairline top rule,
- * plain typography, no field fill at all.
+ * plain typography, no field fill at all. The rule is a real element
+ * (.datesRule) so it can draw in on entry; its resting state is identical
+ * to the former border.
  */
 .pieceDates {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: var(--space-4) 0 0;
-  border-block-start: 2px solid var(--color-ink);
   color: var(--color-ink);
   text-decoration: none;
+}
+
+.datesRule {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 2px;
+  background: var(--color-ink);
 }
 
 .pieceDates:hover {
@@ -126,11 +135,6 @@
   display: inline-block;
   margin-inline-start: var(--space-2);
   color: var(--color-accent-strong);
-  transition: translate 160ms ease-out;
-}
-
-.pieceDates:hover .datesArrow {
-  translate: var(--space-1) calc(-1 * var(--space-1));
 }
 
 /* The final: the dark celebration scene with a short caption. */

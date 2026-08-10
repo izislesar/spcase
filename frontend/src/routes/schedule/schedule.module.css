@@ -28,11 +28,28 @@
 .title {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  font-size: var(--text-poster);
+  /*
+   * «Расписание» must sit on one line at every viewport from 320 px up —
+   * the clamp is tuned so the whole word (~5.2em with tracking) always
+   * fits the wide container, and mid-word wrapping is disabled outright.
+   */
+  font-size: clamp(2.75rem, 1.35rem + 6.6vw, 7rem);
   font-weight: 800;
   line-height: 0.96;
   letter-spacing: -0.035em;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+/* Mask for the Motion line reveal (skipped during the vt-title morph). */
+.titleMask {
+  display: block;
+  overflow: clip;
+}
+
+.titleLine {
+  display: block;
 }
 
 .intro {
@@ -42,11 +59,16 @@
   font-size: var(--text-lg);
 }
 
-.headerArt {
+.headerArtWrap {
   inline-size: min(80vw, 26rem);
-  block-size: auto;
   justify-self: start;
   pointer-events: none;
+}
+
+.headerArt {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
 }
 
 /*
@@ -67,7 +89,12 @@
   background: var(--color-line);
 }
 
-/* Coral progress fill: rests at scale 0; scroll support grows it. */
+/*
+ * Coral progress fill: driven by a Motion useScroll scaleY on the timeline
+ * (see SchedulePage.tsx). The CSS baseline is the full line, which is also
+ * the reduced-motion state; the transform origin keeps the fill growing
+ * from the top.
+ */
 .lineProgress {
   position: absolute;
   inset-block: 0;
@@ -76,29 +103,6 @@
   border-radius: 2px;
   background: var(--color-accent);
   transform-origin: top;
-  scale: 1 0;
-}
-
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .lineProgress {
-      animation-name: schedule-fill;
-      animation-duration: 1ms; /* driven by the scroll timeline */
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: scroll(root);
-    }
-  }
-}
-
-@keyframes schedule-fill {
-  from {
-    scale: 1 0;
-  }
-
-  to {
-    scale: 1 1;
-  }
 }
 
 .items {
@@ -228,7 +232,7 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .headerArt {
+  .headerArtWrap {
     inline-size: min(38vw, 30rem);
     justify-self: end;
   }

@@ -1,8 +1,19 @@
+import {
+  LayoutGroup,
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useLocation, useViewTransitionState } from "react-router";
 import { Mark } from "../../components/graphics/Mark";
 import { ClosingScene } from "../../components/graphics/scenes/ClosingScene";
 import { ButtonLink } from "../../components/ui/ActionLinks";
+import { EDITORIAL_EASE, MARKER_SPRING } from "../../lib/motion";
 import styles from "./AppShell.module.css";
 
 const NAV_ITEMS = [
@@ -18,11 +29,197 @@ function navLinkClass({ isActive }: { isActive: boolean }): string {
   return [styles.navLink, isActive ? styles.navLinkActive : undefined].filter(Boolean).join(" ");
 }
 
+/*
+ * During a view transition that involves the homepage, <html> carries
+ * .vt-involves-home on both snapshots; the non-home side additionally
+ * carries .vt-back. The view-transitions.css rules use them to reverse the
+ * page slide when the destination is home (restrained reverse).
+ */
+function useViewTransitionDirection() {
+  const involvesHome = useViewTransitionState("/");
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("vt-involves-home", involvesHome);
+    root.classList.toggle("vt-back", involvesHome && pathname !== "/");
+    return () => root.classList.remove("vt-involves-home", "vt-back");
+  }, [involvesHome, pathname]);
+}
+
+/*
+ * Bottom bar signature: the active marker TRAVELS between destinations via
+ * a shared-layout Motion span, and the bar answers meaningful scroll
+ * direction by shifting PARTIALLY downward (never fully hidden). Hover,
+ * keyboard focus and the page top pin it fully visible. Scroll work stays
+ * on motion values — no React state per scroll frame.
+ */
+function BottomBar() {
+  const reduced = useReducedMotion();
+  const { scrollY } = useScroll();
+  const shiftTarget = useMotionValue(0);
+  const shift = useSpring(shiftTarget, { stiffness: 320, damping: 34 });
+  const y = useTransform(shift, [0, 1], ["0%", "62%"]);
+  const pinnedRef = useRef(false);
+  const directionRef = useRef<"down" | "up">("up");
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (reduced || pinnedRef.current || latest < 96) {
+      directionRef.current = "up";
+      shiftTarget.set(0);
+      return;
+    }
+    const delta = latest - (scrollY.getPrevious() ?? latest);
+    if (delta > 3 && directionRef.current !== "down") {
+      directionRef.current = "down";
+      shiftTarget.set(1);
+    } else if (delta < -3 && directionRef.current !== "up") {
+      directionRef.current = "up";
+      shiftTarget.set(0);
+    }
+  });
+
+  const pin = (pinned: boolean) => {
+    pinnedRef.current = pinned;
+    if (pinned) {
+      directionRef.current = "up";
+      shiftTarget.set(0);
+    }
+  };
+
+  return (
+    <motion.nav
+      className={styles.bottomBar}
+      aria-label="Основная навигация"
+      style={{ y }}
+      onHoverStart={() => pin(true)}
+      onHoverEnd={() => pin(false)}
+      onFocusCapture={() => pin(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) pin(false);
+      }}
+    >
+      <NavLink
+        to="/"
+        viewTransition
+        className={styles.barBrand}
+        aria-label="СПК кейс-чемпионат, на главную"
+      >
+        <Mark className={styles.barMark} />
+        СПК
+      </NavLink>
+      <LayoutGroup id="bottom-nav">
+        <div className={styles.barLinks}>
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              viewTransition
+              className={navLinkClass}
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.span
+                      layoutId="bottom-nav-marker"
+                      className={styles.barMarker}
+                      transition={MARKER_SPRING}
+                      aria-hidden="true"
+                    />
+                  )}
+                  {item.label}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </LayoutGroup>
+    </motion.nav>
+  );
+}
+
+/*
+ * Footer: the closing poster. On approach the statement reveals line by
+ * line through masks, the finish scene enters laterally (a different axis),
+ * and the meta row settles last. The composition itself is unchanged.
+ */
+function Footer({ menuOpen }: { menuOpen: boolean }) {
+  const reduced = useReducedMotion();
+
+  return (
+    <footer className={styles.footer} inert={menuOpen}>
+      <div className={`container-wide ${styles.footerInner}`}>
+        <div className={styles.footerCta}>
+          <p className={styles.footerStatement}>
+            <span className={styles.statementMask}>
+              <motion.span
+                className={styles.statementLine}
+                initial={reduced ? false : { y: "112%" }}
+                whileInView={{ y: "0%" }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, ease: EDITORIAL_EASE }}
+              >
+                Собери команду.
+              </motion.span>
+            </span>
+            <span className={styles.statementMask}>
+              <motion.span
+                className={styles.statementLine}
+                initial={reduced ? false : { y: "112%" }}
+                whileInView={{ y: "0%" }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, ease: EDITORIAL_EASE, delay: 0.09 }}
+              >
+                Реши кейс.
+              </motion.span>
+            </span>
+          </p>
+          <ButtonLink to="/register" viewTransition className={styles.footerButton}>
+            Подать заявку
+          </ButtonLink>
+        </div>
+        <motion.div
+          className={styles.footerSceneWrap}
+          initial={reduced ? false : { opacity: 0, x: 44 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: EDITORIAL_EASE, delay: 0.12 }}
+        >
+          <ClosingScene className={styles.footerScene} />
+        </motion.div>
+        <motion.div
+          className={styles.footerMeta}
+          initial={reduced ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.5, ease: EDITORIAL_EASE, delay: 0.2 }}
+        >
+          <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
+          <nav className={styles.footerNav} aria-label="Дополнительная навигация">
+            <NavLink to="/register" viewTransition>
+              Регистрация
+            </NavLink>
+            <NavLink to="/schedule" viewTransition>
+              Расписание
+            </NavLink>
+            <NavLink to="/jury/login" viewTransition>
+              Вход для жюри
+            </NavLink>
+          </nav>
+        </motion.div>
+      </div>
+    </footer>
+  );
+}
+
 export function AppShell() {
   const menuId = useId();
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  useViewTransitionDirection();
 
   /*
    * Mobile menu lifecycle: while open it locks page scroll, moves focus into
@@ -152,6 +349,7 @@ export function AppShell() {
                   key={item.to}
                   to={item.to}
                   end={item.end}
+                  viewTransition
                   className={navLinkClass}
                   onClick={closeMenu}
                 >
@@ -163,49 +361,17 @@ export function AppShell() {
         </div>
       )}
       <main id="main-content" tabIndex={-1} className={styles.main} inert={menuOpen}>
-        <Outlet />
+        {/*
+          The page wrapper carries the vt-page view-transition name: route
+          view transitions slide this region while the shared chrome
+          (header/footer/bottom bar) stays put.
+        */}
+        <div className={styles.routePage}>
+          <Outlet />
+        </div>
       </main>
-      {/*
-        Footer: the closing poster — the oversized statement and one clear
-        action beside the wide finish scene, cropped by the footer edges.
-      */}
-      <footer className={styles.footer} inert={menuOpen}>
-        <div className={`container-wide ${styles.footerInner}`}>
-          <div className={styles.footerCta}>
-            <p className={styles.footerStatement}>
-              Собери команду.
-              <br />
-              Реши кейс.
-            </p>
-            <ButtonLink to="/register" className={styles.footerButton}>
-              Подать заявку
-            </ButtonLink>
-          </div>
-          <ClosingScene className={styles.footerScene} />
-          <div className={styles.footerMeta}>
-            <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
-            <nav className={styles.footerNav} aria-label="Дополнительная навигация">
-              <NavLink to="/register">Регистрация</NavLink>
-              <NavLink to="/schedule">Расписание</NavLink>
-              <NavLink to="/jury/login">Вход для жюри</NavLink>
-            </nav>
-          </div>
-        </div>
-      </footer>
-      {/* Desktop-only thin bottom bar: brand + the four destinations. */}
-      <nav className={styles.bottomBar} aria-label="Основная навигация">
-        <NavLink to="/" className={styles.barBrand} aria-label="СПК кейс-чемпионат, на главную">
-          <Mark className={styles.barMark} />
-          СПК
-        </NavLink>
-        <div className={styles.barLinks}>
-          {NAV_ITEMS.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
+      <Footer menuOpen={menuOpen} />
+      <BottomBar />
     </div>
   );
 }
