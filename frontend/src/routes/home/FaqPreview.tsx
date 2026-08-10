@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import { ChatArt } from "../../components/graphics/illustrations";
 import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
 import { errorMessage, useFaq } from "./api";
 import styles from "./home.module.css";
@@ -10,7 +11,7 @@ export function FaqPreview() {
 
   return (
     <section className={styles.faq} aria-labelledby="faq-heading">
-      <div className="container">
+      <div className={`container ${styles.faqInner}`}>
         <header className={styles.sectionHeader}>
           <p className={styles.eyebrow}>03 · Вопросы</p>
           <h2 id="faq-heading" className={styles.sectionTitle}>
@@ -20,6 +21,8 @@ export function FaqPreview() {
             Если ответа здесь нет, организаторы помогут уточнить детали до начала чемпионата.
           </p>
         </header>
+        {/* One quiet illustration beside the rows; the section stays calm. */}
+        <ChatArt className={styles.faqArt} />
         {faq.isPending && <LoadingState label="Загружаем вопросы…" />}
         {faq.isError && <ErrorNotice message={errorMessage(faq.error)} />}
         {faq.isSuccess &&

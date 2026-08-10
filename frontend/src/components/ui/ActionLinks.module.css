@@ -2,25 +2,35 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: var(--space-3) var(--space-6);
+  min-height: 52px;
+  padding: var(--space-3) var(--space-8);
   border-radius: var(--radius);
-  background: var(--color-accent);
+  background: var(--color-accent-strong);
   color: var(--color-on-accent);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 800;
   letter-spacing: 0.01em;
   text-decoration: none;
-  transition: background-color 160ms ease-out;
+  box-shadow: 0 0.3rem 0 color-mix(in oklch, var(--color-ink) 24%, transparent);
+  transition:
+    translate 140ms ease-out,
+    box-shadow 140ms ease-out;
 }
 
 .button:hover {
-  background: var(--color-accent-strong);
   color: var(--color-on-accent);
+  translate: 0 -2px;
+  box-shadow: 0 0.45rem 0 color-mix(in oklch, var(--color-ink) 24%, transparent);
+}
+
+.button:active {
+  translate: 0 1px;
+  box-shadow: 0 0.15rem 0 color-mix(in oklch, var(--color-ink) 24%, transparent);
 }
 
 /*
- * Quiet text link: inherits context color (works on paper and on the dark
- * field), underline appears on hover, the arrow nudges forward.
+ * Quiet text link: inherits context color (works on white and on saturated
+ * fields), underline appears on hover, the arrow nudges forward.
  */
 .arrowLink {
   display: inline-flex;
@@ -28,7 +38,7 @@
   gap: var(--space-2);
   min-height: 44px;
   color: inherit;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.3em;

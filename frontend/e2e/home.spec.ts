@@ -14,7 +14,7 @@ test("домашняя страница показывает ключевые р
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Расписание", level: 2 })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Коротко о главном", level: 2 })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Подать заявку" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Подать заявку" }).first()).toBeVisible();
 });
 
 test("навигация доступна на всех вьюпортах", async ({ page, isMobile }) => {
@@ -39,18 +39,16 @@ test("skip-ссылка переносит фокус к основному со
   await expect(page.locator("#main-content")).toBeFocused();
 });
 
-test("редуцированная анимация не ломает страницу, путь отрисован полностью", async ({
-  page,
-  isMobile,
-}) => {
+test("редуцированная анимация не ломает страницу", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "СПК кейс-чемпионат", level: 1 })).toBeVisible();
-  const path = page.getByTestId(
-    isMobile ? "progression-path-vertical" : "progression-path-horizontal",
-  );
-  await expect(path).toBeVisible();
-  await expect(path).toHaveCSS("stroke-dashoffset", "0px");
+  await expect(page.getByRole("link", { name: "Подать заявку" }).first()).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Три этапа. Одна сильная работа.", level: 2 }),
+  ).toBeVisible();
+  await page.goto("/schedule");
+  await expect(page.getByRole("heading", { name: "Расписание", level: 1 })).toBeVisible();
 });
 
 test.describe("мобильное меню", () => {

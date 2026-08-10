@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router";
-import { BrandMark, CaseArc, Disc, ResolvedMark } from "../../components/graphics/grammar";
+import { FlagScene, Mark } from "../../components/graphics/illustrations";
+import { ButtonLink } from "../../components/ui/ActionLinks";
 import styles from "./AppShell.module.css";
 
 const NAV_ITEMS = [
@@ -78,19 +79,17 @@ export function AppShell() {
       <a className="skip-link" href="#main-content">
         К содержимому
       </a>
+      {/*
+        Compact mobile header. On desktop it yields to the bottom bar below —
+        the reference-led pattern keeps the top of the page free for the
+        editorial composition.
+      */}
       <header className={styles.header}>
         <div className={`container ${styles.headerInner}`}>
           <NavLink to="/" className={styles.brand} aria-label="СПК кейс-чемпионат, на главную">
-            <BrandMark className={styles.brandMark} />
+            <Mark className={styles.brandMark} />
             СПК
           </NavLink>
-          <nav className={styles.desktopNav} aria-label="Основная навигация">
-            {NAV_ITEMS.map((item) => (
-              <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
           <button
             ref={toggleRef}
             type="button"
@@ -116,27 +115,7 @@ export function AppShell() {
       </header>
       {menuOpen && (
         <div className={styles.menuOverlay}>
-          {/*
-            The dark menu echoes the grammar: the still-open case ring and one
-            team disc. Decorative → aria-hidden.
-          */}
-          <svg
-            className={styles.menuEcho}
-            viewBox="0 0 400 400"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <CaseArc
-              cx={110}
-              cy={310}
-              r={140}
-              width={24}
-              gap={70}
-              rotate={-140}
-              stroke="color-mix(in oklch, var(--color-on-field) 16%, transparent)"
-            />
-            <Disc cx={336} cy={84} r={24} fill="var(--color-accent)" />
-          </svg>
+          <FlagScene className={styles.menuEcho} />
           <div
             ref={panelRef}
             id={menuId}
@@ -185,21 +164,47 @@ export function AppShell() {
       <main id="main-content" tabIndex={-1} className={styles.main} inert={menuOpen}>
         <Outlet />
       </main>
+      {/*
+        Footer: the closing scene — an oversized statement and one clear
+        action on the navy field, the pennant raised beside it.
+      */}
       <footer className={styles.footer} inert={menuOpen}>
         <div className={`container ${styles.footerInner}`}>
-          {/*
-            The story completes here: the resolved mark (closed ring, assembled
-            elements) tinted for the accent field.
-          */}
-          <ResolvedMark className={styles.footerMark} />
-          <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
-          <nav className={styles.footerNav} aria-label="Дополнительная навигация">
-            <NavLink to="/register">Регистрация</NavLink>
-            <NavLink to="/schedule">Расписание</NavLink>
-            <NavLink to="/jury/login">Вход для жюри</NavLink>
-          </nav>
+          <div className={styles.footerCta}>
+            <p className={styles.footerStatement}>
+              Собери команду.
+              <br />
+              Реши кейс.
+            </p>
+            <ButtonLink to="/register" className={styles.footerButton}>
+              Подать заявку
+            </ButtonLink>
+          </div>
+          <FlagScene className={styles.footerScene} />
+          <div className={styles.footerMeta}>
+            <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
+            <nav className={styles.footerNav} aria-label="Дополнительная навигация">
+              <NavLink to="/register">Регистрация</NavLink>
+              <NavLink to="/schedule">Расписание</NavLink>
+              <NavLink to="/jury/login">Вход для жюри</NavLink>
+            </nav>
+          </div>
         </div>
       </footer>
+      {/* Desktop-only thin bottom bar: brand + the four destinations. */}
+      <nav className={styles.bottomBar} aria-label="Основная навигация">
+        <NavLink to="/" className={styles.barBrand} aria-label="СПК кейс-чемпионат, на главную">
+          <Mark className={styles.barMark} />
+          СПК
+        </NavLink>
+        <div className={styles.barLinks}>
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }

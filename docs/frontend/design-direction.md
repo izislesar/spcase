@@ -54,40 +54,55 @@ and efficiency over theatrical animation**. The editorial visual identity
 applies, but motion and decorative gestures are minimized where users perform
 repeated task-focused work.
 
-## Established visual rules (Stage 4A)
+## Established visual rules (Stage 4B)
 
-The public homepage implementation fixed these reusable rules; they are the
-defaults for later stages (token values live in `frontend/src/styles/tokens.css`,
-shared artwork in `frontend/src/components/graphics/grammar.tsx`):
+The public implementation fixed these reusable rules; they are the defaults
+for later stages (token values live in `frontend/src/styles/tokens.css`,
+shared artwork in `frontend/src/components/graphics/illustrations.tsx`).
+They supersede the earlier Stage 4A identity (open-ring metaphor, the
+disc/block/half-disc semantic grammar and the Unbounded display face),
+which is retired: graphic elements are art direction, not encoded product
+symbolism.
 
-- Graphic grammar: one small family of flat vector forms with product
-  meaning. The case is an **open ring** (unresolved problem; its gap narrows
-  through the stages and closes at the final); the team is a set of
-  independent elements — **disc, block, half-disc**. The public page tells
-  this as one story: hero (scattered elements around the open ring) →
-  format vignettes (scatter → converge → assemble) → the resolved mark
-  (closed ring around one assembled composition) in the final vignette and
-  the footer. Schedule markers and the brand mark echo the same forms.
-  Reuse these primitives instead of inventing new decoration.
-- Palette: warm paper base, near-black ink, one vermilion accent and two
-  deliberate supporting flat fields — warm sun yellow (`--color-sun`) and
-  mint (`--color-mint`). Section rhythm on the homepage: paper → sun → dark
-  ink → mint → accent footer. One dominant field per section; no gradients;
-  colors are not all used in every section.
-- Typography: one self-hosted display face — **Unbounded** (variable
-  200–900, WOFF2 cyrillic + latin subsets, SIL OFL 1.1, `font-display:
-  swap`) for headings and the wordmark; the system sans stack carries body,
-  UI and tabular numerals. No other webfonts.
-- Hero rule: typography is part of the composition (oversized first line
-  with an inline team disc as its full stop, offset accent second line),
-  with the open case ring anchored behind it — adjacency and tension, never
-  text painted over the ink stroke.
-- Signature mechanism: the trajectory — a bent SVG path with three hops
-  between the format stages, with one accent disc riding it via
-  `offset-path` + a CSS scroll-driven animation (no JS, no render loop).
-  The fully drawn path and the disc resting at the finish are the baseline
-  for reduced motion and unsupported browsers. One such gesture per page.
-- Flat fields, not cards: sections are large flat color fields; content
-  uses hairline rules, indexes and grammar markers instead of boxed cards.
-- Accent is never used for body text on the dark field; on the accent
-  footer field the focus ring switches to on-accent.
+- Grammar: **graphic maximalism + simple UI**. Visual richness comes from
+  typography, composition, saturated flat color fields and bespoke flat
+  vector illustration; interface chrome stays minimal. Never the reverse.
+- Canvas and ink: near-white editorial canvas, deep navy ink
+  (`--color-ink`), one coral accent (`--color-accent` /
+  `--color-accent-strong` for text and buttons).
+- Saturated flat fields: mustard (`--color-mustard`), turquoise
+  (`--color-turquoise`), navy (`--color-navy`). Large fields create
+  deliberate editorial rhythm (homepage: white → mustard panel → white
+  mosaic → turquoise → white → navy footer); no gradients, no mechanical
+  one-token-per-section sequence.
+- Typography: one self-hosted display face — **Manrope** (variable 200–800,
+  WOFF2 cyrillic + latin subsets, SIL OFL 1.1, `font-display: swap`), a
+  friendly heavy grotesk with full Cyrillic, used at weight 800 with tight
+  tracking for display type and the wordmark. Character comes from scale,
+  spacing, line breaks and positioning, not decorative effects. The system
+  sans stack carries body, UI and tabular numerals. No other webfonts.
+- Illustration: original flat vector scenes — thick simple silhouettes,
+  flat fills, limited per-scene palette, small spark accents, occasional
+  dashed travel paths. Each scene illustrates a real piece of the product
+  (case-solving machine, stages, calendar, cup, questions, pennant).
+  No stock-illustration look, no abstract identity geometry, no 3D.
+- Hero rule: heavy headline with deliberate line breaks on the left, ONE
+  large bespoke scene on the right; the artwork interacts with the DOM
+  typography spatially, never replaces it.
+- Section rule: one dominant graphic move per section — an oversized
+  colored panel (format), an irregular editorial mosaic of heterogeneous
+  tiles (visual navigation, not feature cards), typographic rows on a flat
+  field (schedule preview), quiet hairline rows (FAQ), a closing scene
+  (footer). Adjacent sections are not equally loud.
+- Poster surfaces: rounded rectangles with soft physical depth
+  (`--shadow-poster`) and slight tilts are the tile/poster language;
+  dashboard-style cards, bento grids and pill controls are rejected.
+- Navigation: on desktop a thin fixed bottom bar (brand + the four
+  destinations, reserved-space active marker); on mobile the compact top
+  header with the focus-managed overlay menu.
+- Motion stays sparse: a one-shot hero entrance assembly, a scroll-driven
+  timeline progress line (guarded native CSS scroll timeline), small
+  hover-only tile lifts. Everything has a static, fully understandable
+  baseline; reduced motion collapses all of it.
+- Accent is never used for body text on dark fields; on saturated fields
+  text is navy ink or on-field pairs with checked contrast.

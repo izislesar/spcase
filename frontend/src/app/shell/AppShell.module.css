@@ -5,12 +5,11 @@
 }
 
 /*
- * Header: no hairline, no chrome — it merges into the paper field so the
- * page reads as one poster surface. The brand pairs the grammar mark with
- * the wordmark in the display face.
+ * Mobile header: a compact brand + menu row that merges into the canvas.
+ * Hidden on desktop, where the bottom bar takes over navigation.
  */
 .header {
-  background: var(--color-paper);
+  background: var(--color-canvas);
 }
 
 .headerInner {
@@ -20,7 +19,8 @@
   gap: var(--space-4);
 }
 
-.brand {
+.brand,
+.barBrand {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -28,19 +28,86 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 800;
+  letter-spacing: -0.01em;
   color: var(--color-ink);
   text-decoration: none;
 }
 
-.brandMark {
-  inline-size: 1.75rem;
+.brandMark,
+.barMark {
+  inline-size: 1.375rem;
   block-size: auto;
 }
 
+.menuToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-inline: var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Mobile menu: the navy flat field with a quiet pennant scene behind. */
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--color-navy);
+  color: var(--color-on-navy);
+  overflow: clip;
+}
+
+.menuEcho {
+  position: absolute;
+  inset-block-end: calc(-1 * var(--space-8));
+  inset-inline-end: calc(-1 * var(--space-8));
+  inline-size: min(70vw, 20rem);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.menuOverlay :focus-visible {
+  outline-color: var(--color-on-navy);
+}
+
+.menuPanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: var(--space-3) var(--gutter) var(--space-8);
+}
+
+.menuClose {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--color-on-navy);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  margin-block: auto;
+}
+
 /*
- * Desktop nav: small uppercase letter-spaced links; the active item is
- * marked by the accent square from the grammar. The square's space is
- * reserved (visibility, not display) so activation never shifts layout.
+ * Shared link treatment (mobile panel + desktop bottom bar): the active
+ * item is marked by a coral square whose space is always reserved, so
+ * activation never shifts layout.
  */
 .navLink {
   display: inline-flex;
@@ -61,108 +128,33 @@
 
 .navLink:hover {
   color: var(--color-ink);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.3em;
 }
 
 .navLinkActive {
   color: var(--color-ink);
-  font-weight: 600;
 }
 
 .navLinkActive::before {
   visibility: visible;
 }
 
-.desktopNav {
-  display: none;
-}
-
-.menuToggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 44px;
-  padding-inline: var(--space-2);
-  border: 0;
-  background: none;
-  color: var(--color-ink);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Mobile menu: the dark flat field with a quiet grammar echo behind. */
-.menuOverlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: var(--color-field);
-  color: var(--color-on-field);
-}
-
-.menuEcho {
-  position: absolute;
-  inset: 0;
-  inline-size: 100%;
-  block-size: 100%;
-  pointer-events: none;
-}
-
-.menuOverlay :focus-visible {
-  outline-color: var(--color-on-field);
-}
-
-.menuPanel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  padding: var(--space-3) var(--gutter) var(--space-8);
-}
-
-.menuClose {
-  align-self: flex-end;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 44px;
-  border: 0;
-  background: none;
-  color: var(--color-on-field);
-  font: inherit;
-  cursor: pointer;
-}
-
-.mobileNav {
-  display: flex;
-  flex-direction: column;
-  margin-block: auto;
-}
-
 .mobileNav .navLink {
   padding-block: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--text-xl);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--color-on-field);
-  border-block-end: 1px solid color-mix(in oklch, var(--color-on-field) 18%, transparent);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-on-navy);
+  border-block-end: 1px solid color-mix(in oklch, var(--color-on-navy) 18%, transparent);
 }
 
 .mobileNav .navLink::before {
   margin-inline-end: var(--space-3);
 }
 
-.mobileNav .navLink:hover {
-  color: var(--color-on-field);
-  text-decoration: none;
-}
-
+.mobileNav .navLink:hover,
 .mobileNav .navLinkActive {
-  color: var(--color-on-field);
-  font-weight: 700;
+  color: var(--color-on-navy);
 }
 
 .main:focus {
@@ -170,42 +162,74 @@
 }
 
 /*
- * Footer: the closing gesture of the page — the accent field carrying the
- * resolved mark. Links are on-accent; the focus ring switches to on-accent
- * so it stays visible on the vermilion field.
+ * Footer: the closing scene on the navy field. The oversized statement and
+ * the pennant artwork complete the page; the meta row sits beneath.
  */
 .footer {
-  padding-block: var(--space-8);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-  font-size: var(--text-sm);
+  padding-block: var(--space-12) var(--space-8);
+  background: var(--color-navy);
+  color: var(--color-on-navy);
+  overflow: clip;
 }
 
 .footer :focus-visible {
-  outline-color: var(--color-on-accent);
+  outline-color: var(--color-on-navy);
 }
 
 .footerInner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3) var(--space-6);
+  display: grid;
+  gap: var(--space-8);
 }
 
-.footerMark {
-  --gm-ring: var(--color-on-accent);
-  --gm-dome: var(--color-on-accent);
-  --gm-block: var(--color-ink);
-  --gm-disc: var(--color-ink);
-  inline-size: 3.5rem;
-  block-size: auto;
+.footerCta {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: start;
+}
+
+.footerStatement {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.footerButton {
+  box-shadow: 0 0.3rem 0 color-mix(in oklch, var(--color-on-navy) 25%, transparent);
+}
+
+.footerButton:hover {
+  box-shadow: 0 0.45rem 0 color-mix(in oklch, var(--color-on-navy) 25%, transparent);
+}
+
+.footerButton:active {
+  box-shadow: 0 0.15rem 0 color-mix(in oklch, var(--color-on-navy) 25%, transparent);
+}
+
+.footerScene {
+  inline-size: min(62vw, 17rem);
+  justify-self: end;
+  margin-block-start: calc(-1 * var(--space-16));
+  pointer-events: none;
+}
+
+.footerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-6);
+  padding-block-start: var(--space-6);
+  border-block-start: 1px solid color-mix(in oklch, var(--color-on-navy) 18%, transparent);
+  font-size: var(--text-sm);
 }
 
 .footerBrand {
   margin: 0;
   margin-inline-end: auto;
-  font-family: var(--font-display);
-  font-weight: 700;
+  color: var(--color-on-navy-muted);
 }
 
 .footerNav {
@@ -218,28 +242,61 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--color-on-accent);
+  color: var(--color-on-navy);
   text-decoration: none;
 }
 
 .footerNav a:hover {
-  color: var(--color-on-accent);
+  color: var(--color-on-navy);
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
 
+/* Desktop bottom bar: hidden on mobile, fixed on large viewports. */
+.bottomBar {
+  display: none;
+}
+
 @media (width > 64rem) {
-  .desktopNav {
+  .header {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 10;
+    background: transparent;
+  }
+
+  /* Only the brand survives on desktop; navigation lives in the bottom bar. */
+  .menuToggle,
+  .menuOverlay {
+    display: none;
+  }
+
+  .bottomBar {
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: 0 var(--gutter);
+    background: var(--color-canvas);
+    border-block-start: 1px solid var(--color-line);
+  }
+
+  .barLinks {
     display: flex;
     gap: var(--space-2) var(--space-8);
     text-transform: uppercase;
     font-size: var(--text-eyebrow);
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
   }
 
-  .menuToggle,
-  .menuOverlay {
-    display: none;
+  /* Keep page content clear of the fixed bar. */
+  .footer {
+    padding-block-end: calc(var(--space-8) + 3.25rem);
   }
 }
