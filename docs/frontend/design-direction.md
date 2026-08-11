@@ -1,235 +1,367 @@
 # Frontend design direction
 
-> **Status: approved stable visual constitution.**
-> This document describes enduring art-direction rules, not a snapshot of a
-> particular implementation stage. Current human verdicts live in
-> `visual-acceptance.md`; product/interaction semantics live in
-> `experience-model.md`.
+> **Status: approved stable visual constitution for the next frontend iteration.**
+> This document defines enduring visual rules, not a snapshot of a particular
+> implementation. Current human verdicts live in `visual-acceptance.md`;
+> product/interaction semantics live in `experience-model.md`.
 
 ## North star
 
-The SPCase frontend is an **Editorial Competition OS with controlled
-imperfection**.
+SPCase is a **dark, content-first competition interface**.
 
-It should feel like a live competition system expressed through editorial
-design: part publication, scoreboard, dossier, event graphics and judging
-desk. It must not read as generic B2B SaaS, a component-library showcase or an
-"award-site" motion demo.
+It should feel like a real championship that happens to have a digital
+interface, not like a designer's concept for a championship website.
 
-The visual system is intentionally disciplined but not polished to sterility.
-Use roughly:
+The governing sentence is:
 
-**90% discipline / 10% disobedience.**
+> **Nothing exists solely to make the page look designed.**
 
-The discipline proves competence. The disobedience creates character.
+A second test applies to every decorative or compositional decision:
 
-## Controlled imperfection
+> **If an element cannot justify its existence without the phrase “visual
+> interest”, remove it.**
 
-Controlled imperfection is not sloppiness and not simulated handmade texture.
-It is deliberate tension inside a strong system.
+The target is quiet confidence, not visual spectacle. Character should emerge
+from real content, typography, information hierarchy, state, spacing and the
+natural differences between surfaces.
 
-### Discipline
+## What Stage 4E taught us
 
-- clear information hierarchy;
-- coherent grid and spacing logic;
-- predictable interaction and control placement;
-- accessible contrast, focus and target sizes;
-- stable typography and product semantics;
-- consistent state language;
-- intentional responsive composition.
+The previous direction successfully moved away from generic SaaS, but it
+created another recognizable AI/design-template grammar: oversized stage
+numbers, authored grid breaks, flat symbolic illustrations, large primary
+color blocks, pseudo-editorial rules and deliberate asymmetry.
 
-### Disobedience
+Those devices are no longer approved as identity by default.
 
-Use sparingly and mainly at high-salience moments:
+Do not try to fix that result by inventing more unusual visual tricks. Stage
+4F follows a **delete before designing** rule: remove anything whose main job
+is aesthetic signaling, then rebuild only what the content and interaction
+actually require.
 
-- asymmetric composition;
-- uneven but purposeful whitespace;
-- a display element escaping or crossing the main grid;
-- deliberate crop at a viewport or section boundary;
-- oversized identifiers or numerals;
-- rare physical marks such as a stamp, registration mark or broken rule;
-- deliberate changes in visual density between neighboring regions;
-- a strong color field that is not balanced symmetrically by another one.
+## Dark canvas
 
-A violation must be authored. Random misalignment, arbitrary rotation and
-inconsistent spacing are not character.
+The default public/product canvas is dark rather than cream/off-white.
 
-### Do not fake "human"
+Use a narrow palette. A good starting set is:
 
-Do not add paper grain, scratched textures, distressed type, random rotations,
-noise, fake print errors or hand-drawn wobble merely to make the interface
-look less digital. Imperfection should come from composition and hierarchy,
-not from decorative aging.
+```text
+canvas             #0D1118
+surface             #131923
+raised/selected     #1A2230
+primary text        #E8E6DF
+muted text          #8E98A8
+rules               rgba(232, 230, 223, 0.16)
+primary accent      #C83A32
+optional cool tone  #60758A
+```
 
-## Existing visual DNA to preserve
+Exact values may be calibrated during implementation and human review, but the
+relationship is authoritative:
 
-The Stage 4D review confirmed that the following direction remains valuable:
+- roughly 80–90% dark canvas;
+- most remaining visual information is warm light text and subtle rules;
+- one primary accent, currently deep red;
+- any secondary hue is muted and rare.
 
-- very light / off-white editorial canvas;
-- deep navy as primary ink;
-- saturated flat mustard, cyan/turquoise and coral/red fields;
-- Manrope as the primary display face;
-- oversized typography and strong line breaks;
-- flat SVG/DOM/CSS-first illustration;
-- simple silhouettes and limited palettes;
-- strong contrast between large graphic surfaces and minimal UI chrome;
-- desktop bottom-navigation concept where it remains usable;
-- mobile and reduced-motion mechanisms.
+Do not use mustard, cyan/turquoise and coral as simultaneous large identity
+fields. Existing tokens may remain during migration, but the public visual
+system must not depend on a four-color primary palette.
 
-These are ingredients, not a frozen layout. Existing components may be
-substantially recomposed when the human verdict requires it.
+Dark does **not** mean:
 
-## Canvas and color
+- cyberpunk;
+- developer-tool aesthetic;
+- terminal cosplay;
+- luxury-black marketing;
+- neon;
+- glowing edges;
+- glass panels;
+- blue/purple gradients;
+- dot-grid backgrounds;
+- fake technical HUD labels.
 
-- Prefer white / very-light editorial canvas with deep navy ink.
-- Use mustard, cyan/turquoise and coral/red as large flat fields or semantic
-  accents, not as a mechanical "one color per section" sequence.
-- Let color create rhythm and state emphasis.
-- No gradients, glassmorphism or soft glow layers.
-- Do not introduce a rainbow status palette by default. State must remain
-  understandable through text, shape and hierarchy, not color alone.
+## Surface model
+
+The page itself is the primary surface.
+
+Do not solve dark mode by stacking slightly lighter cards on a dark background.
+Use containers only when the content is genuinely a self-contained object or
+requires a bounded interactive region.
+
+Prefer separation through:
+
+- whitespace;
+- typography;
+- alignment;
+- thin rules;
+- density changes;
+- occasionally a subtle surface shift;
+- rarely the red accent.
+
+A section does not need a background change simply because the previous
+section ended.
 
 ## Typography
 
-- Manrope remains the display face with full Cyrillic support.
-- Oversized type is a primary graphic tool.
-- Character comes from scale, line breaks, crop, spacing and placement rather
-  than decorative effects.
-- Body/UI copy uses the system sans stack.
-- Tabular data and identifiers may use a restrained monospace/system-mono role
-  where it strengthens the dossier/system language; do not add another
-  webfont solely for this.
-- Define distinct roles for display, headline, body, meta and data rather than
-  solving hierarchy with more cards.
+Typography carries most of the identity.
+
+- Manrope remains available and may remain the primary face; it is not a
+  license for ubiquitous oversized bold display text.
+- Do not make every section headline a poster headline.
+- Prefer a wider range of useful scales: quiet labels, readable body copy,
+  medium editorial headings and occasional large display type.
+- Large text must be justified by information hierarchy, not by a desire to
+  make a section feel designed.
+- Real data such as dates, time, scores and identifiers may use tabular figures
+  or a restrained system-mono role when useful.
+- Do not add another display font merely to manufacture character.
+
+Avoid slogan-like headings where a direct label is clearer. For example,
+prefer `Формат чемпионата` over copy such as `Три этапа. Одна сильная работа.`
+when the latter adds no information.
 
 ## Composition
 
-- Prefer wide/full-bleed editorial composition where it serves the surface;
-  `max-width` is a tool, not the identity.
-- Asymmetry is intentional and different sections may use different internal
-  compositions.
-- Grid is an information framework, not a card generator.
-- Do not default to `repeat(3, 1fr)` feature sections, universal Bento grids or
-  equal-height tiles.
-- Some surfaces should contain plain type, rules and whitespace with no
-  container at all.
-- Rounded cards are accents, not universal anatomy.
-- Adjacent sections need not share equal visual loudness or whitespace.
-- One strong visual gesture usually beats several simultaneous gestures.
+Do not design imperfection.
 
-## Illustration and semantic graphics
+The previous `90% discipline / 10% disobedience` rule is retired because it
+encouraged agents to manufacture a checklist of grid escapes, crops and broken
+rules.
 
-Illustration must carry product meaning or identity. It is not filler for
-empty layout space.
+Instead:
 
-- Original flat vector language; no stock illustration look.
-- Illustration sets should be heterogeneous rather than an icon pack.
-- Repeated formulae such as "object inside circle + spark" are rejected as a
-  default.
-- No arbitrary 3D or abstract identity blobs.
-- Reusable graphic motifs should acquire stable product semantics where
-  possible: stage marker, case/document, submission, locked state, jury mark,
-  current position, result, etc.
-- A graphic motif should be able to recur across public pages, product
-  workspaces and event collateral without becoming decorative noise.
+- keep a coherent underlying layout;
+- allow different content to produce naturally different density and spacing;
+- do not normalize every section to the same padding, height or component
+  anatomy;
+- do not force symmetry;
+- do not force asymmetry;
+- do not add a grid violation just to demonstrate authorship;
+- leave empty space empty when it has no content role.
+
+Character should be difficult to reduce to a list of "design tricks".
+
+## Content is the graphic
+
+Prefer real information over decorative filler.
+
+Examples of useful graphic material:
+
+- city and venue;
+- event dates;
+- registration deadline;
+- team size;
+- current lifecycle state when authoritative;
+- schedule times;
+- case title;
+- submission deadline;
+- score/ranking;
+- file metadata;
+- participant roles.
+
+Do not replace empty space with a gear, flag, sheet stack, podium, machine,
+speech bubble or abstract symbol merely because the layout feels sparse.
+
+A truthful `02–04.10.26` can be more visually valuable than an illustration.
+
+## Illustration and decorative graphics
+
+Illustration is no longer a default part of the public identity.
+
+For Stage 4F:
+
+- remove the current cartoon/editorial scene language from dominant public
+  composition;
+- do not add replacement illustration systems;
+- do not create semantic gears/flags/stamps/podiums merely to preserve the old
+  concept;
+- use icons only where an interface convention or action genuinely benefits
+  from one;
+- use the SPCase mark/logo if and when a real brand asset exists;
+- prefer text, data and structure over decorative SVG.
+
+Future illustration can be reintroduced only after a specific human-approved
+need, not as a default solution to empty space.
+
+## Color semantics
+
+Color must earn its use.
+
+Deep red is the primary accent. Good candidates include:
+
+- primary action;
+- current/high-priority state;
+- deadline emphasis;
+- a consequential result or lifecycle moment.
+
+Do not make an entire section red merely to create visual rhythm. Do not use a
+second or third bright color simply to differentiate neighboring sections.
+State must never rely on color alone.
 
 ## Public surfaces
 
-Public routes are allowed to be expressive.
+Public pages should be calm, direct and event-specific.
 
-They may use:
+The homepage should prioritize truthful competition content such as:
 
-- very large type;
-- art-directed illustration;
-- asymmetric color fields;
-- unusual whitespace and crop;
-- heterogeneous section composition;
-- rare high-salience motion.
+- SPCase identity;
+- city/location;
+- dates;
+- registration deadline/state;
+- team format;
+- primary action;
+- schedule/FAQ only when they are useful next information.
 
-The homepage should increasingly behave like the live cover/status board of a
-competition rather than a static marketing funnel. Its content and emphasis
-should reflect the current competition state when backend data supports it.
+A strong public page may contain large areas with only typography and real
+information.
 
-Public expressiveness does not justify repetitive agency-landing-page
-patterns such as hero → three cards → color block → FAQ with uniform reveal
-animation.
+Do not default to:
+
+- hero art panels;
+- hero illustration;
+- editorial collage;
+- equal feature blocks;
+- giant stage numerals;
+- color-field section rhythm;
+- agency-style headline slogans;
+- decorative section labels such as `01 · ФОРМАТ` when they add no navigation
+  or information value.
+
+## Format/stages
+
+The championship format is content, not a visual showcase.
+
+Present the stages plainly and clearly. Small numbers are acceptable when they
+help sequence the stages, but numbers must behave as metadata rather than
+dominant decoration.
+
+Prefer actual stage names, dates and explanatory text over a custom visual
+scene for every stage.
+
+## Schedule
+
+Schedule is one of the places where information itself can produce a strong
+visual composition.
+
+Use:
+
+- date grouping;
+- aligned times;
+- event titles;
+- locations/details;
+- current/next state when authoritative;
+- rules and spacing where they improve scanning.
+
+Do not decorate the schedule with unrelated artwork. Motion is only useful
+when it communicates temporal state or interaction.
+
+## Auth surfaces
+
+Login and registration are functional surfaces.
+
+They should be especially restrained:
+
+- one dark canvas;
+- clear title/context;
+- stable form fields;
+- direct primary action;
+- concise useful registration/deadline information where truthful.
+
+No art panel is required. Do not add illustration, parallax or spectacle to
+make auth feel "on brand".
 
 ## Product surfaces
 
-USER and JURY surfaces are operational tools. Their visual grammar should be
-more document-like and information-dense:
+USER and JURY surfaces should derive visual strength from operational
+information rather than marketing composition.
 
-- dossier/work-sheet composition;
-- rules and separators;
-- identifiers;
-- explicit state and deadlines;
-- tables/lists where the information is tabular;
-- restrained color fields;
-- minimal decorative illustration;
-- motion primarily for state and continuity.
+Prefer:
 
-Do not scale the landing-page grammar directly into product workspaces.
+- plain hierarchy;
+- lists/tables where appropriate;
+- explicit deadlines and state;
+- files and metadata;
+- clear next action;
+- thin rules and restrained surface changes;
+- minimal decoration;
+- minimal motion.
+
+Do not turn product screens into Bloomberg/terminal cosplay. Monospace,
+technical IDs and compact metadata are tools, not identity.
 
 ## Admin surfaces
 
-ADMIN is primarily utilitarian. Prioritize scanability, correctness,
-operational safety and dense information. Brand identity may appear through
-type, rules and color accents, but theatrical composition is inappropriate.
+ADMIN is primarily utilitarian. Prioritize correctness, scanability and safe
+operation. Branding should be quiet.
 
 ## Motion
 
-Motion is a supporting system, not a design theme.
+Motion is now deliberately sparse.
 
-Preferred reasons for motion:
+Preferred reasons:
 
 1. navigation continuity;
 2. state transition;
-3. information progression;
-4. interaction feedback;
-5. rare public-page spectacle.
+3. direct interaction feedback;
+4. truthful temporal progression where static representation is insufficient.
 
-Avoid continuous reveal choreography, default scroll drift, pointer parallax
-on routine surfaces, and animation whose main purpose is to demonstrate
-animation.
+Public scroll reveal, decorative parallax, floating art, scroll drift and
+motion added purely to make a page feel premium are not approved defaults.
 
-Every motion surface must have a static, understandable baseline and a strong
-reduced-motion path.
+A static screenshot should already contain the intended hierarchy and
+character.
 
-## Anti-slop contract
+Every motion surface must have a complete reduced-motion/static path.
 
-The following are rejected as default grammar:
+## Anti-AI / anti-template contract
 
-- generic B2B SaaS appearance or copy;
-- KPI-card dashboard intros;
-- universal rounded cards;
-- Bento grids used as identity;
-- pill/badge overload;
-- feature-icon + heading + paragraph triptychs;
-- abstract gradient spheres/blobs;
-- glassmorphism and glow;
-- arbitrary purple/blue gradients;
-- decorative WebGL/3D;
-- stock icon-pack illustration;
-- repetitive reveal/fade-up choreography;
-- decorative motion without product meaning;
-- "Welcome back" dashboard hero patterns;
-- equal visual polish and equal density everywhere.
+Reject the design when its identity is mainly one or more of these patterns:
 
-These are anti-default rules, not primitive bans. Use a card, pill, radius or
-animation when the information or interaction genuinely calls for it.
+- Swiss/editorial agency-site imitation;
+- giant `01 / 02 / 03` numerals as decoration;
+- label patterns such as `01 · SECTION` used for style rather than utility;
+- deliberately broken grid rules;
+- designed whitespace imbalance as a signature trick;
+- gear/flag/document/podium illustration motifs;
+- large primary-color rectangles used as section identity;
+- Bento/equal-card composition;
+- KPI-card dashboards;
+- universal rounded dark cards;
+- glass/glow/gradient/neon dark UI;
+- fake terminal/HUD aesthetics;
+- generic "premium" reveal choreography;
+- slogan copy generated to make ordinary information sound profound;
+- decorative marks, stamps, registration symbols or pseudo-print artifacts
+  without a real product purpose.
 
-## Mobile as first-class composition
+A primitive is not banned because AI systems sometimes use it. The question is
+whether the primitive is justified by the actual content or interaction.
 
-Mobile is not a collapsed desktop layout. Art-direct the 320/375 px
-composition deliberately.
+## The deletion test
+
+Before adding or retaining any nonessential visual element, answer:
+
+1. What information does it communicate?
+2. What interaction does it support?
+3. What hierarchy does it clarify?
+4. Would the page become less understandable or less identifiable without it?
+
+If the only defensible answer is "it adds visual interest", remove it.
+
+## Mobile
+
+Mobile is a first-class composition, but it should become simpler rather than
+more theatrical.
 
 Core functionality must work:
 
 - from 320 px upward;
 - on touch-only devices;
-- without hover or precise pointer;
+- without hover;
 - with reduced motion;
-- with touch targets at least 44 px where interactive.
+- with touch targets at least 44 px where interactive;
+- without horizontal overflow caused by decorative layout tricks.
 
-Controlled imperfection must not become unpredictable mobile layout. On small
-screens, clarity wins when tension and usability conflict.
+When desktop whitespace or alignment does not translate naturally to a small
+screen, recompute it for clarity instead of preserving an art-directed gesture.

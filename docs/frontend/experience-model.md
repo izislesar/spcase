@@ -10,28 +10,22 @@
 SPCase is not a SaaS application that happens to host a competition.
 
 The interface represents a **live competition with stages, deadlines,
-artifacts, roles and irreversible moments**. Product UX should make a user
-understand where they are in that competition, what is available now, what is
-locked, what happens next and what action matters most.
+artifacts, roles and consequential moments**. A user should quickly understand:
 
-The conceptual blend is:
+1. where they are in the competition;
+2. what is available now;
+3. what is locked or unavailable;
+4. what happens next;
+5. what action matters most.
 
-```text
-editorial publication
-× competition scoreboard
-× operational dossier
-× event system
-× judging sheet
-```
+The product should feel like a real event with a direct digital interface, not
+like an editorial concept laid on top of a CRUD application.
 
-The visual constitution is `design-direction.md`; behavioral truth remains in
+Visual rules live in `design-direction.md`; behavioral truth remains in
 `legacy-contract.md`, `docs/domain/business-rules.md` and
 `docs/contracts/http-api.md`.
 
 ## Competition lifecycle
-
-The UX should consistently express the relevant lifecycle rather than treating
-routes as unrelated pages.
 
 Canonical participant progression:
 
@@ -53,212 +47,222 @@ JURY
 RESULTS
 ```
 
-Not every state must exist as a new backend enum. The frontend derives its
-presentation from existing authoritative data and contracts; do not invent
-server state merely to match this diagram.
+Not every state must exist as a new backend enum. Presentation is derived from
+authoritative data and contracts; never invent server state to make the UI
+look more "live".
 
-At any important participant surface, answer these questions quickly:
+## Information hierarchy before visual metaphor
 
-1. What stage is the competition in?
-2. What is my/team state?
-3. What can I do now?
-4. What is the next irreversible or deadline-bound event?
+Every important surface should begin with the information needed to act.
+Useful categories are:
 
-## Stable product language
+- identity: team, case, participant, event;
+- state: current lifecycle condition;
+- time: date, deadline, remaining window where authoritative;
+- material: case files, submission files, criteria, results;
+- people: team members, jury context, roles;
+- action: the current next step;
+- consequence: what a high-salience action changes or locks.
 
-Use compact identifiers and metadata to make the system feel concrete and
-operational rather than generic.
+Do not invent a dossier, ticket, stamp, scoreboard or technical metaphor when
+plain information hierarchy communicates the state better.
 
-Examples of the language, subject to real available data:
+## Homepage
 
-```text
-SPK/26
-TEAM/042
-CASE/03
-DOC/02
-REV/04
-JURY/07
-```
+The homepage is the public entry point to the current championship.
 
-Do not fabricate IDs the backend does not expose. The principle is stable
-naming and metadata hierarchy, not fake data.
+Its first job is to answer basic questions with truthful content:
 
-Useful visual roles:
+- what is SPCase;
+- where/when it happens;
+- whether/when registration is available;
+- who can participate / team format where known;
+- what the primary next action is.
 
-- display: event/stage/title;
-- meta: IDs, timestamps, role, version, status;
-- data: countdowns, scores, counts, deadlines;
-- action: the single current next step;
-- rule/marker: progression, grouping, current position.
+When backend data supports a current lifecycle state, surface it. When it does
+not, use stable factual event information rather than fake LIVE/NOW/countdown
+concepts.
 
-## Homepage as live cover
+The homepage does not need an illustration or metaphor to feel complete.
 
-The homepage should evolve from static marketing toward a **live cover/status
-board** of the championship.
+## Format
 
-Its strongest message should depend on the real current stage when data is
-available. Examples:
+Explain how the championship works in direct language.
 
-- registration open → deadline and team formation are primary;
-- case active → active work window and case status are primary;
-- submission window → deadline/state are primary;
-- completed competition → results become primary.
+Each stage should communicate:
 
-This is a presentation rule, not authorization to invent missing API state.
-If current APIs cannot support a desired state safely, document the gap rather
-than guessing.
+- stage name;
+- date/window when authoritative;
+- what participants do;
+- what outcome moves them forward.
 
-## Participant workspace: dossier, not dashboard
+Small sequence numbers are acceptable as metadata. Stage numbers should not
+become the primary visual content.
 
-The main participant workspace should read like the team's active competition
-dossier rather than a generic dashboard.
+## Schedule
+
+Schedule is a primary information surface, not a decorative timeline story.
+
+Prioritize:
+
+- date grouping;
+- times;
+- event names;
+- locations/details;
+- current/next event when authoritative;
+- fast scanning on desktop and mobile.
+
+The schedule itself should provide the visual structure. Illustration and
+narrative motion are unnecessary.
+
+## Auth
+
+Login and registration should feel like entering the championship, but remain
+plain functional forms.
+
+Prioritize:
+
+- clear context/title;
+- concise registration/deadline information where truthful;
+- stable fields;
+- validation and errors;
+- one obvious primary action;
+- obvious link between login and registration.
+
+Do not add a decorative art panel merely to make auth visually distinctive.
+
+## Participant workspace
+
+The main participant surface is a work area, not a generic dashboard and not a
+stylized dossier prop.
 
 Preferred hierarchy:
 
 - team identity;
-- current stage;
+- current competition state;
 - assigned/available case;
-- deadline or lock state;
+- deadline/lock state;
 - team membership;
-- work artifacts/submission state;
+- work/submission artifacts;
 - next action.
 
-Avoid starting the surface with generic KPI cards or "Welcome back" copy. Use
-plain hierarchy, rules, lists, metadata and strong state communication before
-introducing containers.
+Avoid `Welcome back`, KPI cards or marketing-style hero content. Use lists,
+rules, metadata and bounded surfaces only when they improve comprehension.
 
 ## Team formation
 
-Team formation should feel like assembling a roster for an event, not filling
-an account-settings page.
+Team formation is a roster-building workflow.
 
 Emphasize:
 
-- current membership;
+- current members;
 - captain/role where authoritative;
-- available capacity/invite or join actions;
-- conditions that prevent further changes;
-- transition into locked/competition state.
+- available capacity;
+- invite/join actions;
+- restrictions that prevent further changes;
+- transition into a locked/competition state.
 
-Hard Lock and related lifecycle behavior remain defined by backend/domain
-contracts; visual treatment must not imply reversibility where none exists.
+Hard Lock and lifecycle behavior remain defined by backend/domain contracts.
+Visual treatment must not imply reversibility where none exists.
 
-## Case release: issued dossier
+## Case
 
-A case is an issued competition artifact, not a generic downloadable card.
+A case is the central work artifact.
 
-Before release, if authoritative data exposes the condition, the UI may use a
-sealed/locked treatment. After release, present the case as an issued dossier
-with title, metadata, files/instructions and current work state.
+After authoritative release, show:
 
-A release moment is allowed to have more visual ceremony than routine product
-navigation because it is a meaningful lifecycle event.
+- case title/context;
+- instructions;
+- files/materials;
+- relevant dates/deadlines;
+- current participant work state.
 
-## Submission: a deliberate ritual
+Before release, show only states actually supported by authoritative data.
 
-Submission is one of the highest-salience interactions in the product. Treat
-it like fixing/filing a competition result, not dropping a file into a generic
-upload widget.
+Do not needlessly style the case as a sealed envelope, issued dossier or other
+physical metaphor. The actual case content is enough.
 
-The surface should make clear:
+## Submission
 
-- required and optional artifacts;
-- validation/readiness state;
+Submission is a high-consequence workflow and deserves more interaction care
+than routine navigation.
+
+Make clear:
+
+- required/optional artifacts;
+- selected/uploaded files;
+- validation/readiness;
 - deadline;
-- consequences of submission/lock according to the actual contract;
+- consequence of submitting/locking according to the real contract;
 - final action;
 - confirmed post-submit state.
 
-After successful submission, use a strong stable confirmation treatment
-(e.g. issued timestamp/status/stamp language) while remaining accessible and
-truthful to backend state.
+Confirmation may be visually strong, but it should be based on real status,
+time and files rather than a decorative stamp metaphor.
 
-Do not imply an irreversible action unless the contract really makes it
+Do not imply irreversibility unless the contract actually makes the action
 irreversible.
 
-## Jury: judging desk
+## Jury
 
-JURY surfaces are a judging workspace, not a dashboard.
+JURY is a scoring workspace, not a dashboard and not a themed judging prop.
 
-The ideal desktop mental model is a judging sheet beside the team/submission
-material. Prioritize:
+Prioritize:
 
 - team/case identity;
 - submission material;
 - scoring criteria;
 - current values and totals where authoritative;
-- validation and lifecycle state;
-- deliberate score submission/finalization.
+- validation/lifecycle state;
+- score submission/finalization.
 
-Repeated judging work requires efficiency and low motion. Visual character
-comes from hierarchy, typography, rules and state — not decorative scenes.
+Repeated judging work requires low motion and high scanability.
 
 ## Results
 
-Results are an event moment and may receive stronger art direction than
-routine product screens. The hierarchy should emphasize ranking/outcome and
-make scoring provenance understandable where the product exposes it.
+Results may carry stronger hierarchy because they are a meaningful event
+moment, but data stays primary.
 
-Do not turn results into celebratory visual noise that obscures data.
+Prioritize:
 
-## Schedule and temporal state
+- ranking/outcome;
+- score;
+- team identity;
+- scoring provenance where available.
 
-Schedule is an information visualization of time, not a decorative scrolling
-story.
-
-If current-time data is available, make the user's temporal position legible:
-what happened, what is current, what is next. Animation may reinforce current
-progress but must not be required to understand the schedule.
+Do not add celebratory visual noise that obscures comparison.
 
 ## Persistent lifecycle orientation
 
-Where useful, surfaces may share a compact lifecycle/stage indicator so users
-can orient themselves across routes. It should describe real product state and
-collapse gracefully on mobile.
+Where useful, a compact lifecycle indicator may orient users across routes.
+It must correspond to real state and remain understandable without animation.
 
-Do not create a fake percentage progress bar when the underlying lifecycle is
-stage-based rather than continuous.
-
-## Semantic graphic language
-
-Reusable motifs should gain stable meaning. Candidate roles include:
-
-- current-stage marker;
-- milestone/flag;
-- issued case/document;
-- submission/fixed state;
-- locked state;
-- jury mark/evaluation;
-- result/rank;
-- dotted or ruled progression path.
-
-Do not force every motif onto every screen. A semantic motif is useful because
-it can recur when the same concept recurs.
+Do not create fake continuous percentage progress for a stage-based lifecycle.
 
 ## Interaction hierarchy
 
 At a given state, prefer one obvious primary action over several equally loud
-CTAs. Secondary actions should visually remain secondary.
+CTAs. Secondary actions should remain secondary.
 
-High-salience lifecycle actions (join/finalize/submit/evaluate where actually
-applicable) deserve stronger confirmation and consequence communication than
-routine navigation.
+High-consequence actions (join/finalize/submit/evaluate where applicable)
+require clearer consequence communication and confirmation than routine
+navigation.
 
 ## Public / product / admin density
 
-- Public: expressive, spacious, illustrative.
-- USER/JURY product: information-dense, document-like, task-focused.
+- PUBLIC: calm, direct, content-first, sparse when content is sparse.
+- USER/JURY: denser operational information, minimal decoration.
 - ADMIN: utilitarian, highly scannable, operationally safe.
 
-Shared identity does not require shared layout anatomy.
+Shared identity comes from type, palette, spacing, interaction and product
+language; it does not require shared decorative motifs.
 
 ## Accessibility and truthfulness
 
-- Never trade readability or control predictability for controlled
-  imperfection.
 - Do not encode state only in color or motion.
-- Reduced-motion users must receive equivalent information.
+- Reduced-motion users receive equivalent information.
 - Never invent deadlines, lock states, IDs, scores, eligibility or lifecycle
   transitions from visual design needs.
-- When design intent conflicts with an authoritative behavioral contract,
-  preserve the contract and document the design constraint/gap.
+- Do not trade form/control predictability for visual character.
+- When visual intent conflicts with an authoritative behavioral contract,
+  preserve the contract and report the design constraint/gap.

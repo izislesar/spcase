@@ -9,10 +9,10 @@
 > The independent `frontend/` project exists and is the migration target:
 > a Vite 8 + React 19 + TypeScript (strict) application with React Router
 > (data mode), TanStack Query, the `/api/v1` fetch transport, CSS
-> token/base primitives, Biome and Playwright configuration. The public
-> visual implementation has reached Stage 4D; human review on 2026-08-11
-> returned ITERATE and Stage 4E is the next art-direction consolidation
-> stage (`visual-acceptance.md`). Product UX semantics live in
+> token/base primitives, Biome and Playwright configuration. Stage 4E was
+> technically implemented but human review on 2026-08-11 rejected its visual
+> direction. Stage 4F (dark de-stylization) is the next approved public design
+> implementation stage (`visual-acceptance.md`). Product UX semantics live in
 > `experience-model.md`. Production cutover is defined (`cutover-plan.md`)
 > but NOT executed. Details: `../../frontend/AGENTS.md`.
 
@@ -50,7 +50,8 @@ Styling and visual system:
 - Grid / Subgrid
 - Container Queries
 - OKLCH / `color-mix()`
-- SVG-first graphics
+- SVG only where a real interface/brand need exists; decorative illustration is
+  not a default architecture requirement
 
 Motion and browser interaction:
 

@@ -6,13 +6,15 @@ Backend, database и production-инфраструктура реализова�
 frontend-приложение до продолжения staging/production cutover
 (см. `docs/decisions/0001-frontend-v2.md`).
 
-Frontend-миграция находится на этапе публичной визуальной системы (фаза 4):
-технический foundation и поведенческий контракт завершены, публичная
-визуальная реализация прошла Stage 4 / 4A / 4B / 4C / 4D. Human visual review
-Stage 4D проведён 2026-08-11 с вердиктом **ITERATE**: визуальная ДНК сохранена,
-но композиционная модель и product UX должны быть консолидированы вокруг
-`Editorial Competition OS + controlled imperfection`. Следующий шаг — Stage
-4E (art-direction consolidation), см. `docs/frontend/design-direction.md`,
+Frontend-миграция находится на этапе публичной визуальной системы (фаза 4).
+Технический foundation и поведенческий контракт завершены. Stage 4E
+(`73185c5`) технически реализован, но human visual review 2026-08-11 дал
+вердикт **REJECT DIRECTION**: попытка `Editorial Competition OS + controlled
+imperfection` ушла от generic SaaS, но стала выглядеть как клишированный
+Swiss/editorial agency concept. Следующий утверждённый шаг — **Stage 4F: dark
+de-stylization**: удалить декоративный visual grammar, перейти на тёмный
+content-first интерфейс и заново собрать public surfaces из реального контента,
+типографики, state и interaction. См. `docs/frontend/design-direction.md`,
 `docs/frontend/experience-model.md` и `docs/frontend/visual-acceptance.md`.
 
 Staging acceptance и production deployment НЕ являются ближайшей фазой: они
@@ -34,7 +36,7 @@ Staging acceptance и production deployment НЕ являются ближайш
 ## Фаза 1. Context engineering
 
 - [x] 1.1 Реструктурировать контекст репозитория: `AGENTS.md`, `docs/`, `ROADMAP.md`
-- [ ] 1.2 Поддерживать документацию актуальной при изменении кода и архитектуры
+- [~] 1.2 Поддерживать документацию актуальной через human + ChatGPT Web documentation pass; coding agents по умолчанию меняют только реализацию
 
 ## Фаза 2. Frontend behavioral contract
 
@@ -50,13 +52,14 @@ Staging acceptance и production deployment НЕ являются ближайш
 
 ## Фаза 4. Публичная визуальная система
 
-- [~] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — Stage 4D реализован и рассмотрен человеком; verdict **ITERATE**
-- [~] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — механизмы существуют; окончательная композиционная acceptance входит в Stage 4E
+- [~] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — implementation продолжается; human visual acceptance ещё не получен
+- [~] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — технические механизмы существуют; финальная acceptance переносится в Stage 4F
 - [x] 4.3 Stage 4C — wide/full-bleed composition, heterogeneous editorial scenes, уменьшение card chrome, mobile 320/375 recomposition — технически реализовано
-- [x] 4.4 Stage 4D — Motion/view-transition interaction layer, bottom-nav marker, hero/schedule/auth choreography, PublicStatus и reduced-motion пути — технически реализовано; human review 2026-08-11 выявил избыточную agency-landing-page/motion-polish модель
-- [ ] 4.5 Stage 4E — art-direction consolidation: закрепить `Editorial Competition OS + controlled imperfection`, переработать публичную композицию без смены visual DNA, уменьшить декоративный motion, сделать графику более семантической, зафиксировать public/product/admin grammar и подготовить human acceptance
+- [x] 4.4 Stage 4D — Motion/view-transition interaction layer, bottom-nav marker, hero/schedule/auth choreography, PublicStatus и reduced-motion пути — технически реализовано; human review выявил избыточную agency-landing-page/motion-polish модель
+- [x] 4.5 Stage 4E — art-direction consolidation (`73185c5`) — технически реализовано; human review 2026-08-11: **REJECT DIRECTION** из-за giant-number/editorial-rule/illustration/color-field/forced-asymmetry AI-template grammar
+- [ ] 4.6 Stage 4F — dark de-stylization: тёмный content-first canvas, один основной red accent, удалить dominant illustration/color-field/giant-number grammar, отказаться от manufactured imperfection, упростить auth, сделать schedule information-first, сократить motion до state/navigation/interaction и провести human visual review
 
-**Gate:** фаза 5 НЕ начинается, пока Stage 4E human review явно не зафиксирует
+**Gate:** фаза 5 НЕ начинается, пока Stage 4F human review явно не зафиксирует
 visual **ACCEPT** в `docs/frontend/visual-acceptance.md`. Технически валидный
 commit не равен визуально принятому.
 

@@ -6,14 +6,34 @@
 wired into production yet; legacy `web/` remains the running frontend and the
 behavioral reference until explicit cutover.
 
-The public React surfaces have a technically validated Stage 4D implementation,
-but the human review on 2026-08-11 returned **ITERATE**, not ACCEPT. Preserve
-the established visual DNA, but do not treat current DOM/CSS/composition or
-motion density as a design source of truth. The next stage is Stage 4E: art-
-direction consolidation around the approved product/visual model.
+Stage 4E (`73185c5`, `feat(frontend): consolidate editorial art direction`) is
+technically complete but was **visually rejected by human review on
+2026-08-11**. Do not treat its composition, illustration, palette usage or
+"controlled imperfection" devices as approved visual precedent.
 
-USER/JURY/ADMIN routes are still mostly structural shells. Do not extrapolate
-the public landing-page grammar into those workspaces by default.
+The next approved implementation stage is **Stage 4F — dark de-stylization**.
+Its authority is `docs/frontend/design-direction.md` plus the current verdict
+in `docs/frontend/visual-acceptance.md`.
+
+USER/JURY/ADMIN routes are still mostly structural shells. Do not start Phase
+5 unless the task explicitly says Stage 4F has received human ACCEPT.
+
+## Documentation ownership
+
+Project documentation is owned by the human + ChatGPT Web workflow.
+
+Coding agents must **not edit `.md` project/context documents** as part of code
+implementation unless the user explicitly overrides this rule for that task.
+This includes:
+
+- `AGENTS.md`;
+- `README.md`;
+- `ROADMAP.md`;
+- `frontend/AGENTS.md`;
+- `docs/**/*.md`.
+
+When code work reveals a documentation gap, report it in the final report. Do
+not silently update the docs yourself.
 
 ## Read context by task
 
@@ -56,10 +76,12 @@ Do not load the full `legacy-contract.md` for a purely visual public-page edit.
 - Playwright for desktop/mobile e2e
 - CSS Modules + modern native CSS
 - CSS custom properties, Grid/Flex, container queries, OKLCH/`color-mix()`
-- SVG/DOM/CSS-first graphics
-- `motion` is installed and is the default animation library
+- `motion` is installed and available for justified interaction/state motion
 
 No Tailwind and no component-library visual system in the React target.
+
+Do not add GSAP, ScrollTrigger, Lenis, Rive or another runtime visual framework
+without explicit task-level approval.
 
 ## API contract
 
@@ -77,71 +99,96 @@ No Tailwind and no component-library visual system in the React target.
 
 North star:
 
-**Editorial Competition OS with controlled imperfection.**
+**Dark, content-first competition interface.**
 
-The product should feel like a live competition system — part editorial
-publication, scoreboard, dossier and judging desk — not like generic SaaS.
+The frontend should feel like a real championship with a straightforward
+interface, not like a designer's concept website.
 
-Use roughly **90% discipline / 10% disobedience**:
+Governing tests:
 
-- discipline: hierarchy, grid, readability, predictable controls,
-  accessibility, stable semantics;
-- disobedience: rare asymmetric composition, uneven whitespace, intentional
-  crop/grid escape, oversized numbering, physical marks/stamps and deliberate
-  density changes.
+> Nothing exists solely to make the page look designed.
 
-Imperfection must create tension, not fake handmade texture. Do not add random
-rotation, paper grain, scratches, noisy backgrounds or arbitrary misalignment
-merely to look "human".
+> If an element cannot justify itself without the phrase "visual interest",
+> remove it.
+
+### Dark palette
+
+The default direction is a continuous near-black/deep-navy canvas with warm
+light text, subtle rules and one deep-red primary accent. Secondary color is
+rare and muted.
+
+Do not reproduce the Stage 4D/4E mustard + cyan + coral + navy field system.
+Do not solve the dark direction with nested lighter cards.
+
+Dark must not drift into cyberpunk, terminal, developer-tool, neon, glass,
+glow, luxury-black or blue/purple-gradient aesthetics.
+
+### Content before decoration
+
+Prefer real competition information over illustration or ornamental geometry.
+Dates, deadlines, team size, schedule, scores, files and lifecycle state are
+valid visual material.
+
+The current gear/flag/machine/podium/sheet illustration language is not an
+approved identity requirement. Stage 4F should remove it from dominant public
+composition and must not replace it with another decorative illustration
+system.
+
+### Natural variation, not designed imperfection
+
+Do not implement a quota of grid escapes, broken rules, crops, rotations or
+asymmetric tricks. The old `90% discipline / 10% disobedience` formula is no
+longer an implementation rule.
+
+Allow different content to produce different density and spacing, but do not
+manufacture irregularity to look human.
 
 ### Public vs product surfaces
 
-Public routes may be expressive: large type, illustration, asymmetric fields,
-strong whitespace and rare spectacle motion.
+PUBLIC is calm and content-first. Large type is allowed when it reflects real
+hierarchy, but public pages should not depend on illustration, giant numerals,
+color blocks or slogan copy.
 
-USER/JURY workspaces are information-dense operational tools: document-like
-layouts, rules, labels, tables, status, identifiers and restrained motion.
+USER/JURY workspaces are information-dense operational tools. ADMIN is
+primarily utilitarian.
 
-ADMIN is primarily utilitarian.
+Do not scale landing-page grammar into operational workspaces.
 
-Never scale the landing-page visual grammar directly into operational
-workspaces.
+## Anti-slop / anti-AI contract
 
-## Anti-slop contract
+Reject as dominant grammar:
 
-Avoid as default visual grammar:
-
-- Bento-grid or equal-card composition;
+- Swiss/editorial agency-site imitation;
+- giant stage numerals;
+- decorative `01 · SECTION` labels;
+- Bento/equal-card layouts;
 - KPI-card dashboards;
-- universal rounded containers;
-- pill/badge overload;
-- glassmorphism, gradients, glow or generic 3D;
-- stock "feature icon + title + paragraph" sections;
-- abstract decorative blobs/geometries without product semantics;
-- repetitive identical illustration formulas;
-- "Welcome back" dashboard hero patterns;
-- continuous reveal/parallax choreography;
-- decorative motion whose only purpose is to demonstrate animation.
+- universal rounded dark surfaces;
+- art-panel auth layouts;
+- gear/flag/document/podium illustration motifs;
+- large multicolor section fields;
+- deliberate broken-grid tricks;
+- slogans replacing factual labels;
+- glassmorphism, glow, gradients, neon;
+- terminal/HUD cosplay;
+- decorative scroll choreography.
 
-A card is allowed when the underlying object is semantically a self-contained
-card. A rounded corner or animation is allowed when it earns its role. These
-are constraints against defaults, not blanket bans on primitives.
+A primitive is allowed when the information or interaction genuinely requires
+it. These are anti-default rules, not syntactic bans.
 
 ## Motion policy
 
-Motion must have a product reason. Preferred classes:
+Motion is deliberately sparse. Preferred reasons:
 
-1. navigation continuity / shared surface transitions;
-2. state transitions (opened, selected, submitted, error, locked);
-3. information progression (current stage, schedule/time progression);
-4. microresponse (hover/press/focus);
-5. rare public-page spectacle, primarily the hero.
+1. navigation continuity;
+2. state transition;
+3. direct interaction feedback;
+4. truthful temporal progression where it improves comprehension.
 
-Respect `prefers-reduced-motion` at every motion call site or through a shared
-primitive that guarantees it. Static state must remain fully understandable.
+Public scroll reveal, decorative parallax, scroll drift and floating artwork
+are not approved defaults.
 
-Pointer parallax and scroll drift are not default primitives. Do not add GSAP,
-Lenis or Rive without an explicit task-level product need and approval.
+Respect `prefers-reduced-motion`. Static state must be complete and clear.
 
 ## Code rules
 
@@ -155,6 +202,8 @@ Lenis or Rive without an explicit task-level product need and approval.
 - No unjustified runtime dependencies.
 - Current implementation is evidence, not visual authority, when it conflicts
   with the approved design direction or current human verdict.
+- Do not fabricate API state, dates, counts or lifecycle information for visual
+  effect.
 
 ## Behavioral parity
 

@@ -66,6 +66,20 @@ context by default.
 
 Use short cross-references instead of duplicating stable facts across files.
 
+## Documentation ownership
+
+Project/context documentation is authored and maintained by the human +
+ChatGPT Web workflow. Coding agents are implementation-only by default.
+
+Unless the user explicitly overrides this rule for a task, coding agents must
+not edit project Markdown/context files, including `AGENTS.md`, `README.md`,
+`ROADMAP.md`, `frontend/AGENTS.md` and `docs/**/*.md`. If implementation work
+reveals that documentation is stale or incomplete, report the discrepancy in
+the final report so the documentation owner can update it separately.
+
+Documentation-only commits should remain separate from implementation commits
+when practical.
+
 ## Global invariants
 
 - Preserve established behavior unless the task explicitly changes an
