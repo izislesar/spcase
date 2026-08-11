@@ -1,226 +1,92 @@
-/* Dedicated /schedule page — an information timeline, not a scrolling story. */
+/* Dedicated /schedule page — the schedule itself is the composition. */
 
 .page {
   padding-block: clamp(2rem, 1rem + 5vw, 5rem) var(--section-gap);
-  overflow: clip;
-}
-
-.eyebrow {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-eyebrow);
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
 }
 
 .header {
-  display: grid;
-  gap: var(--space-8);
-  align-items: end;
-  margin-bottom: clamp(4rem, 3rem + 6vw, 9rem);
+  max-width: 46rem;
+  margin-bottom: var(--space-12);
 }
 
-.headerCopy {
-  max-width: 48rem;
+/* Factual page context: which championship this schedule belongs to. */
+.context {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
 
 .title {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  /*
-   * «Расписание» must sit on one line at every viewport from 320 px up —
-   * the clamp is tuned so the whole word (~5.2em with tracking) always
-   * fits the wide container, and mid-word wrapping is disabled outright.
-   */
-  font-size: clamp(2.75rem, 1.35rem + 6.6vw, 7rem);
+  font-size: var(--text-2xl);
   font-weight: 800;
-  line-height: 0.96;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
+  /* A single word: never break it mid-word, at any viewport. */
   overflow-wrap: normal;
   word-break: keep-all;
   hyphens: none;
 }
 
-/* Mask for the Motion line reveal (skipped during the vt-title morph). */
-.titleMask {
-  display: block;
-  overflow: clip;
-}
-
-.titleLine {
-  display: block;
-}
-
 .intro {
   margin: 0;
   max-width: 46ch;
-  color: var(--color-ink-muted);
+  color: var(--color-text-muted);
   font-size: var(--text-lg);
 }
 
-.headerArtWrap {
-  inline-size: min(80vw, 26rem);
-  justify-self: start;
-  pointer-events: none;
-}
-
-.headerArt {
-  display: block;
-  inline-size: 100%;
-  block-size: auto;
-}
-
-/*
- * The timeline: one ink line, oversized dates offset from it, generous
- * whitespace between events. The line sits inside the date gutter —
- * left on mobile, between date and body on desktop.
- */
-.timeline {
-  position: relative;
-}
-
-.line {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0.6875rem;
-  inline-size: 3px;
-  border-radius: 2px;
-  background: var(--color-line);
-}
-
-/*
- * Coral progress fill: driven by a Motion useScroll scaleY on the timeline
- * (see SchedulePage.tsx). The CSS baseline is the full line, which is also
- * the reduced-motion state; the transform origin keeps the fill growing
- * from the top.
- */
-.lineProgress {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0.6875rem;
-  inline-size: 3px;
-  border-radius: 2px;
-  background: var(--color-accent);
-  transform-origin: top;
-}
-
-.items {
+.groups {
   display: grid;
-  gap: clamp(4rem, 3rem + 8vw, 9rem);
+  gap: var(--space-12);
+}
+
+.groupTitle {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  overflow-wrap: break-word;
+}
+
+.events {
+  display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
+  border-block-start: 1px solid var(--color-line);
 }
 
-.item,
-.itemAlt {
-  position: relative;
+.event {
   display: grid;
-  gap: var(--space-2);
-  padding-inline-start: var(--space-8);
+  gap: var(--space-1) var(--space-8);
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--color-line);
 }
 
-.marker {
-  position: absolute;
-  inset-block-start: var(--space-4);
-  inset-inline-start: 0;
-  inline-size: 1.375rem;
-  block-size: 1.375rem;
-  border-radius: 50%;
-  background: var(--color-accent);
-  border: 4px solid var(--color-canvas);
-}
-
-.date {
-  display: block;
-}
-
-.day {
-  display: block;
-  font-family: var(--font-display);
-  font-size: clamp(3.5rem, 2.4rem + 5.5vw, 7.5rem);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
-  color: var(--color-ink);
-}
-
-.month {
-  display: block;
-  margin-block-start: var(--space-2);
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--color-accent-strong);
-}
-
+/* Fixed-width tabular time column for fast vertical scanning. */
 .time {
-  display: block;
-  margin-block-start: var(--space-1);
-  font-size: var(--text-sm);
-  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--color-ink-muted);
+  font-weight: 700;
+  color: var(--color-text-muted);
 }
 
 .body {
   min-width: 0;
-  max-width: 38rem;
-  align-self: center;
+  max-width: 44rem;
 }
 
 .eventTitle {
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--space-1);
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: var(--text-lg);
+  font-weight: 700;
   overflow-wrap: break-word;
 }
 
 .eventDescription {
   margin: 0;
-  font-size: var(--text-lg);
-  color: var(--color-ink-muted);
+  color: var(--color-text-muted);
   overflow-wrap: break-word;
-}
-
-/* The closing poster: the finish scene on a flat navy band. */
-.closingBand {
-  margin-top: clamp(4rem, 3rem + 8vw, 9rem);
-  background: var(--color-navy);
-  overflow: clip;
-}
-
-.closingArt {
-  display: block;
-  inline-size: min(100%, 52rem);
-  block-size: auto;
-  margin-inline: auto;
-  margin-block-end: -2px;
-  pointer-events: none;
-}
-
-.empty {
-  display: grid;
-  justify-items: center;
-  gap: var(--space-8);
-  padding-block: var(--space-16);
-  text-align: center;
-}
-
-.emptyArt {
-  inline-size: min(88vw, 28rem);
-  block-size: auto;
-}
-
-.emptyText {
-  margin: 0;
-  max-width: 34ch;
-  font-size: var(--text-lg);
-  color: var(--color-ink-muted);
 }
 
 @media (width > 64rem) {
@@ -228,39 +94,8 @@
     padding-block-start: var(--space-16);
   }
 
-  .header {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .headerArtWrap {
-    inline-size: min(38vw, 30rem);
-    justify-self: end;
-  }
-
-  .line,
-  .lineProgress {
-    inset-inline-start: 15.5rem;
-  }
-
-  .item,
-  .itemAlt {
-    grid-template-columns: 13rem minmax(0, 1fr);
-    gap: var(--space-16);
-    align-items: start;
-    padding-inline-start: 0;
-  }
-
-  .marker {
-    inset-inline-start: 14.8125rem;
-    inset-block-start: var(--space-2);
-  }
-
-  .date {
-    text-align: end;
-  }
-
-  /* Alternating editorial offsets: even items step further right. */
-  .itemAlt .body {
-    margin-inline-start: var(--space-16);
+  .event {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    align-items: baseline;
   }
 }

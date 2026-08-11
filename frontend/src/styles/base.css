@@ -16,7 +16,7 @@
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: 1.6;
-    color: var(--color-ink);
+    color: var(--color-text);
     background: var(--color-canvas);
   }
 
@@ -30,23 +30,22 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
   h1 {
     font-size: var(--text-2xl);
-    letter-spacing: -0.03em;
   }
 
   a {
-    color: var(--color-accent-strong);
+    color: var(--color-accent-text);
     text-underline-offset: 0.2em;
   }
 
   a:hover {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   :focus-visible {
@@ -106,10 +105,10 @@
   }
 
   /*
-   * Wide editorial primitive for public page compositions: sections get
-   * close to the viewport width so artwork and color fields can breathe,
-   * crop and break the grid. Readable text inside still uses constrained
-   * measures — the wide frame is for graphics, not paragraphs.
+   * Wide primitive for public page compositions: sections get closer to the
+   * viewport width than the reading container. Readable text inside still
+   * uses constrained measures — the wide frame is for structure, not
+   * paragraphs.
    */
   .container-wide {
     container-type: inline-size;

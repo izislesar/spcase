@@ -33,31 +33,25 @@
 
   :root {
     /*
-     * Palette: near-white editorial canvas, deep navy ink, one coral accent
-     * and two saturated flat fields (mustard, turquoise). Large fields carry
-     * the visual rhythm; there is no mechanical one-token-per-section rule.
-     * All values OKLCH. Text pairs are AA-checked:
-     *   ink/canvas ~ 12.6, ink-muted/canvas ~ 5.3,
-     *   accent-strong/canvas ~ 4.9 (text links, buttons),
-     *   on-accent/accent-strong ~ 4.9,
-     *   ink/mustard ~ 9.1, ink/turquoise ~ 9.6,
-     *   on-navy/navy ~ 12.4, on-navy-muted/navy ~ 6.1.
-     * Bare accent and the field colors are used for artwork/fills, not text.
+     * Dark palette: one continuous near-black/deep-navy canvas, warm light
+     * text, subtle rules and ONE deep-red accent. Surfaces appear only where
+     * structure requires them (inputs, the fixed nav bar); there are no
+     * large color fields, gradients, glows or shadows-as-hierarchy.
+     * All values OKLCH. Text pairs are AA-checked on the canvas:
+     *   text/canvas ~ 12.9, text-muted/canvas ~ 6.5,
+     *   accent-text/canvas ~ 5.7 (text links, focus ring),
+     *   on-accent/accent ~ 4.7 (bold button labels).
+     * Bare accent is used for fills and small markers, not body text.
      */
-    --color-canvas: oklch(98.7% 0.004 95);
-    --color-surface: oklch(100% 0 0);
-    --color-ink: oklch(27% 0.055 262);
-    --color-ink-muted: oklch(46% 0.045 262);
-    --color-line: oklch(90% 0.015 260);
-    --color-accent: oklch(58% 0.2 27);
-    --color-accent-strong: oklch(50% 0.19 29);
-    --color-on-accent: oklch(99% 0.005 95);
-    --color-mustard: oklch(86% 0.15 92);
-    --color-turquoise: oklch(87% 0.09 195);
-    --color-navy: oklch(24% 0.06 262);
-    --color-on-navy: oklch(95% 0.02 250);
-    --color-on-navy-muted: oklch(80% 0.03 255);
-    --color-soft: oklch(95.5% 0.012 255);
+    --color-canvas: oklch(15% 0.014 252);
+    --color-surface: oklch(18.5% 0.018 251);
+    --color-raised: oklch(22% 0.022 250);
+    --color-text: oklch(92.5% 0.006 95);
+    --color-text-muted: oklch(65% 0.02 250);
+    --color-line: rgb(232 230 223 / 0.16);
+    --color-accent: oklch(52% 0.19 27);
+    --color-accent-text: oklch(64% 0.17 27);
+    --color-on-accent: oklch(97% 0.005 95);
 
     /*
      * Type stacks: Manrope carries display headings and the wordmark;
@@ -66,17 +60,16 @@
     --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-display: "Manrope", var(--font-sans);
 
-    /* Fluid type scale */
-    --text-eyebrow: 0.8125rem;
+    /*
+     * Fluid type scale, deliberately quiet: labels, readable body, medium
+     * section headings and page titles. Large type appears only where the
+     * information hierarchy justifies it.
+     */
     --text-sm: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
     --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
     --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
     --text-xl: clamp(1.375rem, 1.2rem + 0.9vw, 1.875rem);
     --text-2xl: clamp(1.75rem, 1.35rem + 1.9vw, 2.875rem);
-    --text-display: clamp(2.625rem, 1.6rem + 5.1vw, 6rem);
-    --text-numeral: clamp(3rem, 2.2rem + 4vw, 5.5rem);
-    /* Poster scale: oversized closing statements and the hero title. */
-    --text-poster: clamp(3.25rem, 1.7rem + 7.7vw, 8.75rem);
 
     /* Spacing scale (4px base) */
     --space-1: 0.25rem;
@@ -94,17 +87,13 @@
 
     --container-max: 75rem;
     /*
-     * Wide editorial measure for public compositions (hero, format, mosaic,
-     * schedule, footer): much wider than the reading container, with
-     * viewport-aware gutters. Text measures inside stay constrained.
+     * Wide measure for public page compositions (hero, format, schedule,
+     * footer): wider than the reading container, with viewport-aware
+     * gutters. Text measures inside stay constrained.
      */
     --container-wide-max: 96rem;
     --gutter-wide: clamp(1rem, 0.25rem + 4vw, 4rem);
     --radius: 0.375rem;
-    --radius-lg: 1.25rem;
-    --focus-ring: 0.1875rem solid var(--color-accent-strong);
-
-    /* Soft physical depth for poster surfaces and raised tiles. */
-    --shadow-poster: 0 0.5rem 0 color-mix(in oklch, var(--color-ink) 14%, transparent);
+    --focus-ring: 0.1875rem solid var(--color-accent-text);
   }
 }

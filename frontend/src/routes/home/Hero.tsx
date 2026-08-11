@@ -1,142 +1,86 @@
-import { motion, useReducedMotion, type Variants } from "motion/react";
-import { HeroScene } from "../../components/graphics/scenes/HeroScene";
 import { ArrowLink, ButtonLink } from "../../components/ui/ActionLinks";
 import { ErrorNotice, LoadingState } from "../../components/ui/DataState";
-import { EDITORIAL_EASE } from "../../lib/motion";
-import { errorMessage, usePublicInfo } from "./api";
+import { errorMessage, formatEventTime, usePublicInfo } from "./api";
 import styles from "./Hero.module.css";
 import { formatCountdown, useCountdown } from "./useCountdown";
 
 /*
- * The hero as the cover/status board of the championship, not a startup
- * hero: an oversized masthead headline, a ruled dossier strip with the
- * factual state of the competition (place/year, team format, jury criteria,
- * live registration countdown), and the case-solving machine crossing the
- * strip's top rule — the single authored irregularity of the composition.
- * Everything on the strip is truthful: static facts or live /info data with
- * its loading, error and terminal states intact.
- *
- * Authored entrance (~1.2s, never a uniform opacity stagger): «СПК» rises
- * through a vertical mask, «кейс-чемпионат» slides laterally through its
- * own mask, the scene masses assemble (driven inside HeroScene), and the
- * body with the data strip settles last. There is no pointer or scroll
- * depth: the static composition carries the design. Reduced motion shows
- * the final composition immediately.
+ * The hero as plain championship identity: the name, one factual lead
+ * sentence, the primary action and a short fact list — place/year, team
+ * format, jury criteria and the live registration state (countdown plus the
+ * deadline date from /info, with loading, error and terminal states
+ * intact). No artwork, no entrance choreography: the static composition is
+ * the design.
  */
-
-const topLineVariants: Variants = {
-  hidden: { y: "112%" },
-  visible: { y: "0%", transition: { duration: 0.65, ease: EDITORIAL_EASE, delay: 0.12 } },
-};
-
-const mainLineVariants: Variants = {
-  hidden: { x: "-104%" },
-  visible: { x: "0%", transition: { duration: 0.7, ease: EDITORIAL_EASE, delay: 0.3 } },
-};
-
-const settleVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EDITORIAL_EASE, delay: 0.55 } },
-};
-
 export function Hero() {
-  const reduced = useReducedMotion();
-
   return (
-    <motion.section
-      className={styles.hero}
-      aria-labelledby="home-heading"
-      initial={reduced ? false : "hidden"}
-      animate="visible"
-    >
+    <section className={styles.hero} aria-labelledby="home-heading">
       <div className={`container-wide ${styles.heroInner}`}>
-        <div className={styles.heroHead}>
-          {/*
-            Heavy grotesk headline with two deliberate line breaks; the second
-            line is offset and set in the coral accent. Each line reveals
-            through its own overflow mask — the exact text and the h1
-            semantics are unchanged.
-          */}
-          <h1 id="home-heading" className={styles.display}>
-            <span className={styles.displayTop}>
-              <motion.span className={styles.displayLine} variants={topLineVariants}>
-                СПК
-              </motion.span>
-            </span>
-            <span className={styles.displayMain}>
-              <motion.span className={styles.displayLine} variants={mainLineVariants}>
-                кейс-чемпионат
-              </motion.span>
-            </span>
-          </h1>
+        <h1 id="home-heading" className={styles.title}>
+          <span className={styles.titleLine}>СПК</span>
+          <span className={styles.titleLine}>кейс-чемпионат</span>
+        </h1>
+        <p className={styles.lead}>
+          Практический кейс, командная работа и защита решения перед экспертами.
+        </p>
+        <div className={styles.heroActions}>
+          <ButtonLink to="/register" viewTransition>
+            Подать заявку
+          </ButtonLink>
+          <ArrowLink to="/schedule" viewTransition>
+            Смотреть расписание
+          </ArrowLink>
+          <ArrowLink to="/login" viewTransition>
+            Вход для участников
+          </ArrowLink>
         </div>
-        <motion.div className={styles.heroBody} variants={settleVariants}>
-          <p className={styles.lead}>
-            Практический кейс, командная работа и защита решения перед экспертами.
-          </p>
-          <div className={styles.heroActions}>
-            <ButtonLink to="/register" viewTransition>
-              Подать заявку
-            </ButtonLink>
-            <ArrowLink to="/schedule" viewTransition>
-              Смотреть расписание
-            </ArrowLink>
+        <dl className={styles.facts}>
+          <div className={styles.fact}>
+            <dt className={styles.factLabel}>Место</dt>
+            <dd className={styles.factValue}>Санкт-Петербург · 2026</dd>
           </div>
-        </motion.div>
-        {/*
-          The one hero artwork: documents fly in, the machine works them
-          over, the pennant comes out. On desktop its bottom mass crosses
-          the data strip's top rule into the strip's deliberately empty
-          right region. Decorative → the svg is aria-hidden.
-        */}
-        <div className={styles.heroArtWrap}>
-          <HeroScene className={styles.heroArt} />
-        </div>
-        {/* The dossier strip: hairline rules, small caps labels, tabular values. */}
-        <motion.div className={styles.strip} variants={settleVariants}>
-          <div className={styles.stripCell}>
-            <span className={styles.cellLabel}>Место</span>
-            <span className={styles.cellValue}>Санкт-Петербург · 2026</span>
+          <div className={styles.fact}>
+            <dt className={styles.factLabel}>Команда</dt>
+            <dd className={styles.factValue}>02—04 участника</dd>
           </div>
-          <div className={styles.stripCell}>
-            <span className={styles.cellLabel}>Команда</span>
-            <span className={styles.cellValue}>02—04 участника</span>
+          <div className={styles.fact}>
+            <dt className={styles.factLabel}>Оценка жюри</dt>
+            <dd className={styles.factValue}>6 критериев</dd>
           </div>
-          <div className={styles.stripCell}>
-            <span className={styles.cellLabel}>Оценка жюри</span>
-            <span className={styles.cellValue}>6 критериев</span>
-          </div>
-          <Countdown />
-        </motion.div>
+          <RegistrationState />
+        </dl>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
-function Countdown() {
+function RegistrationState() {
   const info = usePublicInfo();
   const countdown = useCountdown(info.data?.registration_deadline);
 
   return (
-    <div className={styles.stripCell}>
-      <span className={styles.cellLabel}>До конца регистрации</span>
-      {info.isPending && <LoadingState label="Загружаем дедлайн…" />}
-      {info.isError && <ErrorNotice message={errorMessage(info.error)} />}
-      {info.isSuccess &&
-        (countdown.finished ? (
-          <strong className={styles.cellData} role="status">
-            Регистрация завершена
-          </strong>
-        ) : (
-          <span className={styles.cellData} role="status">
-            {/* Digits tick every second and are hidden from AT; the accessible
-                text changes at most once an hour. */}
-            <span aria-hidden="true">{formatCountdown(countdown.remainingMs ?? 0)}</span>
-            <span className="visually-hidden">
-              {accessibleRemaining(countdown.remainingMs ?? 0)}
+    <div className={styles.fact}>
+      <dt className={styles.factLabel}>Регистрация</dt>
+      <dd className={styles.factValue}>
+        {info.isPending && <LoadingState label="Загружаем дедлайн…" />}
+        {info.isError && <ErrorNotice message={errorMessage(info.error)} />}
+        {info.isSuccess &&
+          (countdown.finished ? (
+            <strong role="status">Регистрация завершена</strong>
+          ) : (
+            <span role="status">
+              {/* Digits tick every second and are hidden from AT; the
+                  accessible text changes at most once an hour. */}
+              <span aria-hidden="true">
+                до {formatEventTime(info.data.registration_deadline)} ·{" "}
+                {formatCountdown(countdown.remainingMs ?? 0)}
+              </span>
+              <span className="visually-hidden">
+                {accessibleRemaining(countdown.remainingMs ?? 0)}
+              </span>
             </span>
-          </span>
-        ))}
+          ))}
+      </dd>
     </div>
   );
 }

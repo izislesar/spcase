@@ -30,7 +30,7 @@
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border-inline-start: 4px solid var(--color-accent);
-  background: var(--color-soft);
-  color: var(--color-ink);
+  background: var(--color-surface);
+  color: var(--color-text);
   font-weight: 600;
 }

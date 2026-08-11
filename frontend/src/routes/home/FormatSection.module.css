@@ -1,31 +1,19 @@
-/* Format — one ruled progression axis, three stages of different weight. */
+/* Format — a plain sequence of the real stages, no showcase composition. */
 
 .format {
   padding-block: var(--section-gap);
-  overflow: clip;
-}
-
-.eyebrow {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-eyebrow);
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
 }
 
 .formatHeader {
-  max-width: 56rem;
+  max-width: 46rem;
   margin-bottom: var(--space-12);
 }
 
 .formatTitle {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  font-size: var(--text-display);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  font-size: var(--text-xl);
+  font-weight: 700;
   overflow-wrap: break-word;
 }
 
@@ -33,174 +21,49 @@
   margin: 0;
   max-width: 44ch;
   font-size: var(--text-lg);
-  color: var(--color-ink-muted);
-}
-
-/*
- * The progression: on mobile a vertical rule at the left edge with the
- * stages indented; each oversized numeral pulls back across the rule.
- */
-.stageWrap {
-  position: relative;
+  color: var(--color-text-muted);
 }
 
 .stageList {
   display: grid;
-  gap: var(--space-12);
   margin: 0;
-  padding: 0 0 0 var(--space-8);
+  padding: 0;
   list-style: none;
+  border-block-start: 1px solid var(--color-line);
 }
 
-.axis {
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 0;
-  inline-size: 2px;
-  background: var(--color-ink);
-  transform-origin: top;
+.stage {
+  display: grid;
+  gap: var(--space-1) var(--space-8);
+  padding-block: var(--space-6);
+  border-block-end: 1px solid var(--color-line);
 }
 
-/* Shared typographic furniture for the three stages. */
+/* Sequence numbers as quiet metadata, not decoration. */
 .stageNumber {
-  display: block;
-  margin-inline-start: calc(-1 * var(--space-8));
-  font-family: var(--font-display);
-  font-size: var(--text-numeral);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .stageName {
-  margin: var(--space-4) 0 var(--space-2);
+  margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: var(--text-lg);
+  font-weight: 700;
   overflow-wrap: break-word;
-}
-
-.stageAlias {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  font-weight: 600;
-  opacity: 0.75;
 }
 
 .stageText {
   margin: 0;
-  max-width: 34ch;
-  color: var(--color-ink-muted);
+  max-width: 44ch;
+  color: var(--color-text-muted);
   overflow-wrap: break-word;
 }
 
-/* 01 — the dominant typographic block; its numeral breaks the rule. */
-.stageStart .stageNumber {
-  color: var(--color-accent-strong);
-}
-
-/* 02 — narrower, with the work scene as a small inset. */
-.stageWork .stageNumber {
-  color: var(--color-ink);
-}
-
-.stageWorkArt {
-  display: block;
-  inline-size: min(100%, 13rem);
-  block-size: auto;
-  margin-block-start: var(--space-6);
-  margin-inline-start: calc(-1 * var(--space-2));
-  pointer-events: none;
-}
-
-/*
- * 03 — the only color field of the progression: the final. The coral band
- * escapes the container on the right; the pennant breaks its top edge.
- */
-.stageFinal {
-  display: grid;
-  gap: var(--space-6);
-  align-items: end;
-  padding: var(--space-6);
-  margin-inline-end: calc(-1 * var(--gutter-wide));
-  background: var(--color-accent-strong);
-  color: var(--color-on-accent);
-  overflow: visible;
-}
-
-.stageFinal .stageNumber {
-  margin-inline-start: 0;
-  color: var(--color-navy);
-}
-
-.stageFinalCopy {
-  min-width: 0;
-}
-
-.stageFinal .stageText {
-  color: color-mix(in oklch, var(--color-on-accent) 85%, var(--color-accent-strong));
-}
-
-.stageFinalArt {
-  inline-size: min(42%, 9rem);
-  block-size: auto;
-  justify-self: end;
-  margin-block-start: calc(-1 * var(--space-12));
-  pointer-events: none;
-}
-
 @media (width > 64rem) {
-  /*
-   * Desktop: the axis turns horizontal across the top; 01 dominates the
-   * left, 02 steps down as the narrower offset block, 03 closes the
-   * progression as the full-width coral band below.
-   */
-  .stageList {
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--space-8);
-    padding: var(--space-16) 0 0;
-  }
-
-  .axis {
-    inset-block: 0 auto;
-    inset-inline: 0;
-    inline-size: auto;
-    block-size: 2px;
-    transform-origin: left;
-  }
-
-  /* Numerals rise across the horizontal rule, breaking it. */
-  .stageNumber {
-    margin-inline-start: 0;
-    margin-block-start: calc(-1 * var(--space-16) - var(--space-4));
-  }
-
-  .stageStart {
-    grid-column: 1 / 6;
-    grid-row: 1;
-  }
-
-  .stageWork {
-    grid-column: 7 / 10;
-    grid-row: 1;
-    margin-block-start: var(--space-16);
-  }
-
-  .stageFinal {
-    grid-column: 1 / 13;
-    grid-row: 2;
-    grid-template-columns: minmax(0, 1fr) auto;
-    margin-block-start: var(--space-8);
-    padding: var(--space-8);
-  }
-
-  .stageFinal .stageNumber {
-    margin-block-start: 0;
-  }
-
-  .stageFinalArt {
-    inline-size: min(100%, 10rem);
-    margin-block-start: calc(-1 * var(--space-16));
+  .stage {
+    grid-template-columns: 7rem minmax(0, 14rem) minmax(0, 1fr);
+    align-items: baseline;
   }
 }

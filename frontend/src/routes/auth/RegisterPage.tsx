@@ -1,15 +1,13 @@
-import { SheetStack } from "../../components/graphics/scenes/SheetStack";
+import { Link } from "react-router";
 import { PublicAuthShell } from "../../components/layout/PublicAuthShell";
 
 export function RegisterPage() {
   return (
     <PublicAuthShell
-      eyebrow="Участникам"
+      context="Участникам"
       title="Регистрация"
       lead="Профиль участника — первый шаг к команде и подаче решения на чемпионат."
-      field="mustard"
-      art={<SheetStack />}
-      vtName="vt-coral"
+      secondary={<Link to="/login">Уже есть профиль — вход</Link>}
     />
   );
 }

@@ -1,34 +1,19 @@
-/* Schedule preview — typographic rows on the full-bleed turquoise field. */
+/* Schedule preview — typographic rows on the plain dark canvas. */
 
 .schedule {
   padding-block: var(--section-gap);
-  background: var(--color-turquoise);
-}
-
-.eyebrow {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-eyebrow);
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: color-mix(in oklch, var(--color-ink) 68%, var(--color-turquoise));
 }
 
 .sectionTitle {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-display);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  /* Single word: never break it mid-word, at any viewport. */
-  overflow-wrap: normal;
-  word-break: keep-all;
-  hyphens: none;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  overflow-wrap: break-word;
 }
 
 .scheduleHeader {
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-8);
 }
 
 .eventRows {
@@ -36,22 +21,21 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border-block-start: 2px solid var(--color-ink);
+  border-block-start: 1px solid var(--color-line);
 }
 
 .eventRow {
   display: grid;
   gap: var(--space-1) var(--space-8);
-  padding-block: var(--space-6);
-  border-block-end: 1px solid color-mix(in oklch, var(--color-ink) 26%, transparent);
+  padding-block: var(--space-4);
+  border-block-end: 1px solid var(--color-line);
 }
 
 .eventTime {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-size: var(--text-sm);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
 }
 
 .eventBody {
@@ -61,16 +45,15 @@
 .eventTitle {
   margin: 0 0 var(--space-1);
   font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-size: var(--text-lg);
+  font-weight: 700;
   overflow-wrap: break-word;
 }
 
 .eventDescription {
   margin: 0;
   max-width: 62ch;
-  color: color-mix(in oklch, var(--color-ink) 74%, var(--color-turquoise));
+  color: var(--color-text-muted);
   overflow-wrap: break-word;
 }
 
@@ -87,21 +70,12 @@
   margin: 0;
   max-width: 46ch;
   font-size: var(--text-sm);
-  color: color-mix(in oklch, var(--color-ink) 74%, var(--color-turquoise));
-}
-
-.scheduleLink {
-  color: var(--color-ink);
+  color: var(--color-text-muted);
 }
 
 @media (width > 64rem) {
   .eventRow {
-    grid-template-columns: minmax(19rem, max-content) 1fr;
+    grid-template-columns: minmax(15rem, max-content) 1fr;
     align-items: baseline;
-  }
-
-  .eventTime {
-    font-size: var(--text-2xl);
-    letter-spacing: -0.02em;
   }
 }

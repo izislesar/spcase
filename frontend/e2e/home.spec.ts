@@ -9,11 +9,9 @@ import { expect, test } from "@playwright/test";
 test("домашняя страница показывает ключевые разделы", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "СПК кейс-чемпионат", level: 1 })).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Три этапа. Одна сильная работа.", level: 2 }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Формат чемпионата", level: 2 })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Расписание", level: 2 })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Коротко о главном", level: 2 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Частые вопросы", level: 2 })).toBeVisible();
   await expect(page.getByRole("link", { name: "Подать заявку" }).first()).toBeVisible();
 });
 
@@ -51,9 +49,7 @@ test("редуцированная анимация не ломает стран
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "СПК кейс-чемпионат", level: 1 })).toBeVisible();
   await expect(page.getByRole("link", { name: "Подать заявку" }).first()).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Три этапа. Одна сильная работа.", level: 2 }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Формат чемпионата", level: 2 })).toBeVisible();
   await page.goto("/schedule");
   await expect(page.getByRole("heading", { name: "Расписание", level: 1 })).toBeVisible();
 });

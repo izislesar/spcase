@@ -1,20 +1,18 @@
 import { motion, type Transition, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
-import { BubbleScene } from "../../components/graphics/scenes/BubbleScene";
 import { PublicStatus } from "../../components/public/PublicStatus";
-import { EDITORIAL_EASE } from "../../lib/motion";
+import { QUIET_EASE } from "../../lib/motion";
 import { errorMessage, useFaq } from "./api";
 import styles from "./FaqPreview.module.css";
 
 /*
- * FAQ — the quiet decompression after the louder sections: hairline rows
- * and one small conversation motif beside them. The header is static — the
- * section's only motion is the accordion itself. Accordion semantics are
- * unchanged: one open item at a time, aria-expanded/aria-controls wiring
- * intact, and collapsed regions stay in the DOM hidden visually and from
- * AT. The answer reveals through a Motion height animation (~300ms,
- * near-instant under reduced motion), so neighboring items move smoothly
- * instead of jumping.
+ * FAQ — quiet: heading, questions, answers, separators. The section's only
+ * motion is the accordion open/close (state communication). Accordion
+ * semantics are unchanged: one open item at a time,
+ * aria-expanded/aria-controls wiring intact, and collapsed regions stay in
+ * the DOM hidden visually and from AT. The answer reveals through a Motion
+ * height animation (~300ms, near-instant under reduced motion), so
+ * neighboring items move smoothly instead of jumping.
  */
 export function FaqPreview() {
   const faq = useFaq();
@@ -24,21 +22,18 @@ export function FaqPreview() {
 
   const answerTransition: Transition = reduced
     ? { duration: 0.01 }
-    : { duration: 0.3, ease: EDITORIAL_EASE };
+    : { duration: 0.3, ease: QUIET_EASE };
 
   return (
     <section className={styles.faq} aria-labelledby="faq-heading">
       <div className={`container ${styles.faqInner}`}>
         <header className={styles.sectionHeader}>
-          <p className={styles.eyebrow}>03 · Вопросы</p>
           <h2 id="faq-heading" className={styles.sectionTitle}>
-            Коротко о главном
+            Частые вопросы
           </h2>
           <p className={styles.sectionIntro}>
             Если ответа здесь нет, организаторы помогут уточнить детали до начала чемпионата.
           </p>
-          {/* The question motif as a small mark; the rows stay calm. */}
-          <BubbleScene className={styles.faqArt} />
         </header>
         {faq.isPending && <PublicStatus kind="loading" title="Загружаем вопросы…" />}
         {faq.isError && (

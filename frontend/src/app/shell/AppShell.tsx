@@ -9,11 +9,9 @@ import {
   useTransform,
 } from "motion/react";
 import { useEffect, useId, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation, useViewTransitionState } from "react-router";
+import { NavLink, Outlet } from "react-router";
 import { Mark } from "../../components/graphics/Mark";
-import { ClosingScene } from "../../components/graphics/scenes/ClosingScene";
-import { ButtonLink } from "../../components/ui/ActionLinks";
-import { EDITORIAL_EASE, MARKER_SPRING } from "../../lib/motion";
+import { MARKER_SPRING } from "../../lib/motion";
 import styles from "./AppShell.module.css";
 
 const NAV_ITEMS = [
@@ -30,29 +28,11 @@ function navLinkClass({ isActive }: { isActive: boolean }): string {
 }
 
 /*
- * During a view transition that involves the homepage, <html> carries
- * .vt-involves-home on both snapshots; the non-home side additionally
- * carries .vt-back. The view-transitions.css rules use them to reverse the
- * page slide when the destination is home (restrained reverse).
- */
-function useViewTransitionDirection() {
-  const involvesHome = useViewTransitionState("/");
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle("vt-involves-home", involvesHome);
-    root.classList.toggle("vt-back", involvesHome && pathname !== "/");
-    return () => root.classList.remove("vt-involves-home", "vt-back");
-  }, [involvesHome, pathname]);
-}
-
-/*
- * Bottom bar signature: the active marker TRAVELS between destinations via
- * a shared-layout Motion span, and the bar answers meaningful scroll
- * direction by shifting PARTIALLY downward (never fully hidden). Hover,
- * keyboard focus and the page top pin it fully visible. Scroll work stays
- * on motion values — no React state per scroll frame.
+ * Bottom bar: the active marker TRAVELS between destinations via a
+ * shared-layout Motion span (navigation continuity), and the bar answers
+ * meaningful scroll direction by shifting PARTIALLY downward (never fully
+ * hidden). Hover, keyboard focus and the page top pin it fully visible.
+ * Scroll work stays on motion values — no React state per scroll frame.
  */
 function BottomBar() {
   const reduced = useReducedMotion();
@@ -140,49 +120,26 @@ function BottomBar() {
 }
 
 /*
- * Footer: the closing poster on the navy field. The composition is static
- * and carries itself; the whole block settles in a single quiet one-shot
- * reveal on approach — no multi-stage choreography.
+ * Footer: plain meta — the factual brand line and secondary navigation on
+ * the same dark canvas, separated by one hairline. No closing poster.
  */
 function Footer({ menuOpen }: { menuOpen: boolean }) {
-  const reduced = useReducedMotion();
-
   return (
     <footer className={styles.footer} inert={menuOpen}>
-      <motion.div
-        className={`container-wide ${styles.footerInner}`}
-        initial={reduced ? false : { opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: EDITORIAL_EASE }}
-      >
-        <div className={styles.footerCta}>
-          <p className={styles.footerStatement}>
-            <span className={styles.statementLine}>Собери команду.</span>
-            <span className={styles.statementLine}>Реши кейс.</span>
-          </p>
-          <ButtonLink to="/register" viewTransition className={styles.footerButton}>
-            Подать заявку
-          </ButtonLink>
-        </div>
-        <div className={styles.footerSceneWrap}>
-          <ClosingScene className={styles.footerScene} />
-        </div>
-        <div className={styles.footerMeta}>
-          <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
-          <nav className={styles.footerNav} aria-label="Дополнительная навигация">
-            <NavLink to="/register" viewTransition>
-              Регистрация
-            </NavLink>
-            <NavLink to="/schedule" viewTransition>
-              Расписание
-            </NavLink>
-            <NavLink to="/jury/login" viewTransition>
-              Вход для жюри
-            </NavLink>
-          </nav>
-        </div>
-      </motion.div>
+      <div className={`container-wide ${styles.footerInner}`}>
+        <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
+        <nav className={styles.footerNav} aria-label="Дополнительная навигация">
+          <NavLink to="/register" viewTransition>
+            Регистрация
+          </NavLink>
+          <NavLink to="/schedule" viewTransition>
+            Расписание
+          </NavLink>
+          <NavLink to="/jury/login" viewTransition>
+            Вход для жюри
+          </NavLink>
+        </nav>
+      </div>
     </footer>
   );
 }
@@ -192,8 +149,6 @@ export function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useViewTransitionDirection();
 
   /*
    * Mobile menu lifecycle: while open it locks page scroll, moves focus into
@@ -253,8 +208,7 @@ export function AppShell() {
       </a>
       {/*
         Compact mobile header. On desktop it yields to the bottom bar below —
-        the reference-led pattern keeps the top of the page free for the
-        editorial composition.
+        the top of the page stays free for the content.
       */}
       <header className={styles.header}>
         <div className={`container ${styles.headerInner}`}>
@@ -287,7 +241,6 @@ export function AppShell() {
       </header>
       {menuOpen && (
         <div className={styles.menuOverlay}>
-          <ClosingScene className={styles.menuEcho} />
           <div
             ref={panelRef}
             id={menuId}
@@ -337,7 +290,7 @@ export function AppShell() {
       <main id="main-content" tabIndex={-1} className={styles.main} inert={menuOpen}>
         {/*
           The page wrapper carries the vt-page view-transition name: route
-          view transitions slide this region while the shared chrome
+          view transitions crossfade this region while the shared chrome
           (header/footer/bottom bar) stays put.
         */}
         <div className={styles.routePage}>

@@ -1,4 +1,4 @@
-/* FAQ — quiet decompression: hairline rows, one large scene. */
+/* FAQ — quiet rows: heading, questions, answers, hairline separators. */
 
 .faq {
   padding-block: var(--section-gap);
@@ -13,36 +13,19 @@
   max-width: 46rem;
 }
 
-.eyebrow {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-eyebrow);
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
-}
-
 .sectionTitle {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: var(--text-xl);
+  font-weight: 700;
   overflow-wrap: break-word;
 }
 
 .sectionIntro {
   margin: 0;
   max-width: 44ch;
-  color: var(--color-ink-muted);
+  color: var(--color-text-muted);
   font-size: var(--text-lg);
-}
-
-.faqArt {
-  inline-size: min(48vw, 11rem);
-  block-size: auto;
-  margin-block-start: var(--space-6);
-  pointer-events: none;
 }
 
 .faqList {
@@ -68,7 +51,7 @@
   padding: var(--space-4) 0;
   border: 0;
   background: none;
-  color: var(--color-ink);
+  color: var(--color-text);
   font: inherit;
   font-family: var(--font-sans);
   font-weight: 700;
@@ -79,7 +62,7 @@
 
 .faqIcon {
   flex-shrink: 0;
-  color: var(--color-accent-strong);
+  color: var(--color-accent-text);
   transition: rotate 200ms ease;
 }
 
@@ -100,18 +83,6 @@
   margin: 0;
   padding-block-end: var(--space-4);
   max-width: 62ch;
-  color: var(--color-ink-muted);
+  color: var(--color-text-muted);
   overflow-wrap: break-word;
-}
-
-@media (width > 64rem) {
-  .faqInner {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    gap: var(--space-16);
-    align-items: start;
-  }
-
-  .faqArt {
-    inline-size: min(100%, 12rem);
-  }
 }

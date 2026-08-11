@@ -29,7 +29,7 @@
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: var(--color-ink);
+  color: var(--color-text);
   text-decoration: none;
 }
 
@@ -47,34 +47,21 @@
   padding-inline: var(--space-2);
   border: 0;
   background: none;
-  color: var(--color-ink);
+  color: var(--color-text);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
 }
 
-/* Mobile menu: the navy flat field with the quiet finish scene behind. */
+/* Mobile menu: a plain dark surface one step above the canvas. */
 .menuOverlay {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: var(--color-navy);
-  color: var(--color-on-navy);
+  background: var(--color-surface);
+  color: var(--color-text);
   overflow: clip;
   animation: menu-enter 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.menuEcho {
-  position: absolute;
-  inset-block-end: calc(-1 * var(--space-8));
-  inset-inline-end: calc(-1 * var(--space-12));
-  inline-size: min(96vw, 30rem);
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-.menuOverlay :focus-visible {
-  outline-color: var(--color-on-navy);
 }
 
 .menuPanel {
@@ -94,7 +81,7 @@
   min-height: 44px;
   border: 0;
   background: none;
-  color: var(--color-on-navy);
+  color: var(--color-text);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -116,14 +103,14 @@
 
 /*
  * Shared link treatment (mobile panel + desktop bottom bar): the active
- * item is marked by a coral square whose space is always reserved, so
- * activation never shifts layout.
+ * item is marked by a small accent square whose space is always reserved,
+ * so activation never shifts layout.
  */
 .navLink {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--color-ink-muted);
+  color: var(--color-text-muted);
   text-decoration: none;
 }
 
@@ -137,11 +124,11 @@
 }
 
 .navLink:hover {
-  color: var(--color-ink);
+  color: var(--color-text);
 }
 
 .navLinkActive {
-  color: var(--color-ink);
+  color: var(--color-text);
 }
 
 .navLinkActive::before {
@@ -154,8 +141,8 @@
   font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--color-on-navy);
-  border-block-end: 1px solid color-mix(in oklch, var(--color-on-navy) 18%, transparent);
+  color: var(--color-text);
+  border-block-end: 1px solid var(--color-line);
 }
 
 .mobileNav .navLink::before {
@@ -164,7 +151,7 @@
 
 .mobileNav .navLink:hover,
 .mobileNav .navLinkActive {
-  color: var(--color-on-navy);
+  color: var(--color-text);
 }
 
 .main:focus {
@@ -203,86 +190,27 @@
 }
 
 /*
- * Footer: the closing poster on the navy field. The oversized statement
- * and the wide finish scene complete the page; the meta row sits beneath.
- * The scene bleeds off the right gutter and the bottom edge.
+ * Footer: plain meta on the same canvas — the factual brand line and
+ * secondary navigation under one hairline rule.
  */
 .footer {
-  padding-block: var(--space-12) var(--space-8);
-  background: var(--color-navy);
-  color: var(--color-on-navy);
-  overflow: clip;
-}
-
-.footer :focus-visible {
-  outline-color: var(--color-on-navy);
+  padding-block: var(--space-8);
 }
 
 .footerInner {
-  display: grid;
-  gap: var(--space-8);
-}
-
-.footerCta {
-  display: grid;
-  gap: var(--space-6);
-  justify-items: start;
-}
-
-.footerStatement {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-display);
-  font-weight: 800;
-  line-height: 1.04;
-  letter-spacing: -0.03em;
-}
-
-/* Two deliberate lines of the closing statement. */
-.statementLine {
-  display: block;
-}
-
-.footerButton {
-  box-shadow: 0 0.3rem 0 color-mix(in oklch, var(--color-on-navy) 25%, transparent);
-}
-
-.footerButton:hover {
-  box-shadow: 0 0.45rem 0 color-mix(in oklch, var(--color-on-navy) 25%, transparent);
-}
-
-.footerButton:active {
-  box-shadow: 0 0.15rem 0 color-mix(in oklch, var(--color-on-navy) 25%, transparent);
-}
-
-.footerSceneWrap {
-  inline-size: min(96vw, 34rem);
-  justify-self: end;
-  margin-block-start: calc(-1 * var(--space-4));
-  margin-inline-end: calc(-1 * var(--gutter-wide));
-  pointer-events: none;
-}
-
-.footerScene {
-  display: block;
-  inline-size: 100%;
-  block-size: auto;
-}
-
-.footerMeta {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--space-2) var(--space-6);
   padding-block-start: var(--space-6);
-  border-block-start: 1px solid color-mix(in oklch, var(--color-on-navy) 18%, transparent);
+  border-block-start: 1px solid var(--color-line);
   font-size: var(--text-sm);
 }
 
 .footerBrand {
   margin: 0;
   margin-inline-end: auto;
-  color: var(--color-on-navy-muted);
+  color: var(--color-text-muted);
 }
 
 .footerNav {
@@ -295,12 +223,12 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: var(--color-on-navy);
+  color: var(--color-text-muted);
   text-decoration: none;
 }
 
 .footerNav a:hover {
-  color: var(--color-on-navy);
+  color: var(--color-text);
   text-decoration: underline;
   text-underline-offset: 0.3em;
 }
@@ -326,8 +254,9 @@
   }
 
   /*
-   * The bottom bar: thin, quiet, mostly whitespace — a hairline rule and
-   * small caps links that do not compete with the page composition.
+   * The bottom bar: thin and quiet — a hairline rule and small caps links
+   * that do not compete with the content. The subtle surface shift keeps
+   * the fixed bar readable over scrolled content; no glow, no shadow.
    */
   .bottomBar {
     position: fixed;
@@ -339,7 +268,7 @@
     justify-content: space-between;
     gap: var(--space-6);
     padding: 0 var(--gutter-wide);
-    background: var(--color-canvas);
+    background: var(--color-surface);
     border-block-start: 1px solid var(--color-line);
   }
 
@@ -378,20 +307,6 @@
     block-size: 0.5em;
     background: var(--color-accent);
     pointer-events: none;
-  }
-
-  /* Desktop footer: statement left, the finish scene bleeding right. */
-  .footerInner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-  }
-
-  .footerMeta {
-    grid-column: 1 / -1;
-  }
-
-  .footerSceneWrap {
-    inline-size: min(46vw, 42rem);
   }
 
   /* Keep page content clear of the fixed bar. */

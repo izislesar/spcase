@@ -1,15 +1,13 @@
-import { GearScene } from "../../components/graphics/scenes/GearScene";
+import { Link } from "react-router";
 import { PublicAuthShell } from "../../components/layout/PublicAuthShell";
 
 export function LoginPage() {
   return (
     <PublicAuthShell
-      eyebrow="Участникам"
+      context="Участникам"
       title="Вход"
       lead="Вход для участников чемпионата — в личный кабинет команды и к отправке решения."
-      field="turquoise"
-      art={<GearScene />}
-      vtName="vt-turquoise"
+      secondary={<Link to="/register">Нет профиля — регистрация</Link>}
     />
   );
 }

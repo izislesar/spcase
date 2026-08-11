@@ -1,12 +1,12 @@
-/* PublicStatus — editorial loading/error/empty block for public sections. */
+/* PublicStatus — quiet loading/error/empty block for public sections. */
 
 .status {
   max-width: 40rem;
   padding-block-start: var(--space-4);
-  border-block-start: 2px solid var(--color-ink);
+  border-block-start: 1px solid var(--color-line);
 }
 
-/* Small accent square: the graphic marker; pulses only while loading. */
+/* Small accent square: the state marker; pulses only while loading. */
 .marker {
   display: block;
   inline-size: 0.625rem;
@@ -34,15 +34,14 @@
 .title {
   margin: 0 0 var(--space-2);
   font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-size: var(--text-lg);
+  font-weight: 700;
 }
 
 .detail {
   margin: 0;
   max-width: 52ch;
-  color: var(--color-ink-muted);
+  color: var(--color-text-muted);
 }
 
 /* Secondary textual retry — never a competing primary button. */
@@ -52,7 +51,7 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-accent-strong);
+  color: var(--color-accent-text);
   font: inherit;
   font-weight: 700;
   text-decoration: underline;
@@ -61,5 +60,5 @@
 }
 
 .retry:hover {
-  color: var(--color-accent);
+  color: var(--color-text);
 }
