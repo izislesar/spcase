@@ -1,95 +1,175 @@
-# AGENTS.md — SPCase frontend agent context
+# AGENTS.md — SPCase frontend context router
 
-Independent React application for SPCase (spcase.ru). The foundation was
-scaffolded in roadmap phase 3; since then a working public visual
-implementation (home, schedule and the other public routes) has been built
-and iterated through Stage 4/4A/4B. NOT wired into production; the legacy
-server-rendered `web/` remains the running frontend and the behavioral
-authority until cutover.
+## Current state
+
+`frontend/` is the independent React migration target for SPCase. It is NOT
+wired into production yet; legacy `web/` remains the running frontend and the
+behavioral reference until explicit cutover.
+
+The public React surfaces have a technically validated Stage 4D implementation,
+but the human review on 2026-08-11 returned **ITERATE**, not ACCEPT. Preserve
+the established visual DNA, but do not treat current DOM/CSS/composition or
+motion density as a design source of truth. The next stage is Stage 4E: art-
+direction consolidation around the approved product/visual model.
+
+USER/JURY/ADMIN routes are still mostly structural shells. Do not extrapolate
+the public landing-page grammar into those workspaces by default.
+
+## Read context by task
+
+### Public visual/composition task
+
+Read:
+
+1. `docs/frontend/design-direction.md`
+2. `docs/frontend/visual-acceptance.md`
+
+### New USER/JURY/ADMIN workflow
+
+Read:
+
+1. `docs/frontend/experience-model.md`
+2. the relevant sections of `docs/frontend/legacy-contract.md`
+3. the relevant endpoints in `docs/contracts/http-api.md`
+4. `docs/frontend/design-direction.md` for visual constraints
+
+### API/query/auth integration
+
+Read the relevant `docs/contracts/http-api.md` and behavioral-contract
+sections. Do not invent backend behavior from UI needs.
+
+### Cutover/deployment task
+
+Read `docs/frontend/cutover-plan.md`, `docs/architecture/system.md` and ADR
+`docs/decisions/0001-frontend-v2.md`.
+
+Do not load the full `legacy-contract.md` for a purely visual public-page edit.
 
 ## Approved stack
 
-- React 19 + TypeScript (strict) + Vite 8
-- React Router 8 in **data mode** (`createBrowserRouter` in `src/app/router.tsx`) — never framework mode
-- pnpm (only package manager; `packageManager` field is pinned)
-- TanStack Query (server state), React Hook Form + Zod (forms/validation)
-- Biome (lint + format; `pnpm check` must stay clean)
-- Playwright (e2e, desktop + mobile projects; `pnpm test:e2e`)
-- CSS Modules + modern native CSS: custom properties in `@layer tokens`,
-  reset/primitives in `@layer base`, OKLCH, container queries, Grid/Flex
+- React 19 + TypeScript strict + Vite 8
+- React Router 8 in data mode (`createBrowserRouter`), never framework mode
+- pnpm only (`packageManager` is pinned)
+- TanStack Query for server state
+- React Hook Form + Zod for forms/validation
+- Biome for lint/format
+- Playwright for desktop/mobile e2e
+- CSS Modules + modern native CSS
+- CSS custom properties, Grid/Flex, container queries, OKLCH/`color-mix()`
+- SVG/DOM/CSS-first graphics
+- `motion` is installed and is the default animation library
+
+No Tailwind and no component-library visual system in the React target.
 
 ## API contract
 
 - All API calls go through `src/lib/api/client.ts` (`apiGet`/`apiPost`/…).
-- Base path is the relative string `/api/v1` — never configurable, no env
-  var, no production base URL. Dev reaches the Go backend via the Vite
-  proxy to `http://localhost:8000` (`vite.config.ts`).
-- Always `credentials: "same-origin"`; `Content-Type: application/json` only
-  when a body is present.
-- Server error envelope is `{ "error": { "code": string, "message": string } }`;
-  parse it via `src/lib/api/errors.ts` (`ApiError`). Never expose raw
-  payloads or stack traces to users.
-- Auth is the `access_token` HttpOnly cookie; the frontend never reads or
-  stores tokens. No localStorage tokens, no token-in-URL.
+- Base path is the relative string `/api/v1`; never add a production API base
+  URL or token transport.
+- Use `credentials: "same-origin"`.
+- Add `Content-Type: application/json` only when a body is present.
+- Parse `{ "error": { "code": string, "message": string } }` through the
+  existing `ApiError` path; never expose raw payloads or stack traces.
+- Auth is the `access_token` HttpOnly cookie. Frontend code never reads,
+  persists or forwards tokens through localStorage/URLs.
+
+## Product and design model
+
+North star:
+
+**Editorial Competition OS with controlled imperfection.**
+
+The product should feel like a live competition system — part editorial
+publication, scoreboard, dossier and judging desk — not like generic SaaS.
+
+Use roughly **90% discipline / 10% disobedience**:
+
+- discipline: hierarchy, grid, readability, predictable controls,
+  accessibility, stable semantics;
+- disobedience: rare asymmetric composition, uneven whitespace, intentional
+  crop/grid escape, oversized numbering, physical marks/stamps and deliberate
+  density changes.
+
+Imperfection must create tension, not fake handmade texture. Do not add random
+rotation, paper grain, scratches, noisy backgrounds or arbitrary misalignment
+merely to look "human".
+
+### Public vs product surfaces
+
+Public routes may be expressive: large type, illustration, asymmetric fields,
+strong whitespace and rare spectacle motion.
+
+USER/JURY workspaces are information-dense operational tools: document-like
+layouts, rules, labels, tables, status, identifiers and restrained motion.
+
+ADMIN is primarily utilitarian.
+
+Never scale the landing-page visual grammar directly into operational
+workspaces.
+
+## Anti-slop contract
+
+Avoid as default visual grammar:
+
+- Bento-grid or equal-card composition;
+- KPI-card dashboards;
+- universal rounded containers;
+- pill/badge overload;
+- glassmorphism, gradients, glow or generic 3D;
+- stock "feature icon + title + paragraph" sections;
+- abstract decorative blobs/geometries without product semantics;
+- repetitive identical illustration formulas;
+- "Welcome back" dashboard hero patterns;
+- continuous reveal/parallax choreography;
+- decorative motion whose only purpose is to demonstrate animation.
+
+A card is allowed when the underlying object is semantically a self-contained
+card. A rounded corner or animation is allowed when it earns its role. These
+are constraints against defaults, not blanket bans on primitives.
+
+## Motion policy
+
+Motion must have a product reason. Preferred classes:
+
+1. navigation continuity / shared surface transitions;
+2. state transitions (opened, selected, submitted, error, locked);
+3. information progression (current stage, schedule/time progression);
+4. microresponse (hover/press/focus);
+5. rare public-page spectacle, primarily the hero.
+
+Respect `prefers-reduced-motion` at every motion call site or through a shared
+primitive that guarantees it. Static state must remain fully understandable.
+
+Pointer parallax and scroll drift are not default primitives. Do not add GSAP,
+Lenis or Rive without an explicit task-level product need and approval.
 
 ## Code rules
 
-- TypeScript strict: `tsc --noEmit` covers `src`, `vite.config.ts`,
-  `playwright.config.ts`, `e2e`. Keep it green (`pnpm typecheck`).
-- Russian UI copy; `lang="ru"`.
-- Mobile is first-class: mobile-first functional parity, compose from
-  320 px, touch targets ≥ 44 px, no hover-dependent functionality.
-- Accessibility is mandatory, not optional: keep the ACCESSIBILITY
-  requirements of `docs/frontend/legacy-contract.md` satisfied in every
-  change.
-- Respect `prefers-reduced-motion`; `scroll-behavior: smooth` is the only
-  default motion. Experimental features (container queries, `color-mix()`,
-  view transitions) must progressively enhance a usable baseline.
-- SVG/DOM/CSS-first graphics.
-- No unjustified runtime dependencies (see Dependencies below); no backend
-  contract invention — the API contract in `docs/contracts/http-api.md` and
-  the error envelope are fixed.
-
-## Dependencies
-
-Restrained policy: prefer existing deps and platform features. Motion, GSAP,
-Lenis and Rive are approved in the architecture doc but may only be added
-when a concrete feature justifies them. No Tailwind, no component libraries.
-
-## Design direction
-
-Graphic-editorial / illustrative-modernist. Explicitly rejected: generic
-B2B SaaS look, glassmorphism, arbitrary purple/blue gradients, decorative
-WebGL, excessive motion. See `docs/frontend/design-direction.md`.
-
-Before any visual work, read BOTH:
-
-- `docs/frontend/design-direction.md` — the stable visual north star;
-- `docs/frontend/visual-acceptance.md` — the current human visual review
-  state (what is accepted, what is rejected, what the next stage must
-  improve, and the gate before Stage 5).
-
-Important: the current DOM/CSS/component structure is NOT automatically a
-visual source of truth. When human visual acceptance rejects an
-implementation pattern, agents may substantially recompose the visual layer
-(markup structure, CSS, illustration components) while preserving behavior
-and accessibility. A technically valid, committed implementation is not
-necessarily a visually accepted one.
+- Keep `pnpm typecheck`, `pnpm check` and `pnpm build` green.
+- Russian UI copy; document language remains `ru`.
+- Mobile is first-class: deliberate composition from 320 px upward, touch
+  targets at least 44 px, no hover-dependent functionality.
+- Accessibility invariants in `legacy-contract.md` are mandatory.
+- Experimental CSS/browser features must progressively enhance a usable
+  baseline.
+- No unjustified runtime dependencies.
+- Current implementation is evidence, not visual authority, when it conflicts
+  with the approved design direction or current human verdict.
 
 ## Behavioral parity
 
-Defined by `docs/frontend/legacy-contract.md`. The legacy `web/` frontend is
-authoritative for behavior until cutover; do not invent flows here that
-contradict it. Route map and cutover mechanics:
+Behavioral parity is defined by `docs/frontend/legacy-contract.md`. Preserve
+legacy outcomes until cutover unless an authoritative behavioral contract is
+explicitly changed. Route/cutover mechanics live in
 `docs/frontend/cutover-plan.md`.
 
 ## Commands
 
 ```bash
 pnpm install
-pnpm dev          # Vite dev server on :5173, /api/v1 proxied to :8000
-pnpm build        # typecheck + production build into dist/
+pnpm dev
 pnpm typecheck
-pnpm check        # Biome lint + format check
-pnpm test:e2e     # Playwright (needs browsers installed)
+pnpm check
+pnpm build
+pnpm test:e2e
 ```

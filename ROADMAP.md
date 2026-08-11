@@ -8,11 +8,12 @@ frontend-приложение до продолжения staging/production cut
 
 Frontend-миграция находится на этапе публичной визуальной системы (фаза 4):
 технический foundation и поведенческий контракт завершены, публичная
-визуальная реализация прошла итерации Stage 4 / 4A / 4B / 4C / 4D. Stage 4D
-(interaction/motion) реализован и технически валиден, human visual review
-ещё не проведён — статус остаётся `ITERATE` до явного human ACCEPT
-(`docs/frontend/visual-acceptance.md`). Следующий шаг — human visual review
-Stage 4D.
+визуальная реализация прошла Stage 4 / 4A / 4B / 4C / 4D. Human visual review
+Stage 4D проведён 2026-08-11 с вердиктом **ITERATE**: визуальная ДНК сохранена,
+но композиционная модель и product UX должны быть консолидированы вокруг
+`Editorial Competition OS + controlled imperfection`. Следующий шаг — Stage
+4E (art-direction consolidation), см. `docs/frontend/design-direction.md`,
+`docs/frontend/experience-model.md` и `docs/frontend/visual-acceptance.md`.
 
 Staging acceptance и production deployment НЕ являются ближайшей фазой: они
 возобновляются только после завершения frontend-миграции.
@@ -49,14 +50,15 @@ Staging acceptance и production deployment НЕ являются ближайш
 
 ## Фаза 4. Публичная визуальная система
 
-- [~] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — реализация существует и прошла итерации Stage 4 / 4A / 4B / 4C / 4D; human visual acceptance: **ITERATE** (не ACCEPT), см. `docs/frontend/visual-acceptance.md`
-- [~] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — механизмы реализованы; композиция 320/375 px рекомпонована в Stage 4C, ожидает human review
-- [x] 4.3 Stage 4C — визуальная итерация по результатам human review (`docs/frontend/visual-acceptance.md`): wide/full-bleed композиция, heterogeneous editorial scenes, сокращение card chrome, mobile 320/375 recomposition — **технически реализовано**, ожидает human visual review
-- [x] 4.4 Stage 4D — interaction/motion слой поверх статической композиции Stage 4C: shared editorial motion layer (Motion), route view transitions, bottom-nav marker/scroll signature, hero/format/mosaic/schedule/footer/auth choreography, PublicStatus, reduced-motion пути — **технически реализовано**, ожидает human visual review
+- [~] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — Stage 4D реализован и рассмотрен человеком; verdict **ITERATE**
+- [~] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — механизмы существуют; окончательная композиционная acceptance входит в Stage 4E
+- [x] 4.3 Stage 4C — wide/full-bleed composition, heterogeneous editorial scenes, уменьшение card chrome, mobile 320/375 recomposition — технически реализовано
+- [x] 4.4 Stage 4D — Motion/view-transition interaction layer, bottom-nav marker, hero/schedule/auth choreography, PublicStatus и reduced-motion пути — технически реализовано; human review 2026-08-11 выявил избыточную agency-landing-page/motion-polish модель
+- [ ] 4.5 Stage 4E — art-direction consolidation: закрепить `Editorial Competition OS + controlled imperfection`, переработать публичную композицию без смены visual DNA, уменьшить декоративный motion, сделать графику более семантической, зафиксировать public/product/admin grammar и подготовить human acceptance
 
-**Gate:** фаза 5 НЕ начинается, пока human review явно не зафиксирует visual
-ACCEPT в `docs/frontend/visual-acceptance.md`. Технически валидный commit не
-равен визуально принятому.
+**Gate:** фаза 5 НЕ начинается, пока Stage 4E human review явно не зафиксирует
+visual **ACCEPT** в `docs/frontend/visual-acceptance.md`. Технически валидный
+commit не равен визуально принятому.
 
 ## Фаза 5. Миграция USER/JURY/ADMIN
 

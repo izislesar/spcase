@@ -9,10 +9,12 @@
 > The independent `frontend/` project exists and is the migration target:
 > a Vite 8 + React 19 + TypeScript (strict) application with React Router
 > (data mode), TanStack Query, the `/api/v1` fetch transport, CSS
-> token/base primitives, Biome and Playwright configuration, and a working
-> public visual implementation iterated through roadmap Stage 4/4A/4B
-> (visual status: `visual-acceptance.md`). Production cutover is defined
-> (`cutover-plan.md`) but NOT executed. Details: `../../frontend/AGENTS.md`.
+> token/base primitives, Biome and Playwright configuration. The public
+> visual implementation has reached Stage 4D; human review on 2026-08-11
+> returned ITERATE and Stage 4E is the next art-direction consolidation
+> stage (`visual-acceptance.md`). Product UX semantics live in
+> `experience-model.md`. Production cutover is defined (`cutover-plan.md`)
+> but NOT executed. Details: `../../frontend/AGENTS.md`.
 
 ## Direction
 
@@ -50,15 +52,16 @@ Styling and visual system:
 - OKLCH / `color-mix()`
 - SVG-first graphics
 
-Motion:
+Motion and browser interaction:
 
-- Motion for component-level animation
-- View Transitions as progressive enhancement
-- CSS scroll-driven animations as progressive enhancement
-- GSAP + ScrollTrigger only for justified narrative sequences
-- Lenis only where justified on public experiences; not required for
-  application workspaces
-- optional Rive for rare signature interactions
+- `motion` is installed and is the default component-level animation library
+- View Transitions are a progressive enhancement
+- CSS scroll-driven animations are a progressive enhancement when they solve
+  a real information/interaction problem
+- GSAP/ScrollTrigger, Lenis and Rive are **not default project dependencies**;
+  adding any of them requires an explicit task-level product need and approval
+- product workspaces should prefer platform/CSS/Motion primitives and sparse
+  state-oriented animation over narrative choreography
 
 Tooling:
 
@@ -89,7 +92,13 @@ usable baseline**. Core functionality must remain fully usable without them.
   delivery topology is defined in `cutover-plan.md`. The cutover is defined
   but NOT yet executed.
 
-## What is not decided yet
+## Related frontend authorities
 
-- exact build/deploy wiring of the new frontend into the production Compose
-  stack (settled at the cutover stage per `cutover-plan.md`).
+- `design-direction.md` — stable visual constitution;
+- `experience-model.md` — stable product UX model;
+- `visual-acceptance.md` — current human visual verdict;
+- `legacy-contract.md` — behavioral parity requirements;
+- `cutover-plan.md` — defined production delivery/cutover mechanics.
+
+The target cutover topology is already defined in `cutover-plan.md`; it is not
+implemented yet.

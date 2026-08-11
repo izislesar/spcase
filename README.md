@@ -193,8 +193,9 @@ systemd-ask-password "Initial ADMIN password:" |
   PostgreSQL;
 - `docs/domain/business-rules.md` — бизнес-правила и lifecycle;
 - `docs/contracts/http-api.md` — HTTP API и browser routes;
-- `docs/frontend/` — архитектура и design direction нового frontend
-  (`frontend/`), поведенческий контракт legacy и план cutover;
+- `docs/frontend/` — архитектура нового frontend, visual constitution
+  (`design-direction.md`), product UX model (`experience-model.md`), current
+  human visual verdict, legacy behavioral contract и cutover plan;
 - `docs/decisions/0001-frontend-v2.md` — решение о замене frontend;
 - `docs/runbooks/observability.md` — observability baseline и alert
   definitions;
