@@ -2,12 +2,13 @@ import { motion, type Variants } from "motion/react";
 import { SOFT_SPRING } from "../../../lib/motion";
 
 /*
- * Stage 03 — the final: a tall pennant raised on a winner's step. Designed
+ * The final motif: a tall pennant raised on a winner's step. Designed
  * for coral/accent fields: pole and steps in ink, the pennant in deep navy,
  * the knob and the cropped side field in mustard. Crops at left and bottom.
  *
- * Entrance hook: the pennant settles independently (variants driven by the
- * format section); without a variant ancestor the scene renders statically.
+ * Entrance hook: the pennant can settle independently when a variant
+ * ancestor drives it; without one the scene renders statically (the
+ * current placements are static).
  */
 
 const pennantVariants: Variants = {

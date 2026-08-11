@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 /*
  * Environment hooks that let choreographies choose variant sets: fine
- * pointers get pointer-depth interactions, narrow viewports get shorter
- * travel and fewer simultaneous layers. Reduced motion is decided
- * separately via MotionConfig (`reducedMotion="user"`) and
- * `useReducedMotion` at the call site.
+ * pointers get hover microresponses (nothing hover-dependent ever carries
+ * functionality), narrow viewports get simpler variant geometry. Reduced
+ * motion is decided separately via MotionConfig (`reducedMotion="user"`)
+ * and `useReducedMotion` at the call site.
  */
 
 function useMediaQuery(query: string): boolean {

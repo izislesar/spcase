@@ -74,12 +74,6 @@
   overflow-wrap: break-word;
 }
 
-.scheduleEmpty {
-  margin: 0;
-  font-size: var(--text-lg);
-  color: color-mix(in oklch, var(--color-ink) 74%, var(--color-turquoise));
-}
-
 .scheduleFooter {
   display: flex;
   flex-wrap: wrap;

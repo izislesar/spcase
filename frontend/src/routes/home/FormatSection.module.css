@@ -1,8 +1,7 @@
-/* Format — one full-bleed mustard field, three heterogeneous stage pieces. */
+/* Format — one ruled progression axis, three stages of different weight. */
 
 .format {
   padding-block: var(--section-gap);
-  background: var(--color-mustard);
   overflow: clip;
 }
 
@@ -12,7 +11,7 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: color-mix(in oklch, var(--color-ink) 72%, var(--color-mustard));
+  color: var(--color-ink-muted);
 }
 
 .formatHeader {
@@ -34,20 +33,38 @@
   margin: 0;
   max-width: 44ch;
   font-size: var(--text-lg);
-  color: color-mix(in oklch, var(--color-ink) 72%, var(--color-mustard));
+  color: var(--color-ink-muted);
+}
+
+/*
+ * The progression: on mobile a vertical rule at the left edge with the
+ * stages indented; each oversized numeral pulls back across the rule.
+ */
+.stageWrap {
+  position: relative;
 }
 
 .stageList {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-12);
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 var(--space-8);
   list-style: none;
 }
 
-/* Shared typographic furniture for the three pieces. */
+.axis {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 2px;
+  background: var(--color-ink);
+  transform-origin: top;
+}
+
+/* Shared typographic furniture for the three stages. */
 .stageNumber {
   display: block;
+  margin-inline-start: calc(-1 * var(--space-8));
   font-family: var(--font-display);
   font-size: var(--text-numeral);
   font-weight: 800;
@@ -74,80 +91,51 @@
 .stageText {
   margin: 0;
   max-width: 34ch;
+  color: var(--color-ink-muted);
   overflow-wrap: break-word;
 }
 
-/*
- * 01 — the white sheet composition. The artwork is deliberately cropped by
- * the bottom edge of the white field (clip + negative margin), so the paper
- * reads as running out of the block.
- */
-.stageSheet {
-  display: grid;
-  gap: var(--space-6);
-  padding: var(--space-6) var(--space-6) 0;
-  background: var(--color-surface);
+/* 01 — the dominant typographic block; its numeral breaks the rule. */
+.stageStart .stageNumber {
+  color: var(--color-accent-strong);
+}
+
+/* 02 — narrower, with the work scene as a small inset. */
+.stageWork .stageNumber {
   color: var(--color-ink);
-  overflow: clip;
 }
 
-.stageSheet .stageNumber {
-  color: var(--color-accent);
-}
-
-.stageSheet .stageText {
-  color: var(--color-ink-muted);
-}
-
-.stageSheetArt {
-  inline-size: min(70%, 15rem);
+.stageWorkArt {
+  display: block;
+  inline-size: min(100%, 13rem);
   block-size: auto;
-  justify-self: end;
-  margin-block-end: calc(-1 * var(--space-4));
+  margin-block-start: var(--space-6);
+  margin-inline-start: calc(-1 * var(--space-2));
   pointer-events: none;
 }
 
-/* 02 — the narrow tall navy poster; the gear scene is cropped inside. */
-.stageGear {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-6);
-  background: var(--color-navy);
-  color: var(--color-on-navy);
-  overflow: clip;
-}
-
-.stageGear .stageNumber {
-  color: var(--color-mustard);
-}
-
-.stageGear .stageText {
-  color: var(--color-on-navy-muted);
-}
-
-.stageGearArt {
-  inline-size: 150%;
-  max-width: none;
-  block-size: auto;
-  margin-block-start: auto;
-  margin-inline-start: calc(-1 * var(--space-6));
-  margin-block-end: calc(-1 * var(--space-6));
-  pointer-events: none;
-}
-
-/* 03 — the wide coral band; the pennant rises above its top edge. */
+/*
+ * 03 — the only color field of the progression: the final. The coral band
+ * escapes the container on the right; the pennant breaks its top edge.
+ */
 .stageFinal {
   display: grid;
   gap: var(--space-6);
   align-items: end;
   padding: var(--space-6);
+  margin-inline-end: calc(-1 * var(--gutter-wide));
   background: var(--color-accent-strong);
   color: var(--color-on-accent);
   overflow: visible;
 }
 
 .stageFinal .stageNumber {
+  margin-inline-start: 0;
   color: var(--color-navy);
+}
+
+.stageFinalCopy {
+  min-width: 0;
 }
 
 .stageFinal .stageText {
@@ -155,7 +143,7 @@
 }
 
 .stageFinalArt {
-  inline-size: min(46%, 11rem);
+  inline-size: min(42%, 9rem);
   block-size: auto;
   justify-self: end;
   margin-block-start: calc(-1 * var(--space-12));
@@ -163,49 +151,56 @@
 }
 
 @media (width > 64rem) {
+  /*
+   * Desktop: the axis turns horizontal across the top; 01 dominates the
+   * left, 02 steps down as the narrower offset block, 03 closes the
+   * progression as the full-width coral band below.
+   */
   .stageList {
     grid-template-columns: repeat(12, 1fr);
     gap: var(--space-8);
-    align-items: start;
+    padding: var(--space-16) 0 0;
   }
 
-  /* 01: the large white field, top-left. */
-  .stageSheet {
-    grid-column: 1 / 7;
+  .axis {
+    inset-block: 0 auto;
+    inset-inline: 0;
+    inline-size: auto;
+    block-size: 2px;
+    transform-origin: left;
+  }
+
+  /* Numerals rise across the horizontal rule, breaking it. */
+  .stageNumber {
+    margin-inline-start: 0;
+    margin-block-start: calc(-1 * var(--space-16) - var(--space-4));
+  }
+
+  .stageStart {
+    grid-column: 1 / 6;
     grid-row: 1;
-    grid-template-columns: minmax(0, 1fr) auto;
-    padding: var(--space-8) var(--space-8) 0;
   }
 
-  .stageSheetArt {
-    inline-size: min(100%, 17rem);
-    margin-block-end: calc(-1 * var(--space-8));
+  .stageWork {
+    grid-column: 7 / 10;
+    grid-row: 1;
+    margin-block-start: var(--space-16);
   }
 
-  /* 02: the narrow tall poster, spanning both rows. */
-  .stageGear {
-    grid-column: 8 / 12;
-    grid-row: 1 / 3;
-    min-height: 34rem;
-    padding: var(--space-8);
-  }
-
-  .stageGearArt {
-    margin-inline-start: calc(-1 * var(--space-8));
-    margin-block-end: calc(-1 * var(--space-8));
-  }
-
-  /* 03: the wide horizontal band under 01, slightly offset. */
   .stageFinal {
-    grid-column: 1 / 10;
+    grid-column: 1 / 13;
     grid-row: 2;
     grid-template-columns: minmax(0, 1fr) auto;
-    margin-block-start: var(--space-4);
+    margin-block-start: var(--space-8);
     padding: var(--space-8);
+  }
+
+  .stageFinal .stageNumber {
+    margin-block-start: 0;
   }
 
   .stageFinalArt {
-    inline-size: min(100%, 12rem);
+    inline-size: min(100%, 10rem);
     margin-block-start: calc(-1 * var(--space-16));
   }
 }

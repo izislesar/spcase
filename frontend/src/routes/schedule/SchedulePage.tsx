@@ -1,17 +1,10 @@
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type Variants,
-} from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring, type Variants } from "motion/react";
 import { useRef } from "react";
 import { useViewTransitionState } from "react-router";
 import { ClosingScene } from "../../components/graphics/scenes/ClosingScene";
 import { RouteScene } from "../../components/graphics/scenes/RouteScene";
 import { PublicStatus } from "../../components/public/PublicStatus";
-import { EDITORIAL_EASE, SNAPPY_SPRING, useNarrowViewport } from "../../lib/motion";
+import { EDITORIAL_EASE, SNAPPY_SPRING } from "../../lib/motion";
 import { errorMessage, eventDateTimeAttr, useSchedule } from "../home/api";
 import styles from "./schedule.module.css";
 
@@ -30,43 +23,32 @@ function dateParts(value: string): { day: string; month: string; time: string } 
 }
 
 /*
- * Dedicated schedule: a large vertical storytelling page. Oversized dates
- * sit off a single ink line; the coral progress line fills with page scroll
- * (a Motion useScroll scaleY on the timeline — the plain full line is the
- * reduced-motion baseline). Day markers activate as their segment reaches
- * the reader, dates reveal through a clip, event copy follows with a short
- * delay, and the header art drifts at its own scroll depth. Data order is
- * never animated; the choreography lives on the furniture around it.
+ * Dedicated schedule: an information timeline, not a scrolling story.
+ * Oversized dates sit off a single ink line; the coral progress line fills
+ * with page scroll (a Motion useScroll scaleY on the timeline — the plain
+ * full line is the reduced-motion baseline) and day markers activate as
+ * their segment reaches the reader: motion encodes temporal position, not
+ * spectacle. Each event settles in one quiet reveal; the header art and
+ * the closing band are static compositions. Data order is never animated.
  *
  * The h1 carries the vt-title view-transition name: arriving from the
  * homepage the title morphs from the preview heading, and the Motion
  * entrance is skipped (the transition IS the entrance).
  */
 
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EDITORIAL_EASE } },
+};
+
 const markerVariants: Variants = {
   hidden: { scale: 0 },
   visible: { scale: 1, transition: { ...SNAPPY_SPRING } },
 };
 
-const dateVariants: Variants = {
-  hidden: (narrow: boolean) => ({ opacity: 0, y: narrow ? 14 : 26, clipPath: "inset(0 0 100% 0)" }),
-  visible: {
-    opacity: 1,
-    y: 0,
-    clipPath: "inset(0 0 0% 0)",
-    transition: { duration: 0.6, ease: EDITORIAL_EASE },
-  },
-};
-
-const bodyVariants: Variants = {
-  hidden: (narrow: boolean) => ({ opacity: 0, y: narrow ? 14 : 26 }),
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EDITORIAL_EASE, delay: 0.12 } },
-};
-
 export function SchedulePage() {
   const schedule = useSchedule();
   const reduced = useReducedMotion();
-  const narrow = useNarrowViewport();
   const vtSchedule = useViewTransitionState("/schedule");
   const noEntrance = reduced || vtSchedule;
 
@@ -77,23 +59,12 @@ export function SchedulePage() {
   });
   const lineScaleY = useSpring(timelineProgress, { stiffness: 130, damping: 26 });
 
-  /* The header route art drifts at a slightly different scroll depth. */
-  const { scrollYProgress: pageProgress } = useScroll();
-  const artDriftY = useTransform(pageProgress, [0, 0.3], [0, 26]);
-
   return (
     <section className={styles.page} aria-labelledby="schedule-heading">
       <div className="container-wide">
         <header className={styles.header}>
           <div className={styles.headerCopy}>
-            <motion.p
-              className={styles.eyebrow}
-              initial={noEntrance ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease: EDITORIAL_EASE }}
-            >
-              СПК кейс-чемпионат · 2026
-            </motion.p>
+            <p className={styles.eyebrow}>СПК кейс-чемпионат · 2026</p>
             <h1
               id="schedule-heading"
               className={styles.title}
@@ -110,25 +81,15 @@ export function SchedulePage() {
                 </motion.span>
               </span>
             </h1>
-            <motion.p
-              className={styles.intro}
-              initial={noEntrance ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EDITORIAL_EASE, delay: 0.22 }}
-            >
+            <p className={styles.intro}>
               Этапы и дедлайны чемпионата. Все даты приходят с сервера и отображаются в часовом
               поясе участника.
-            </motion.p>
+            </p>
           </div>
-          <motion.div
-            className={styles.headerArtWrap}
-            initial={noEntrance ? false : { opacity: 0, x: -24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: EDITORIAL_EASE, delay: 0.3 }}
-            style={reduced || narrow ? undefined : { y: artDriftY }}
-          >
+          {/* The route motif: static — the schedule as a path, no drift. */}
+          <div className={styles.headerArtWrap}>
             <RouteScene className={styles.headerArt} />
-          </motion.div>
+          </div>
         </header>
         {schedule.isPending && <PublicStatus kind="loading" title="Загружаем расписание…" />}
         {schedule.isError && (
@@ -158,18 +119,14 @@ export function SchedulePage() {
                       initial={reduced ? false : "hidden"}
                       whileInView="visible"
                       viewport={{ once: true, margin: "-18% 0px -18% 0px" }}
-                      custom={narrow}
+                      variants={itemVariants}
                     >
                       <motion.span
                         className={styles.marker}
                         variants={markerVariants}
                         aria-hidden="true"
                       />
-                      <motion.time
-                        className={styles.date}
-                        variants={dateVariants}
-                        dateTime={eventDateTimeAttr(event.start_time)}
-                      >
+                      <time className={styles.date} dateTime={eventDateTimeAttr(event.start_time)}>
                         {parts ? (
                           <>
                             <span className={styles.day}>{parts.day}</span>
@@ -179,11 +136,11 @@ export function SchedulePage() {
                         ) : (
                           <span className={styles.month}>—</span>
                         )}
-                      </motion.time>
-                      <motion.div className={styles.body} variants={bodyVariants}>
+                      </time>
+                      <div className={styles.body}>
                         <h2 className={styles.eventTitle}>{event.title}</h2>
                         <p className={styles.eventDescription}>{event.description}</p>
-                      </motion.div>
+                      </div>
                     </motion.li>
                   );
                 })}
@@ -191,19 +148,12 @@ export function SchedulePage() {
               {/* The closing poster: the finish scene on its navy band. */}
               <motion.div
                 className={styles.closingBand}
-                initial={reduced ? false : { clipPath: "inset(0 0 100% 0)" }}
-                whileInView={{ clipPath: "inset(0 0 0% 0)" }}
+                initial={reduced ? false : { opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.7, ease: EDITORIAL_EASE }}
+                transition={{ duration: 0.6, ease: EDITORIAL_EASE }}
               >
-                <motion.div
-                  initial={reduced ? false : { opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, ease: EDITORIAL_EASE, delay: 0.18 }}
-                >
-                  <ClosingScene className={styles.closingArt} />
-                </motion.div>
+                <ClosingScene className={styles.closingArt} />
               </motion.div>
             </div>
           ) : (

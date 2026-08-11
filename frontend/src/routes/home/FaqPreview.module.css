@@ -39,7 +39,7 @@
 }
 
 .faqArt {
-  inline-size: min(72vw, 19rem);
+  inline-size: min(48vw, 11rem);
   block-size: auto;
   margin-block-start: var(--space-6);
   pointer-events: none;
@@ -112,6 +112,6 @@
   }
 
   .faqArt {
-    inline-size: min(100%, 22rem);
+    inline-size: min(100%, 12rem);
   }
 }

@@ -2,16 +2,17 @@ import { motion, type Transition, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
 import { BubbleScene } from "../../components/graphics/scenes/BubbleScene";
 import { PublicStatus } from "../../components/public/PublicStatus";
-import { EDITORIAL_EASE, VIEWPORT_ONCE } from "../../lib/motion";
+import { EDITORIAL_EASE } from "../../lib/motion";
 import { errorMessage, useFaq } from "./api";
 import styles from "./FaqPreview.module.css";
 
 /*
  * FAQ — the quiet decompression after the louder sections: hairline rows
- * and one large conversation scene beside them. Accordion semantics are
+ * and one small conversation motif beside them. The header is static — the
+ * section's only motion is the accordion itself. Accordion semantics are
  * unchanged: one open item at a time, aria-expanded/aria-controls wiring
  * intact, and collapsed regions stay in the DOM hidden visually and from
- * AT. The answer now reveals through a Motion height animation (~300ms,
+ * AT. The answer reveals through a Motion height animation (~300ms,
  * near-instant under reduced motion), so neighboring items move smoothly
  * instead of jumping.
  */
@@ -29,35 +30,14 @@ export function FaqPreview() {
     <section className={styles.faq} aria-labelledby="faq-heading">
       <div className={`container ${styles.faqInner}`}>
         <header className={styles.sectionHeader}>
-          <motion.p
-            className={styles.eyebrow}
-            initial={reduced ? false : { opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={VIEWPORT_ONCE}
-            transition={{ duration: 0.45, ease: EDITORIAL_EASE }}
-          >
-            03 · Вопросы
-          </motion.p>
-          <motion.h2
-            id="faq-heading"
-            className={styles.sectionTitle}
-            initial={reduced ? false : { opacity: 0, y: 20, clipPath: "inset(0 0 100% 0)" }}
-            whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
-            viewport={VIEWPORT_ONCE}
-            transition={{ duration: 0.6, ease: EDITORIAL_EASE, delay: 0.06 }}
-          >
+          <p className={styles.eyebrow}>03 · Вопросы</p>
+          <h2 id="faq-heading" className={styles.sectionTitle}>
             Коротко о главном
-          </motion.h2>
-          <motion.p
-            className={styles.sectionIntro}
-            initial={reduced ? false : { opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={VIEWPORT_ONCE}
-            transition={{ duration: 0.5, ease: EDITORIAL_EASE, delay: 0.16 }}
-          >
+          </h2>
+          <p className={styles.sectionIntro}>
             Если ответа здесь нет, организаторы помогут уточнить детали до начала чемпионата.
-          </motion.p>
-          {/* One large quiet scene under the header; the rows stay calm. */}
+          </p>
+          {/* The question motif as a small mark; the rows stay calm. */}
           <BubbleScene className={styles.faqArt} />
         </header>
         {faq.isPending && <PublicStatus kind="loading" title="Загружаем вопросы…" />}

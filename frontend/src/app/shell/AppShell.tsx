@@ -140,61 +140,35 @@ function BottomBar() {
 }
 
 /*
- * Footer: the closing poster. On approach the statement reveals line by
- * line through masks, the finish scene enters laterally (a different axis),
- * and the meta row settles last. The composition itself is unchanged.
+ * Footer: the closing poster on the navy field. The composition is static
+ * and carries itself; the whole block settles in a single quiet one-shot
+ * reveal on approach — no multi-stage choreography.
  */
 function Footer({ menuOpen }: { menuOpen: boolean }) {
   const reduced = useReducedMotion();
 
   return (
     <footer className={styles.footer} inert={menuOpen}>
-      <div className={`container-wide ${styles.footerInner}`}>
+      <motion.div
+        className={`container-wide ${styles.footerInner}`}
+        initial={reduced ? false : { opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: EDITORIAL_EASE }}
+      >
         <div className={styles.footerCta}>
           <p className={styles.footerStatement}>
-            <span className={styles.statementMask}>
-              <motion.span
-                className={styles.statementLine}
-                initial={reduced ? false : { y: "112%" }}
-                whileInView={{ y: "0%" }}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ duration: 0.6, ease: EDITORIAL_EASE }}
-              >
-                Собери команду.
-              </motion.span>
-            </span>
-            <span className={styles.statementMask}>
-              <motion.span
-                className={styles.statementLine}
-                initial={reduced ? false : { y: "112%" }}
-                whileInView={{ y: "0%" }}
-                viewport={{ once: true, amount: 0.6 }}
-                transition={{ duration: 0.6, ease: EDITORIAL_EASE, delay: 0.09 }}
-              >
-                Реши кейс.
-              </motion.span>
-            </span>
+            <span className={styles.statementLine}>Собери команду.</span>
+            <span className={styles.statementLine}>Реши кейс.</span>
           </p>
           <ButtonLink to="/register" viewTransition className={styles.footerButton}>
             Подать заявку
           </ButtonLink>
         </div>
-        <motion.div
-          className={styles.footerSceneWrap}
-          initial={reduced ? false : { opacity: 0, x: 44 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, ease: EDITORIAL_EASE, delay: 0.12 }}
-        >
+        <div className={styles.footerSceneWrap}>
           <ClosingScene className={styles.footerScene} />
-        </motion.div>
-        <motion.div
-          className={styles.footerMeta}
-          initial={reduced ? false : { opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.6 }}
-          transition={{ duration: 0.5, ease: EDITORIAL_EASE, delay: 0.2 }}
-        >
+        </div>
+        <div className={styles.footerMeta}>
           <p className={styles.footerBrand}>СПК кейс-чемпионат · Санкт-Петербург · 2026</p>
           <nav className={styles.footerNav} aria-label="Дополнительная навигация">
             <NavLink to="/register" viewTransition>
@@ -207,8 +181,8 @@ function Footer({ menuOpen }: { menuOpen: boolean }) {
               Вход для жюри
             </NavLink>
           </nav>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </footer>
   );
 }

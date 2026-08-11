@@ -1,14 +1,14 @@
 import { motion, type Variants } from "motion/react";
 
 /*
- * The final as a celebration scene for dark fields: a three-step podium
- * with the coral cup on the center step and flat confetti above. Designed
- * for navy backgrounds; steps crop at the bottom edge.
+ * The result motif: a three-step podium with the coral cup on the center
+ * step and flat confetti above. Designed for navy backgrounds; steps crop
+ * at the bottom edge.
  *
- * Hover hooks (used by the mosaic final piece): the podium group can rise
- * slightly while the two confetti groups separate subtly — a single finite
- * gesture, never a looping celebration. Without variants the scene renders
- * statically.
+ * Hover hooks: the podium group can rise slightly while the two confetti
+ * groups separate subtly — a single finite gesture, never a looping
+ * celebration. Without variants the scene renders statically (the current
+ * placement on /jury/login is static).
  */
 export function PodiumScene({
   className,

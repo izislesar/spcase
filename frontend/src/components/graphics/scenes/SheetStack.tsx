@@ -2,15 +2,15 @@ import { motion, type Variants } from "motion/react";
 import { SNAPPY_SPRING, SOFT_SPRING } from "../../../lib/motion";
 
 /*
- * Stage 01 — registration: a tall cropped stack of application sheets with
+ * The application-documents motif: a tall cropped stack of sheets with
  * a pencil. The front sheet runs off the bottom edge and the pencil off the
  * top; no backdrop circle, the paper itself is the composition.
  *
- * Entrance choreography hooks (used by the format section's hidden→visible
- * variants): the sheet stack moves independently and the pencil arrives
- * separately from above. The pencil's static rotation stays on an outer
- * plain <g> so the animated inner group never clobbers it. Without a
- * variant ancestor the scene renders statically.
+ * Entrance hooks: the sheet stack and the pencil can arrive independently
+ * when a variant ancestor drives them (the pencil's static rotation stays
+ * on an outer plain <g> so the animated inner group never clobbers it).
+ * Without a variant ancestor the scene renders statically (the current
+ * placement on /register is static).
  */
 
 const sheetsVariants: Variants = {

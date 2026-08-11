@@ -2,15 +2,14 @@ import { motion, type Variants } from "motion/react";
 import { Gear } from "./Gear";
 
 /*
- * Stage 02 — the work: two meshed gears, the large one deliberately cropped
+ * The work motif: two meshed gears, the large one deliberately cropped
  * by the bottom edge, and a document riding the dashed path underneath.
  * A wide horizontal composition, the opposite aspect of SheetStack.
  *
  * The gears accept optional variant sets from the parent context: the
- * format section rotates them a small finite amount once (hidden→visible),
- * the mosaic artwork field counter-rotates them while hovered (rest/hover).
- * Rotations are finite and spring-settled — never an infinite spin.
- * Without variants the scene renders statically.
+ * mosaic login field turns the large gear a single small amount while
+ * hovered (rest/hover, finite, spring-settled — never an infinite spin).
+ * Without variants the scene renders statically (format inset, /login).
  */
 export function GearScene({
   className,

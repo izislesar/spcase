@@ -1,4 +1,4 @@
-/* Dedicated /schedule page — a large vertical storytelling composition. */
+/* Dedicated /schedule page — an information timeline, not a scrolling story. */
 
 .page {
   padding-block: clamp(2rem, 1rem + 5vw, 5rem) var(--section-gap);

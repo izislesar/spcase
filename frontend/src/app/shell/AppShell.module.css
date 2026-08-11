@@ -238,13 +238,7 @@
   letter-spacing: -0.03em;
 }
 
-/* Masked lines for the on-approach reveal; block layout keeps the two
-   deliberate lines of the closing statement. */
-.statementMask {
-  display: block;
-  overflow: clip;
-}
-
+/* Two deliberate lines of the closing statement. */
 .statementLine {
   display: block;
 }

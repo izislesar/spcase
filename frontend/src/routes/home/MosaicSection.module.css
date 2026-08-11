@@ -1,39 +1,35 @@
-/* Mosaic — an irregular editorial collage, not a tile system. */
+/* Mosaic — one editorial band plus one quiet companion field, no tiles. */
 
 .mosaic {
   padding-block: var(--section-gap);
 }
 
-.mosaicGrid {
+.mosaicInner {
   display: grid;
   gap: var(--space-4);
 }
 
 /*
- * The join piece: a typographic navigation field. Oversized display type,
- * no artwork, no radius — the boldest text block of the collage.
+ * The registration band: a strong coral field with oversized display type
+ * and a ruled meta row of facts — an editorial band, not a CTA card.
  */
-.pieceJoin {
+.band {
   display: flex;
   flex-direction: column;
-  min-height: 17rem;
   padding: var(--space-6);
   background: var(--color-accent-strong);
   color: var(--color-on-accent);
   text-decoration: none;
-  transition:
-    translate 160ms ease-out,
-    background-color 160ms ease-out;
+  transition: background-color 160ms ease-out;
 }
 
-.pieceJoin:hover {
+.band:hover {
   color: var(--color-on-accent);
-  translate: 0 -4px;
   /* Subtle contrast response: the coral deepens a step on hover. */
   background-color: color-mix(in oklch, var(--color-accent-strong) 90%, var(--color-navy));
 }
 
-.joinKicker {
+.bandKicker {
   font-size: var(--text-eyebrow);
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -41,7 +37,7 @@
   opacity: 0.75;
 }
 
-.joinTitle {
+.bandTitle {
   margin-block-start: var(--space-3);
   font-family: var(--font-display);
   font-size: var(--text-2xl);
@@ -50,26 +46,54 @@
   letter-spacing: -0.03em;
 }
 
-.joinText {
-  margin-block-start: auto;
-  padding-block-start: var(--space-6);
-  font-weight: 600;
+/* The ruled meta row: hairline on top, facts and the arrow along it. */
+.bandMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-8);
+  margin-block-start: var(--space-8);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid color-mix(in oklch, var(--color-on-accent) 35%, transparent);
 }
 
-.joinArrow {
+.metaCell {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.metaLabel {
+  font-size: var(--text-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.metaValue {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.bandArrow {
   display: inline-block;
-  margin-inline-start: var(--space-2);
+  margin-inline-start: auto;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
 }
 
-/* Pure artwork field: artwork full-bleed, cropped on the left/bottom. */
-.pieceArt {
-  min-height: 12rem;
+/*
+ * The login continuity field: deliberately quieter than the band —
+ * smaller, dropped lower, the work scene cropped by its bottom edge.
+ */
+.loginField {
+  min-height: 10rem;
   background: var(--color-turquoise);
   overflow: clip;
-  rotate: 0.6deg;
 }
 
-.artScene {
+.loginArt {
   display: block;
   inline-size: 118%;
   max-width: none;
@@ -77,129 +101,34 @@
   margin-block-start: var(--space-4);
 }
 
-/*
- * The dates teaser: the quiet counterpoint — white, hairline top rule,
- * plain typography, no field fill at all. The rule is a real element
- * (.datesRule) so it can draw in on entry; its resting state is identical
- * to the former border.
- */
-.pieceDates {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-4) 0 0;
-  color: var(--color-ink);
-  text-decoration: none;
-}
-
-.datesRule {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
-  block-size: 2px;
-  background: var(--color-ink);
-}
-
-.pieceDates:hover {
-  color: var(--color-ink);
-}
-
-.datesKicker {
-  font-size: var(--text-eyebrow);
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
-}
-
-.datesTitle {
-  margin-block-start: var(--space-2);
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.datesText {
-  margin-block-start: var(--space-2);
-  max-width: 30ch;
-  font-size: var(--text-sm);
-  color: var(--color-ink-muted);
-}
-
-.pieceDates:hover .datesTitle {
-  color: var(--color-accent-strong);
-}
-
-.datesArrow {
-  display: inline-block;
-  margin-inline-start: var(--space-2);
-  color: var(--color-accent-strong);
-}
-
-/* The final: the dark celebration scene with a short caption. */
-.pieceFinal {
-  padding: var(--space-6) var(--space-6) 0;
-  background: var(--color-navy);
-  color: var(--color-on-navy);
-  overflow: clip;
-  rotate: -0.6deg;
-}
-
-.finalScene {
-  display: block;
-  inline-size: min(100%, 24rem);
-  margin-inline: auto;
-  margin-block-end: calc(-1 * var(--space-2));
-}
-
-.finalCaption {
-  position: relative;
-  margin: 0 calc(-1 * var(--space-6));
-  padding: var(--space-4) var(--space-6);
-  background: var(--color-navy);
-  font-size: var(--text-sm);
-  color: var(--color-on-navy-muted);
-}
-
 @media (width > 64rem) {
   /*
-   * Desktop collage: the join field owns the left across two rows; the
-   * artwork field and the hairline teaser share the top right; the dark
-   * final scene closes the composition underneath — with an intentional
-   * blank region at the top-right corner of the grid.
+   * Desktop: the band owns the left two-thirds; the turquoise field hangs
+   * lower on the right, its top deliberately below the band's top.
    */
-  .mosaicGrid {
+  .mosaicInner {
     grid-template-columns: repeat(12, 1fr);
     gap: var(--space-8);
-    align-items: stretch;
+    align-items: start;
   }
 
-  .pieceJoin {
-    grid-column: 1 / 6;
-    grid-row: 1 / 3;
-    min-height: 26rem;
+  .band {
+    grid-column: 1 / 9;
+    min-height: 24rem;
     padding: var(--space-8);
   }
 
-  .joinTitle {
+  .bandTitle {
     font-size: var(--text-display);
   }
 
-  .pieceArt {
-    grid-column: 6 / 10;
-    grid-row: 1;
-    min-height: 15rem;
+  .bandMeta {
+    margin-block-start: auto;
   }
 
-  .pieceDates {
-    grid-column: 6 / 9;
-    grid-row: 2;
-    align-self: start;
-  }
-
-  .pieceFinal {
+  .loginField {
     grid-column: 9 / 13;
-    grid-row: 2;
+    min-height: 14rem;
+    margin-block-start: var(--space-16);
   }
 }

@@ -22,7 +22,4 @@ export const MARKER_SPRING: Transition = { type: "spring", stiffness: 360, dampi
 /** whileInView threshold: fire once when a third of the piece is visible. */
 export const VIEWPORT_ONCE = { once: true, amount: 0.35 } as const;
 
-/** Earlier one-shot trigger for small elements. */
-export const VIEWPORT_ONCE_EARLY = { once: true, amount: 0.2 } as const;
-
 export { useFinePointer, useNarrowViewport } from "./hooks";
