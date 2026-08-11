@@ -7,14 +7,15 @@ frontend-приложение до продолжения staging/production cut
 (см. `docs/decisions/0001-frontend-v2.md`).
 
 Frontend-миграция находится на этапе публичной визуальной системы (фаза 4).
-Технический foundation и поведенческий контракт завершены. Stage 4E
-(`73185c5`) технически реализован, но human visual review 2026-08-11 дал
-вердикт **REJECT DIRECTION**: попытка `Editorial Competition OS + controlled
-imperfection` ушла от generic SaaS, но стала выглядеть как клишированный
-Swiss/editorial agency concept. Следующий утверждённый шаг — **Stage 4F: dark
-de-stylization**: удалить декоративный visual grammar, перейти на тёмный
-content-first интерфейс и заново собрать public surfaces из реального контента,
-типографики, state и interaction. См. `docs/frontend/design-direction.md`,
+Технический foundation и поведенческий контракт завершены. Stage 4E был
+отклонён визуально; Stage 4F (`4f6cbb2`) успешно провёл dark de-stylization и
+human review 2026-08-11 признал его **FOUNDATION ACCEPTED / VISUAL INCOMPLETE**:
+очистка и тёмный content-first skeleton верны, но итог слишком плоский и близок
+к polished wireframe. Следующий утверждённый шаг — **Stage 4G: spatial identity
+without decorative illustration**: сохранить Stage 4F cleanup, добавить один
+signature spatial moment и ограниченную Z1-псевдо3D иерархию через существующие
+CSS/Motion primitives, без возврата к illustration/poster grammar и без новых
+3D runtime dependencies. См. `docs/frontend/design-direction.md`,
 `docs/frontend/experience-model.md` и `docs/frontend/visual-acceptance.md`.
 
 Staging acceptance и production deployment НЕ являются ближайшей фазой: они
@@ -57,9 +58,10 @@ Staging acceptance и production deployment НЕ являются ближайш
 - [x] 4.3 Stage 4C — wide/full-bleed composition, heterogeneous editorial scenes, уменьшение card chrome, mobile 320/375 recomposition — технически реализовано
 - [x] 4.4 Stage 4D — Motion/view-transition interaction layer, bottom-nav marker, hero/schedule/auth choreography, PublicStatus и reduced-motion пути — технически реализовано; human review выявил избыточную agency-landing-page/motion-polish модель
 - [x] 4.5 Stage 4E — art-direction consolidation (`73185c5`) — технически реализовано; human review 2026-08-11: **REJECT DIRECTION** из-за giant-number/editorial-rule/illustration/color-field/forced-asymmetry AI-template grammar
-- [ ] 4.6 Stage 4F — dark de-stylization: тёмный content-first canvas, один основной red accent, удалить dominant illustration/color-field/giant-number grammar, отказаться от manufactured imperfection, упростить auth, сделать schedule information-first, сократить motion до state/navigation/interaction и провести human visual review
+- [x] 4.6 Stage 4F — dark de-stylization (`4f6cbb2`): тёмный content-first canvas, один основной red accent, удалены dominant illustration/color-field/giant-number grammar, Mosaic и большая часть decorative motion; human review: **FOUNDATION ACCEPTED / VISUAL INCOMPLETE**
+- [ ] 4.7 Stage 4G — spatial identity without decorative illustration: добавить ограниченную pseudo-3D/material hierarchy поверх Stage 4F skeleton; один signature hero spatial object, Z1 depth только там, где она улучшает Format/Schedule/interaction; CSS perspective + существующий Motion, без Three.js/WebGL/new runtime dependency; обязательный desktop/mobile/reduced-motion human visual review
 
-**Gate:** фаза 5 НЕ начинается, пока Stage 4F human review явно не зафиксирует
+**Gate:** фаза 5 НЕ начинается, пока Stage 4G human review явно не зафиксирует
 visual **ACCEPT** в `docs/frontend/visual-acceptance.md`. Технически валидный
 commit не равен визуально принятому.
 

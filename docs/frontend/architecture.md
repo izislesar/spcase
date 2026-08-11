@@ -8,13 +8,13 @@
 >
 > The independent `frontend/` project exists and is the migration target:
 > a Vite 8 + React 19 + TypeScript (strict) application with React Router
-> (data mode), TanStack Query, the `/api/v1` fetch transport, CSS
-> token/base primitives, Biome and Playwright configuration. Stage 4E was
-> technically implemented but human review on 2026-08-11 rejected its visual
-> direction. Stage 4F (dark de-stylization) is the next approved public design
-> implementation stage (`visual-acceptance.md`). Product UX semantics live in
-> `experience-model.md`. Production cutover is defined (`cutover-plan.md`)
-> but NOT executed. Details: `../../frontend/AGENTS.md`.
+> (data mode), TanStack Query, the `/api/v1` fetch transport, CSS token/base
+> primitives, Biome and Playwright configuration. Stage 4F (`4f6cbb2`)
+> established the accepted dark/de-stylized foundation but human review found
+> it visually incomplete. Stage 4G adds a restrained spatial/pseudo-3D identity
+> using the existing browser/CSS/Motion stack (`visual-acceptance.md`). Product
+> UX semantics live in `experience-model.md`. Production cutover is defined
+> (`cutover-plan.md`) but NOT executed. Details: `../../frontend/AGENTS.md`.
 
 ## Direction
 
@@ -50,17 +50,25 @@ Styling and visual system:
 - Grid / Subgrid
 - Container Queries
 - OKLCH / `color-mix()`
-- SVG only where a real interface/brand need exists; decorative illustration is
-  not a default architecture requirement
+- CSS transforms, `perspective` and `transform-style: preserve-3d` for
+  progressive spatial UI
+- restrained directional gradients/shadows only when they communicate material
+  depth
+- SVG only where a real interface/brand/geometry need exists; decorative scene
+  illustration is not a default architecture requirement
 
 Motion and browser interaction:
 
 - `motion` is installed and is the default component-level animation library
 - View Transitions are a progressive enhancement
-- CSS scroll-driven animations are a progressive enhancement when they solve
-  a real information/interaction problem
+- pointer-driven spatial response must be progressive enhancement and should
+  use existing Motion/CSS primitives
+- CSS scroll-driven animations are a progressive enhancement only when they
+  solve a real information/interaction problem
 - GSAP/ScrollTrigger, Lenis and Rive are **not default project dependencies**;
-  adding any of them requires an explicit task-level product need and approval
+  adding any requires an explicit task-level product need and approval
+- Three.js, React Three Fiber, WebGL frameworks and shader runtimes are **not
+  approved for Stage 4G**; true WebGL requires a separate explicit decision
 - product workspaces should prefer platform/CSS/Motion primitives and sparse
   state-oriented animation over narrative choreography
 
@@ -72,9 +80,14 @@ Tooling:
 
 ## Progressive enhancement rule
 
-Experimental browser features (View Transitions, scroll-driven animations,
-Container Queries, `color-mix()`, Subgrid) must **progressively enhance a
-usable baseline**. Core functionality must remain fully usable without them.
+Experimental browser features (View Transitions, spatial transforms,
+scroll-driven animations, Container Queries, `color-mix()`, Subgrid) must
+**progressively enhance a usable baseline**. Core functionality must remain
+fully usable without them.
+
+Spatial UI has an additional baseline rule: important information and controls
+must remain complete when perspective/3D transforms and pointer response are
+removed.
 
 ## Current implementation state
 
@@ -82,16 +95,19 @@ usable baseline**. Core functionality must remain fully usable without them.
   TypeScript strict, Biome, Playwright).
 - Vite builds `dist/index.html` plus fingerprinted assets under
   `dist/assets/*` — the output structure expected by the cutover plan.
-- Routing: React Router Data Mode (`createBrowserRouter`); framework mode
-  is not used.
-- API requests go to the relative path `/api/v1` through a single fetch
-  client; in development a Vite proxy forwards `/api/v1` to the Go backend
-  on `localhost:8000`, keeping calls same-origin.
-- Browser credential model: `credentials: "same-origin"`; the
-  `access_token` HttpOnly cookie is never read or stored by the frontend.
+- Routing: React Router Data Mode (`createBrowserRouter`); framework mode is not
+  used.
+- API requests go to the relative path `/api/v1` through a single fetch client;
+  in development a Vite proxy forwards `/api/v1` to the Go backend on
+  `localhost:8000`, keeping calls same-origin.
+- Browser credential model: `credentials: "same-origin"`; the `access_token`
+  HttpOnly cookie is never read or stored by the frontend.
+- Stage 4F removed the previous public illustration scene system and most
+  decorative motion; Stage 4G should build on that reduced implementation, not
+  restore deleted Stage 4E scene components.
 - Behavioral requirements are fixed in `legacy-contract.md`; production
-  delivery topology is defined in `cutover-plan.md`. The cutover is defined
-  but NOT yet executed.
+  delivery topology is defined in `cutover-plan.md`. The cutover is defined but
+  NOT yet executed.
 
 ## Related frontend authorities
 

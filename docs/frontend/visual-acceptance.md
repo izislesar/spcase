@@ -9,150 +9,141 @@
 
 ## Current status
 
-**Stage 4E human review completed 2026-08-11 — verdict: REJECT DIRECTION**
+**Stage 4F human review completed 2026-08-11 — verdict: FOUNDATION ACCEPTED / VISUAL INCOMPLETE**
 
-Stage 4E was technically coherent and faithfully implemented the previous
-brief, but the rendered result exposed a deeper design problem. It moved away
-from generic SaaS and into another recognizable AI/template grammar:
-"Swiss/editorial creative-agency site".
+Stage 4F (`4f6cbb2`) successfully removed the Stage 4E AI/editorial cliches and
+produced a technically clean dark content-first baseline. Human review agreed
+with the deletion direction but found the rendered public frontend too flat,
+sparse and visually close to a polished wireframe.
 
-The implementation should not be incrementally polished from that direction.
-The next approved step is **Stage 4F — dark de-stylization**.
+Stage 4F is therefore **not rejected**. Its cleanup is the foundation for the
+next iteration. The next approved implementation step is **Stage 4G — spatial
+identity without decorative illustration**.
 
-## Why Stage 4E was rejected
+## What Stage 4F got right
 
-The reviewed homepage/format composition over-relied on a set of visible
-"authored" devices:
+Keep these decisions:
 
-- oversized `01 / 02 / 03` numerals;
-- `01 · ФОРМАТ`-style editorial labels;
-- deliberate asymmetric placement;
-- thin rules used as graphic signatures;
-- flat gear/flag/machine illustration;
-- deep navy + coral + mustard/cyan identity fields;
-- a large coral final-stage band;
-- deliberate grid breaks/crops;
-- sparse, highly polished agency-site whitespace;
-- slogan-like copy such as `Три этапа. Одна сильная работа.`.
+- dark near-black/deep-navy canvas;
+- warm light text and restrained deep-red accent;
+- removal of mustard/cyan/coral section fields;
+- removal of HeroScene/GearScene/PennantScene/PodiumScene/SheetStack/BubbleScene
+  and other public illustration scenes;
+- deletion of the Mosaic/Bento section;
+- removal of giant `01/02/03` identity numerals;
+- factual copy over slogans;
+- much lower motion density;
+- quiet auth forms;
+- information-first schedule;
+- no fabricated LIVE/NOW/count/state data;
+- no generic dashboard/card system.
 
-Individually these techniques are legitimate. Together they read as a
-recognizable generated editorial concept rather than an inevitable interface
-for a real championship.
+Do not undo this cleanup merely to make the site look fuller.
 
-The central lesson is:
+## Why Stage 4F is not visually complete
 
-> Do not design "human imperfection" as a visible feature.
+Human review of the rendered Stage 4F frontend found that the de-stylization
+removed too much visual hierarchy together with the cliches.
 
-If the irregularities can be enumerated as a list of signature tricks, they
-have become styling rather than character.
+Observed issues:
 
-## What remains valid
+- large desktop areas feel unused rather than intentionally spacious;
+- hero lacks a memorable visual/product identity moment;
+- the public flow can read like a very clean wireframe;
+- Format is informative but visually under-articulated;
+- the dark material system has little depth;
+- the interface needs stronger UX feedback and spatial hierarchy without
+  returning to illustration or poster tricks.
 
-Keep the engineering foundation:
+The correct response is **not** to restore Stage 4E. The response is to add a
+small, disciplined spatial system on top of the Stage 4F skeleton.
 
-- React/Vite/TypeScript architecture;
-- API/query/auth behavior;
-- accessibility and responsive mechanisms;
-- `PublicStatus` behavior;
-- React Router/View Transition foundation where it remains useful;
-- Motion as an available dependency, but with much lower use;
-- schedule as an information-first temporal surface;
-- the principle that USER/JURY/ADMIN must not inherit generic SaaS dashboard
-  grammar.
+## Stage 4G approved direction
 
-Visual ingredients are no longer protected merely because Stage 4D/4E used
-them.
+North star:
 
-## Retired visual assumptions
+**Dark Spatial Competition Interface**
 
-The following are no longer part of the approved visual DNA by default:
+Stage 4G adds pseudo-3D and material depth using the existing frontend stack.
+The governing rule is:
 
-- cream/off-white canvas as the main site background;
-- four-color mustard/cyan/coral/navy identity;
-- flat cartoon/editorial illustration system;
-- gears, flags, podiums, sheet stacks and machines as recurring motifs;
-- oversized stage numbers as identity;
-- designed grid escapes and broken rules;
-- "controlled imperfection" as a quota or checklist;
-- large colored fields as section rhythm;
-- public-page spectacle as a requirement.
+> Visual complexity is allowed when it creates spatial hierarchy, interaction,
+> orientation, or a memorable product object.
 
-These may not be retained merely for continuity with earlier stages.
+The homepage may contain one signature spatial object/composition. Shallow
+structural depth may also appear in Format and, where useful, Schedule.
 
-## Stage 4F approved direction
+FAQ and forms remain mostly flat and functional.
 
-The new north star is:
+## Stage 4G depth limits
 
-**Dark, content-first competition interface.**
+Use the depth model from `design-direction.md`:
 
-Governing rules:
+- `Z0` — normal 2D interface;
+- `Z1` — shallow structural depth;
+- `Z2` — rare signature spatial object, primarily hero.
 
-- nothing exists solely to make the page look designed;
-- delete before designing;
-- content, hierarchy, state and interaction are the primary visual material;
-- default canvas is near-black/deep navy;
-- warm light text, subtle rules and one deep-red accent dominate the palette;
-- secondary colors are rare and muted;
-- no replacement illustration system;
-- no manufactured imperfection;
-- no slogan copy where direct factual language is better;
-- most public surfaces live on one continuous dark canvas;
-- auth becomes especially quiet and functional;
-- schedule derives visual interest from the schedule itself;
-- product surfaces remain operational and information-first;
-- motion is largely limited to navigation, state and direct interaction.
+Do not add a site-wide 3D scene system.
 
-Detailed rules live in `design-direction.md` and `experience-model.md`.
+Stage 4G should use CSS perspective/transforms, layered DOM/SVG where justified
+and the already-installed Motion library. Do not add Three.js, React Three
+Fiber, WebGL frameworks, shaders or another visual runtime dependency.
 
-## Stage 4F anti-AI acceptance test
+## Visual material rules
 
-During human review, reject a surface if it primarily looks like any of the
-following:
+Allowed when purposeful:
 
-- Swiss/editorial portfolio concept;
-- dark SaaS with nested cards;
-- cyberpunk/devtool/terminal UI;
-- luxury-black marketing site;
-- giant-number editorial layout;
-- red/blue/neon glass interface;
-- illustration-led landing page;
-- deliberate "look how asymmetric this is" composition;
-- typography slogans replacing factual information;
-- generic motion showcase.
+- subtle material plane gradients;
+- soft cast shadows between meaningful spatial layers;
+- restrained edge highlights;
+- small pointer tilt on a signature object;
+- shallow foreground/background response on meaningful stage/day objects.
 
-For any questionable element ask:
+Still rejected:
 
-> Can its existence be justified without saying "visual interest"?
+- decorative illustration;
+- floating abstract blobs/cubes;
+- glow/neon;
+- glassmorphism;
+- cyberpunk/HUD/terminal language;
+- rotating logos;
+- decorative mechanical/industrial details;
+- ubiquitous floating cards;
+- constant parallax;
+- large scroll-driven spectacle;
+- giant numbers and Stage 4E poster grammar.
 
-If not, it should normally be removed.
-
-## Stage 4F human acceptance surfaces
+## Stage 4G human acceptance surfaces
 
 Review at minimum:
 
 - `/` full scroll at desktop (~1440×900);
+- hero pointer interaction with a fine pointer;
 - `/` at 375 px;
 - `/` at 320 px;
 - `/schedule` desktop + mobile;
 - `/login` and `/register` desktop + mobile;
 - navigation/menu behavior;
 - reduced-motion behavior;
-- high-contrast/focus states;
-- evidence that old illustration assets/color-field grammar no longer dominate
-  public composition.
+- keyboard focus and contrast.
 
-Specific review questions:
+## Stage 4G review questions
 
-1. Does the site feel like a real championship interface rather than a design
-   concept?
-2. Does the dark palette feel institutional/calm rather than cyber/luxury?
-3. Is the page strong when all decorative artwork is ignored?
-4. Is empty space allowed to remain empty?
-5. Are typography and real information doing most of the visual work?
-6. Does any section contain an element whose only clear purpose is aesthetic
-   signaling?
-7. Are auth and schedule more functional than theatrical?
-8. Is motion sparse enough that a static screenshot still carries the design?
+1. Does the hero now have a memorable SPCase-specific visual presence without
+   looking like decorative 3D artwork?
+2. Does pseudo-3D carry information/hierarchy or merely fill empty space?
+3. Is the dark interface richer without becoming cyberpunk, glassy or
+   developer-tool-like?
+4. Is Format more engaging while still readable as the actual competition
+   process?
+5. Is Schedule still primarily information, not a 3D interaction demo?
+6. Are FAQ and auth restrained enough to create contrast with the signature
+   spatial moments?
+7. Does motion feel like direct physical response rather than choreography?
+8. Does the interface remain complete and convincing under reduced motion?
+9. Does mobile flatten gracefully rather than preserving desktop spectacle at
+   the expense of content?
+10. Has any old illustration/poster cliche returned under a different name?
 
 ## Documentation ownership
 
@@ -162,5 +153,5 @@ that policy.
 
 ## Gate
 
-Phase 5 is blocked until Stage 4F receives an explicit human **ACCEPT** in this
-file. A technically valid commit is not enough.
+Phase 5 is blocked until Stage 4G receives an explicit human **ACCEPT** in this
+file. A technically valid Stage 4G commit is not enough.

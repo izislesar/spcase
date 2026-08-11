@@ -6,17 +6,18 @@
 wired into production yet; legacy `web/` remains the running frontend and the
 behavioral reference until explicit cutover.
 
-Stage 4E (`73185c5`, `feat(frontend): consolidate editorial art direction`) is
-technically complete but was **visually rejected by human review on
-2026-08-11**. Do not treat its composition, illustration, palette usage or
-"controlled imperfection" devices as approved visual precedent.
+Stage 4F (`4f6cbb2`, `feat(frontend): de-style public dark interface`) is
+technically complete. Human review on 2026-08-11 accepted its cleanup as the
+correct **foundation**, but found the rendered result **visually incomplete**:
+too flat/sparse and close to a polished wireframe.
 
-The next approved implementation stage is **Stage 4F — dark de-stylization**.
-Its authority is `docs/frontend/design-direction.md` plus the current verdict
-in `docs/frontend/visual-acceptance.md`.
+The next approved implementation stage is **Stage 4G — spatial identity without
+decorative illustration**. Its authority is
+`docs/frontend/design-direction.md` plus the current verdict in
+`docs/frontend/visual-acceptance.md`.
 
-USER/JURY/ADMIN routes are still mostly structural shells. Do not start Phase
-5 unless the task explicitly says Stage 4F has received human ACCEPT.
+Do not restore Stage 4E's illustration/poster grammar. Do not start Phase 5
+unless the task explicitly says Stage 4G has received human ACCEPT.
 
 ## Documentation ownership
 
@@ -76,12 +77,16 @@ Do not load the full `legacy-contract.md` for a purely visual public-page edit.
 - Playwright for desktop/mobile e2e
 - CSS Modules + modern native CSS
 - CSS custom properties, Grid/Flex, container queries, OKLCH/`color-mix()`
-- `motion` is installed and available for justified interaction/state motion
+- CSS perspective/3D transforms for progressive spatial UI
+- `motion` is installed and available for justified interaction/state/spatial
+  response
 
 No Tailwind and no component-library visual system in the React target.
 
-Do not add GSAP, ScrollTrigger, Lenis, Rive or another runtime visual framework
-without explicit task-level approval.
+Do not add GSAP, ScrollTrigger, Lenis, Rive, Three.js, React Three Fiber, a
+WebGL framework or another runtime visual framework without explicit task-level
+approval. Stage 4G is specifically expected to use the existing CSS/Motion
+stack.
 
 ## API contract
 
@@ -99,96 +104,97 @@ without explicit task-level approval.
 
 North star:
 
-**Dark, content-first competition interface.**
+**Dark Spatial Competition Interface.**
 
-The frontend should feel like a real championship with a straightforward
-interface, not like a designer's concept website.
+Stage 4F's dark/content-first cleanup remains the baseline. Stage 4G adds a
+small amount of pseudo-3D and material depth to create stronger identity and UX
+hierarchy.
 
 Governing tests:
 
-> Nothing exists solely to make the page look designed.
+> Visual complexity is allowed when it creates spatial hierarchy, interaction,
+> orientation, or a memorable product object.
 
-> If an element cannot justify itself without the phrase "visual interest",
+> If an element exists only to make an empty region look more interesting,
 > remove it.
 
-### Dark palette
+### Depth model
 
-The default direction is a continuous near-black/deep-navy canvas with warm
-light text, subtle rules and one deep-red primary accent. Secondary color is
-rare and muted.
+- `Z0`: normal 2D UI — forms, FAQ, navigation, body content, most product work.
+- `Z1`: shallow structural depth — active/selected/stage/day relationships.
+- `Z2`: rare signature spatial object — primarily the public hero.
 
-Do not reproduce the Stage 4D/4E mustard + cyan + coral + navy field system.
-Do not solve the dark direction with nested lighter cards.
+Do not make every section spatial. A flat surface next to a spatial surface is
+intentional contrast.
 
-Dark must not drift into cyberpunk, terminal, developer-tool, neon, glass,
-glow, luxury-black or blue/purple-gradient aesthetics.
+### Dark material language
 
-### Content before decoration
+Use near-black/deep-navy canvas, warm text, restrained neutral material planes
+and one deep-red accent.
 
-Prefer real competition information over illustration or ornamental geometry.
-Dates, deadlines, team size, schedule, scores, files and lifecycle state are
-valid visual material.
+Subtle gradients, shadows and edge highlights are allowed only to make
+meaningful spatial layers readable. They are not general page decoration.
 
-The current gear/flag/machine/podium/sheet illustration language is not an
-approved identity requirement. Stage 4F should remove it from dominant public
-composition and must not replace it with another decorative illustration
-system.
+Do not drift into cyberpunk, HUD, terminal, neon, glass, glow, luxury-black or
+purple/blue-gradient aesthetics.
 
-### Natural variation, not designed imperfection
+### No return to illustration
 
-Do not implement a quota of grid escapes, broken rules, crops, rotations or
-asymmetric tricks. The old `90% discipline / 10% disobedience` formula is no
-longer an implementation rule.
-
-Allow different content to produce different density and spacing, but do not
-manufacture irregularity to look human.
+Do not recreate or replace Stage 4E's gear/flag/machine/podium/sheet scene
+system. Stage 4G pseudo-3D should be built from meaningful surfaces/content,
+not 3D illustration or abstract floating objects.
 
 ### Public vs product surfaces
 
-PUBLIC is calm and content-first. Large type is allowed when it reflects real
-hierarchy, but public pages should not depend on illustration, giant numerals,
-color blocks or slogan copy.
+PUBLIC may have one or a few high-salience spatial moments. Hero is the main
+signature candidate; Format and Schedule may use shallow structural depth where
+it improves hierarchy.
 
-USER/JURY workspaces are information-dense operational tools. ADMIN is
-primarily utilitarian.
+FAQ and auth remain predominantly Z0. Forms must stay conventional.
 
-Do not scale landing-page grammar into operational workspaces.
+USER/JURY workspaces will use depth mainly for state/hierarchy once Phase 5 is
+approved. ADMIN remains primarily utilitarian.
+
+Do not scale a hero scene into operational workspaces.
 
 ## Anti-slop / anti-AI contract
 
 Reject as dominant grammar:
 
-- Swiss/editorial agency-site imitation;
+- Stage 4E Swiss/editorial poster devices;
+- decorative gear/flag/document/podium scenes;
 - giant stage numerals;
-- decorative `01 · SECTION` labels;
 - Bento/equal-card layouts;
 - KPI-card dashboards;
-- universal rounded dark surfaces;
-- art-panel auth layouts;
-- gear/flag/document/podium illustration motifs;
-- large multicolor section fields;
-- deliberate broken-grid tricks;
-- slogans replacing factual labels;
-- glassmorphism, glow, gradients, neon;
-- terminal/HUD cosplay;
-- decorative scroll choreography.
+- generic dark floating cards;
+- floating abstract cubes/blobs;
+- rotating 3D logo/object demos;
+- glassmorphism, glow, neon;
+- cyberpunk/terminal/HUD styling;
+- meaningless industrial screws/grids/coordinates;
+- pseudo-3D on every section;
+- large cursor-following/parallax scenes;
+- constant idle animation;
+- slogan copy replacing factual labels.
 
-A primitive is allowed when the information or interaction genuinely requires
-it. These are anti-default rules, not syntactic bans.
+A primitive is allowed when the information, interaction or spatial hierarchy
+genuinely requires it. These are anti-default rules, not syntactic bans.
 
 ## Motion policy
 
-Motion is deliberately sparse. Preferred reasons:
+Preferred reasons:
 
 1. navigation continuity;
 2. state transition;
 3. direct interaction feedback;
-4. truthful temporal progression where it improves comprehension.
+4. truthful temporal progression;
+5. restrained spatial response on a meaningful object.
 
-Public scroll reveal, decorative parallax, scroll drift and floating artwork
-are not approved defaults.
+Signature pointer response should normally be a few degrees of tilt, not large
+travel/rotation. No idle floating or continuous object animation.
 
 Respect `prefers-reduced-motion`. Static state must be complete and clear.
+Touch/keyboard users must not depend on hover/pointer depth.
 
 ## Code rules
 
@@ -199,6 +205,7 @@ Respect `prefers-reduced-motion`. Static state must be complete and clear.
 - Accessibility invariants in `legacy-contract.md` are mandatory.
 - Experimental CSS/browser features must progressively enhance a usable
   baseline.
+- Important text/controls should not be distorted by strong perspective.
 - No unjustified runtime dependencies.
 - Current implementation is evidence, not visual authority, when it conflicts
   with the approved design direction or current human verdict.
