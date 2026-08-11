@@ -1,0 +1,215 @@
+/*
+ * Hero artifact — the Z2 signature object: the championship's own facts on
+ * a small stack of hard graphite plates (identity / participation facts /
+ * one elevated registration layer over a dark back plate).
+ *
+ * The base style is the complete fallback: one flat panel for small
+ * viewports, coarse pointers and reduced motion. The spatial composition
+ * (perspective, translateZ layering, material light, cast shadows) is added
+ * only on wide viewports, and the few-degree static tilt only when motion
+ * is allowed. Pointer tilt itself lives in HeroArtifact.tsx on motion
+ * values, gated by (hover: hover) and (pointer: fine).
+ */
+
+.scene {
+  inline-size: 100%;
+}
+
+/* Flat panel: the whole object as one quiet content block. */
+.stack {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+}
+
+.tilt {
+  display: grid;
+}
+
+/* The back plate exists only in the spatial composition. */
+.plateBack {
+  display: none;
+}
+
+.plateIdentity {
+  padding: var(--space-6);
+}
+
+.identityName {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.identityCity {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+}
+
+.plateFacts {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-6);
+  border-block-start: 1px solid var(--color-line);
+}
+
+.factRow {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.factLabel {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.factValue {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.plateMeta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-4) var(--space-6);
+  border-block-start: 1px solid var(--color-line);
+}
+
+/* The object's one small red detail — a static identity tick, not state. */
+.metaTick {
+  grid-row: 1 / 3;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  align-self: start;
+  margin-block-start: 0.45em;
+  background: var(--color-accent);
+}
+
+.metaLabel {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.metaValue {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Wide viewports: the panel opens into the layered spatial composition.
+ * Depth is shallow and physical — three content plates at 24/48/72px over
+ * the back plate, one directional material light per plane, one soft cast
+ * shadow where separation is real.
+ */
+@media (width > 64rem) {
+  .scene {
+    perspective: 1500px;
+  }
+
+  .stack {
+    position: relative;
+    aspect-ratio: 4 / 3.4;
+    max-inline-size: 34rem;
+    border: 0;
+    background: none;
+    transform-style: preserve-3d;
+  }
+
+  .tilt {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-style: preserve-3d;
+  }
+
+  .plateBack {
+    display: block;
+    position: absolute;
+    inset: 9% 0 0 7%;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+
+  .plateIdentity {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 72%;
+    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 45%, transparent);
+    border-radius: var(--radius);
+    background: linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--color-raised), white 4%),
+      var(--color-raised) 70%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(236 234 228 / 0.05),
+      0 26px 48px -24px var(--color-plane-shadow);
+    transform: translateZ(24px);
+  }
+
+  .plateFacts {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    inline-size: 66%;
+    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 45%, transparent);
+    border-radius: var(--radius);
+    background: linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--color-plane), white 4%),
+      var(--color-plane) 70%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(236 234 228 / 0.06),
+      0 30px 56px -24px var(--color-plane-shadow);
+    transform: translateZ(48px);
+  }
+
+  .plateMeta {
+    position: absolute;
+    inset-block-start: 7%;
+    inset-inline-end: 4%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 55%, transparent);
+    border-radius: var(--radius);
+    background: linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--color-plane), white 6%),
+      var(--color-plane) 70%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(236 234 228 / 0.07),
+      0 18px 36px -18px var(--color-plane-shadow);
+    transform: translateZ(72px);
+  }
+}
+
+/*
+ * The static composition tilt: a few degrees so the layering reads as one
+ * physical object. Removed entirely under reduced motion — the stacked
+ * plates remain a complete static composition without it.
+ */
+@media (width > 64rem) and (prefers-reduced-motion: no-preference) {
+  .stack {
+    transform: rotateX(2deg) rotateY(-4deg);
+  }
+}
+
+/* GPU promotion only where pointer tilt actually runs. */
+@media (width > 64rem) and (hover: hover) and (pointer: fine) and (
+    prefers-reduced-motion: no-preference
+  ) {
+  .tilt {
+    will-change: transform;
+  }
+}

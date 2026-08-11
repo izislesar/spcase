@@ -1,11 +1,14 @@
 import styles from "./FormatSection.module.css";
 
 /*
- * The championship format as a plain content sequence: stage name, one
- * concise explanation, small sequence numbers as muted metadata, hairline
- * separators between stages. No numerals as decoration, no progression
- * artwork, no color field, no motion — the ordered list keeps the reading
- * order intact at every viewport.
+ * The championship format as the real three stages in reading order. On
+ * wide viewports the stages sit on shallow stepped material planes (Z1):
+ * each later stage advances a few pixels in depth with a slightly stronger
+ * separation shadow, so the sequence reads as a physical progression
+ * rather than three independent cards. The stages are not interactive —
+ * no hover spectacle. On smaller viewports and without the transforms the
+ * list collapses to the same conventional vertical sequence with hairline
+ * separators; sequence numbers stay quiet metadata, never decoration.
  */
 const STAGES = [
   {

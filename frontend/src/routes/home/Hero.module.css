@@ -1,10 +1,21 @@
-/* Hero — championship identity as plain content: title, lead, actions, facts. */
+/*
+ * Hero — factual identity content plus the ONE signature spatial object
+ * (the layered fact plates, see HeroArtifact.module.css). The content
+ * column stays primary; the artifact column carries the championship's
+ * facts, so the second column is information, not filler.
+ */
 
 .hero {
   padding-block: clamp(2rem, 1rem + 5vw, 5rem) var(--section-gap);
 }
 
 .heroInner {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.heroContent {
   display: grid;
   gap: var(--space-8);
   justify-items: start;
@@ -37,8 +48,9 @@
 }
 
 /*
- * The fact list: quiet label/value rows separated by hairlines. All values
- * are factual — static truths or live /info data.
+ * The fact list: the live registration state as a quiet label/value row.
+ * The static facts (place/year, team format, jury criteria) are carried by
+ * the spatial artifact, so they are not repeated here.
  */
 .facts {
   display: grid;
@@ -71,6 +83,12 @@
 @media (width > 64rem) {
   .hero {
     padding-block-start: var(--space-16);
+  }
+
+  .heroInner {
+    grid-template-columns: minmax(0, 36rem) minmax(0, 1fr);
+    gap: var(--space-8) var(--space-16);
+    align-items: center;
   }
 
   .fact {

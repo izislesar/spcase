@@ -1,4 +1,5 @@
-/* Format — a plain sequence of the real stages, no showcase composition. */
+/* Format — the real three stages; flat hairline sequence by default,
+ * shallow stepped material planes (Z1) on wide viewports. */
 
 .format {
   padding-block: var(--section-gap);
@@ -61,9 +62,49 @@
   overflow-wrap: break-word;
 }
 
+/*
+ * Wide viewports: the stages become shallow stepped planes. A 1° list tilt
+ * plus 0/8/16px translateZ steps and progressively stronger cast shadows
+ * make the sequence read as a physical progression — later stages advance
+ * slightly. Depth stays inside Z1: no floating cards, no hover response,
+ * fully readable with the transforms removed.
+ */
 @media (width > 64rem) {
+  .stageList {
+    gap: var(--space-4);
+    border-block-start: 0;
+    perspective: 1600px;
+    transform: rotateX(1deg);
+    transform-style: preserve-3d;
+  }
+
   .stage {
     grid-template-columns: 7rem minmax(0, 14rem) minmax(0, 1fr);
     align-items: baseline;
+    padding: var(--space-6);
+    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 40%, transparent);
+    border-radius: var(--radius);
+    background: linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--color-raised), white 3%),
+      var(--color-raised) 70%
+    );
+    box-shadow:
+      inset 0 1px 0 rgb(236 234 228 / 0.04),
+      0 12px 28px -18px var(--color-plane-shadow);
+  }
+
+  .stage:nth-child(2) {
+    transform: translateZ(8px);
+    box-shadow:
+      inset 0 1px 0 rgb(236 234 228 / 0.05),
+      0 18px 36px -18px var(--color-plane-shadow);
+  }
+
+  .stage:nth-child(3) {
+    transform: translateZ(16px);
+    box-shadow:
+      inset 0 1px 0 rgb(236 234 228 / 0.05),
+      0 24px 44px -20px var(--color-plane-shadow);
   }
 }

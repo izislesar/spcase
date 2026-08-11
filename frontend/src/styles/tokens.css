@@ -34,11 +34,15 @@
   :root {
     /*
      * Dark palette: one continuous near-black/deep-navy canvas, warm light
-     * text, subtle rules and ONE deep-red accent. Surfaces appear only where
-     * structure requires them (inputs, the fixed nav bar); there are no
-     * large color fields, gradients, glows or shadows-as-hierarchy.
-     * All values OKLCH. Text pairs are AA-checked on the canvas:
-     *   text/canvas ~ 12.9, text-muted/canvas ~ 6.5,
+     * text, subtle rules and ONE deep-red accent. Stage 4G adds a narrow
+     * graphite material range (plane/edge/shadow) used ONLY for meaningful
+     * spatial layers — the hero fact plates and the Format stage planes —
+     * never as page-wide decoration. There are still no large color fields,
+     * page gradients, glows or ambient shadows.
+     * All color values OKLCH. Text pairs are AA-checked (WCAG ratio):
+     *   text/canvas ~ 15.8, text-muted/canvas ~ 6.1,
+     *   text/plane ~ 12.6, text-muted/plane ~ 4.9,
+     *   text/raised ~ 13.9, text-muted/raised ~ 5.4,
      *   accent-text/canvas ~ 5.7 (text links, focus ring),
      *   on-accent/accent ~ 4.7 (bold button labels).
      * Bare accent is used for fills and small markers, not body text.
@@ -52,6 +56,15 @@
     --color-accent: oklch(52% 0.19 27);
     --color-accent-text: oklch(64% 0.17 27);
     --color-on-accent: oklch(97% 0.005 95);
+
+    /*
+     * Spatial material primitives (Stage 4G): the top graphite plane tone,
+     * its lit edge and the shared cast-shadow color. Gradients/shadows built
+     * from these exist only to separate real spatial layers.
+     */
+    --color-plane: oklch(25.5% 0.021 249);
+    --color-plane-edge: oklch(36% 0.02 250);
+    --color-plane-shadow: rgb(3 5 9 / 0.55);
 
     /*
      * Type stacks: Manrope carries display headings and the wordmark;
