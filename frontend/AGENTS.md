@@ -6,18 +6,21 @@
 wired into production yet; legacy `web/` remains the running frontend and the
 behavioral reference until explicit cutover.
 
-Stage 4F (`4f6cbb2`, `feat(frontend): de-style public dark interface`) is
-technically complete. Human review on 2026-08-11 accepted its cleanup as the
-correct **foundation**, but found the rendered result **visually incomplete**:
-too flat/sparse and close to a polished wireframe.
+Stage 4G (`db9753a`, `feat(frontend): add restrained spatial identity`) is
+technically complete. Human review on 2026-08-11 accepted the **direction** but
+found the composition incomplete: the dark spatial language is right, while
+its scale and relationships are too tentative on wide desktop surfaces.
 
-The next approved implementation stage is **Stage 4G — spatial identity without
-decorative illustration**. Its authority is
+The next approved implementation stage is **Stage 4H — spatial composition &
+density**. It must keep the Stage 4F cleanup and Stage 4G spatial vocabulary,
+then strengthen composition through larger visual footprint, connected spatial
+relationships and better use of real content. Its authority is
 `docs/frontend/design-direction.md` plus the current verdict in
 `docs/frontend/visual-acceptance.md`.
 
-Do not restore Stage 4E's illustration/poster grammar. Do not start Phase 5
-unless the task explicitly says Stage 4G has received human ACCEPT.
+Do not add a new visual language to solve density. Do not restore Stage 4E's
+illustration/poster grammar. Do not start Phase 5 unless the task explicitly
+says Stage 4H has received human ACCEPT.
 
 ## Documentation ownership
 
@@ -85,8 +88,8 @@ No Tailwind and no component-library visual system in the React target.
 
 Do not add GSAP, ScrollTrigger, Lenis, Rive, Three.js, React Three Fiber, a
 WebGL framework or another runtime visual framework without explicit task-level
-approval. Stage 4G is specifically expected to use the existing CSS/Motion
-stack.
+approval. Stage 4H must continue using the existing CSS/Motion stack; it is a
+composition pass, not a new rendering-stack decision.
 
 ## API contract
 
@@ -106,22 +109,36 @@ North star:
 
 **Dark Spatial Competition Interface.**
 
-Stage 4F's dark/content-first cleanup remains the baseline. Stage 4G adds a
-small amount of pseudo-3D and material depth to create stronger identity and UX
-hierarchy.
+Stage 4F's dark/content-first cleanup remains the baseline. Stage 4G established
+the approved spatial/material language. Stage 4H does not add another style; it
+makes that language compositionally confident.
 
 Governing tests:
+
+> Fill space with scale, relationships and depth — not with more components.
 
 > Visual complexity is allowed when it creates spatial hierarchy, interaction,
 > orientation, or a memorable product object.
 
-> If an element exists only to make an empty region look more interesting,
-> remove it.
+> Negative space is intentional when it gives hierarchy room. Dead space is an
+> accidental absence of compositional relationship; do not fix it with filler.
+
+### Composition and density
+
+- Prefer one large coherent visual system over several small decorative objects.
+- Wide desktop layout may use substantially more horizontal space while local
+  reading columns remain narrow enough for comfortable text.
+- Visual footprint should track importance: hero may be large; FAQ/forms do not
+  need spectacle.
+- Vary section density naturally. Do not normalize every section to the same
+  height, padding or component anatomy.
+- Do not fill empty regions with cards, labels, SVG filler, abstract geometry or
+  extra copy merely to occupy space.
 
 ### Depth model
 
 - `Z0`: normal 2D UI — forms, FAQ, navigation, body content, most product work.
-- `Z1`: shallow structural depth — active/selected/stage/day relationships.
+- `Z1`: shallow structural depth — connected stage/day/state relationships.
 - `Z2`: rare signature spatial object — primarily the public hero.
 
 Do not make every section spatial. A flat surface next to a spatial surface is
@@ -138,17 +155,27 @@ meaningful spatial layers readable. They are not general page decoration.
 Do not drift into cyberpunk, HUD, terminal, neon, glass, glow, luxury-black or
 purple/blue-gradient aesthetics.
 
+### Hero / Format expectations
+
+Hero should use one integrated spatial assembly/chassis rather than a visible
+stack of independent floating cards. The object may be substantially larger on
+wide screens and should make surrounding negative space feel related to its
+geometry.
+
+Format should read as one connected progression, not three separate dark cards
+with barely perceptible `translateZ` differences.
+
 ### No return to illustration
 
 Do not recreate or replace Stage 4E's gear/flag/machine/podium/sheet scene
-system. Stage 4G pseudo-3D should be built from meaningful surfaces/content,
-not 3D illustration or abstract floating objects.
+system. Spatial richness should be built from meaningful surfaces/content, not
+3D illustration or abstract floating objects.
 
 ### Public vs product surfaces
 
-PUBLIC may have one or a few high-salience spatial moments. Hero is the main
-signature candidate; Format and Schedule may use shallow structural depth where
-it improves hierarchy.
+PUBLIC may have a few high-salience spatial moments. Hero is the signature
+surface; Format may use connected Z1 depth. Schedule and FAQ should gain visual
+weight primarily from data/typography/width, not extra 3D objects.
 
 FAQ and auth remain predominantly Z0. Forms must stay conventional.
 
@@ -167,6 +194,9 @@ Reject as dominant grammar:
 - Bento/equal-card layouts;
 - KPI-card dashboards;
 - generic dark floating cards;
+- multiple small spatial plates used where one coherent object would work;
+- a tiny signature object floating inside a mostly unrelated empty desktop hero;
+- three separate dark stage panels presented as spatial progression;
 - floating abstract cubes/blobs;
 - rotating 3D logo/object demos;
 - glassmorphism, glow, neon;

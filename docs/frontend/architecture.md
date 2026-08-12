@@ -10,10 +10,11 @@
 > a Vite 8 + React 19 + TypeScript (strict) application with React Router
 > (data mode), TanStack Query, the `/api/v1` fetch transport, CSS token/base
 > primitives, Biome and Playwright configuration. Stage 4F (`4f6cbb2`)
-> established the accepted dark/de-stylized foundation but human review found
-> it visually incomplete. Stage 4G adds a restrained spatial/pseudo-3D identity
-> using the existing browser/CSS/Motion stack (`visual-acceptance.md`). Product
-> UX semantics live in `experience-model.md`. Production cutover is defined
+> established the accepted dark/de-stylized foundation; Stage 4G (`db9753a`)
+> established the accepted spatial/pseudo-3D language using the existing
+> browser/CSS/Motion stack. Stage 4H is a composition/density pass over that same
+> architecture and does not introduce a new visual runtime (`visual-acceptance.md`).
+> Product UX semantics live in `experience-model.md`. Production cutover is defined
 > (`cutover-plan.md`) but NOT executed. Details: `../../frontend/AGENTS.md`.
 
 ## Direction
@@ -68,7 +69,7 @@ Motion and browser interaction:
 - GSAP/ScrollTrigger, Lenis and Rive are **not default project dependencies**;
   adding any requires an explicit task-level product need and approval
 - Three.js, React Three Fiber, WebGL frameworks and shader runtimes are **not
-  approved for Stage 4G**; true WebGL requires a separate explicit decision
+  approved for Stage 4H**; true WebGL requires a separate explicit decision
 - product workspaces should prefer platform/CSS/Motion primitives and sparse
   state-oriented animation over narrative choreography
 
@@ -103,8 +104,9 @@ removed.
 - Browser credential model: `credentials: "same-origin"`; the `access_token`
   HttpOnly cookie is never read or stored by the frontend.
 - Stage 4F removed the previous public illustration scene system and most
-  decorative motion; Stage 4G should build on that reduced implementation, not
-  restore deleted Stage 4E scene components.
+  decorative motion; Stage 4G added the current restrained hero/Format spatial
+  primitives. Stage 4H should recompose/scale those ideas rather than restore
+  deleted Stage 4E scenes or add another visual runtime.
 - Behavioral requirements are fixed in `legacy-contract.md`; production
   delivery topology is defined in `cutover-plan.md`. The cutover is defined but
   NOT yet executed.

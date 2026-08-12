@@ -9,115 +9,130 @@
 
 ## Current status
 
-**Stage 4F human review completed 2026-08-11 — verdict: FOUNDATION ACCEPTED / VISUAL INCOMPLETE**
+**Stage 4G human review completed 2026-08-11 — verdict: DIRECTION ACCEPTED / COMPOSITION INCOMPLETE**
 
-Stage 4F (`4f6cbb2`) successfully removed the Stage 4E AI/editorial cliches and
-produced a technically clean dark content-first baseline. Human review agreed
-with the deletion direction but found the rendered public frontend too flat,
-sparse and visually close to a polished wireframe.
+Stage 4G (`db9753a`) successfully added a restrained pseudo-3D/material identity
+on top of the Stage 4F dark foundation without restoring the rejected
+illustration/poster grammar. Human review likes the concept and wants to keep
+it.
 
-Stage 4F is therefore **not rejected**. Its cleanup is the foundation for the
-next iteration. The next approved implementation step is **Stage 4G — spatial
-identity without decorative illustration**.
+The remaining problem is not the visual language. It is **scale, spatial
+integration and density**. The interface still feels raw/tentative on wide
+screens and leaves too much dead space.
 
-## What Stage 4F got right
+The next approved implementation step is **Stage 4H — spatial composition &
+density**.
+
+## What Stage 4G got right
 
 Keep these decisions:
 
 - dark near-black/deep-navy canvas;
 - warm light text and restrained deep-red accent;
-- removal of mustard/cyan/coral section fields;
-- removal of HeroScene/GearScene/PennantScene/PodiumScene/SheetStack/BubbleScene
-  and other public illustration scenes;
-- deletion of the Mosaic/Bento section;
-- removal of giant `01/02/03` identity numerals;
-- factual copy over slogans;
-- much lower motion density;
-- quiet auth forms;
-- information-first schedule;
-- no fabricated LIVE/NOW/count/state data;
-- no generic dashboard/card system.
+- no decorative illustration scene system;
+- one Z2 hero spatial moment rather than site-wide 3D;
+- graphite material planes with restrained lighting/shadows;
+- fine-pointer tilt only as progressive enhancement;
+- Format as the only current Z1 public progression surface;
+- Schedule, FAQ, auth and navigation largely Z0;
+- no Three.js/WebGL/new visual dependency;
+- no global reveal choreography or idle animation;
+- no fabricated LIVE/NOW/count/state data.
 
-Do not undo this cleanup merely to make the site look fuller.
+Do not undo these decisions to make the site feel fuller.
 
-## Why Stage 4F is not visually complete
+## Why Stage 4G is not yet visually accepted
 
-Human review of the rendered Stage 4F frontend found that the de-stylization
-removed too much visual hierarchy together with the cliches.
+Human review of the rendered Stage 4G frontend found:
 
-Observed issues:
+- the hero artifact is visually too small/tentative relative to the desktop
+  viewport;
+- its layered construction can read as a stack of dark cards rather than one
+  SPCase-specific physical/system object;
+- the conventional text-left/object-right relationship still leaves large areas
+  of dead space rather than meaningful negative space;
+- Format technically uses Z-depth, but visually still reads as three dark
+  bounded panels and the progression relationship is weak;
+- overall desktop content footprint is too cautious in places;
+- Schedule preview/full schedule can use typography, aligned time/data and width
+  more confidently;
+- FAQ is too visually small for the available canvas and can become a stronger
+  full-width typographic surface without adding decoration.
 
-- large desktop areas feel unused rather than intentionally spacious;
-- hero lacks a memorable visual/product identity moment;
-- the public flow can read like a very clean wireframe;
-- Format is informative but visually under-articulated;
-- the dark material system has little depth;
-- the interface needs stronger UX feedback and spatial hierarchy without
-  returning to illustration or poster tricks.
+The phrase "fill the empty space" in this review does **not** authorize filler.
+It means the existing important content and spatial systems should occupy and
+relate to the canvas more confidently.
 
-The correct response is **not** to restore Stage 4E. The response is to add a
-small, disciplined spatial system on top of the Stage 4F skeleton.
+## Stage 4H approved direction
 
-## Stage 4G approved direction
+Stage 4H is a **composition pass, not a new art direction**.
 
-North star:
+Governing rule:
 
-**Dark Spatial Competition Interface**
+> **Fill space with scale, relationships and depth — not with more components.**
 
-Stage 4G adds pseudo-3D and material depth using the existing frontend stack.
-The governing rule is:
+Keep the Dark Spatial Competition Interface north star.
 
-> Visual complexity is allowed when it creates spatial hierarchy, interaction,
-> orientation, or a memorable product object.
+The intended changes are:
 
-The homepage may contain one signature spatial object/composition. Shallow
-structural depth may also appear in Format and, where useful, Schedule.
+- make the hero composition materially larger and more confident on wide
+  desktop;
+- evolve the hero from a visible layered-card stack into one integrated spatial
+  chassis/assembly with shared silhouette/geometry;
+- allow hero typography more scale than ordinary sections;
+- introduce a meaningful large backplane/supporting depth relationship if it
+  belongs to the same hero object;
+- make Format read as one connected shallow spatial progression, not three
+  separate cards/panels;
+- let Schedule gain visual weight through real data, wider alignment, stronger
+  time/date hierarchy and horizontal footprint;
+- let FAQ use more width as a typographic surface;
+- keep auth/forms quiet and mostly 2D;
+- preserve the restrained motion budget.
 
-FAQ and forms remain mostly flat and functional.
+## What Stage 4H must NOT do
 
-## Stage 4G depth limits
+Do not solve density by adding:
 
-Use the depth model from `design-direction.md`:
+- more cards;
+- a second hero illustration;
+- decorative SVG/geometry;
+- abstract cubes/blobs;
+- fake industrial/HUD labels;
+- more colors;
+- more metadata than the product needs;
+- invented facts/state;
+- new section-reveal choreography;
+- WebGL/Three.js/R3F;
+- a new component/rendering library.
 
-- `Z0` — normal 2D interface;
-- `Z1` — shallow structural depth;
-- `Z2` — rare signature spatial object, primarily hero.
+Do not restore Stage 4E giant numerals, flags, gears, colored bands, poster
+asymmetry or Bento grammar.
 
-Do not add a site-wide 3D scene system.
+## Composition acceptance questions
 
-Stage 4G should use CSS perspective/transforms, layered DOM/SVG where justified
-and the already-installed Motion library. Do not add Three.js, React Three
-Fiber, WebGL frameworks, shaders or another visual runtime dependency.
+1. Does the hero command the desktop viewport without feeling like a generic
+   3D landing-page object?
+2. Does the spatial object read as one integrated SPCase object rather than
+   several floating cards?
+3. Is empty space now intentional negative space with clear relationships rather
+   than unused canvas?
+4. Is hero typography strong enough without making every section a poster?
+5. Does Format visually read as one progression before the user notices the
+   individual stages?
+6. Did Schedule become visually richer through information composition rather
+   than cards/decoration?
+7. Does FAQ use the canvas confidently while remaining a simple accordion?
+8. Are flat Z0 surfaces still a useful contrast to the hero/Format spatial
+   moments?
+9. Does mobile flatten/recompose cleanly without inheriting desktop-scale gaps?
+10. Did any new element appear solely because a region looked empty?
 
-## Visual material rules
-
-Allowed when purposeful:
-
-- subtle material plane gradients;
-- soft cast shadows between meaningful spatial layers;
-- restrained edge highlights;
-- small pointer tilt on a signature object;
-- shallow foreground/background response on meaningful stage/day objects.
-
-Still rejected:
-
-- decorative illustration;
-- floating abstract blobs/cubes;
-- glow/neon;
-- glassmorphism;
-- cyberpunk/HUD/terminal language;
-- rotating logos;
-- decorative mechanical/industrial details;
-- ubiquitous floating cards;
-- constant parallax;
-- large scroll-driven spectacle;
-- giant numbers and Stage 4E poster grammar.
-
-## Stage 4G human acceptance surfaces
+## Stage 4H human acceptance surfaces
 
 Review at minimum:
 
-- `/` full scroll at desktop (~1440×900);
+- `/` full scroll at wide desktop (~1440×900 and preferably ~1920 wide);
 - hero pointer interaction with a fine pointer;
 - `/` at 375 px;
 - `/` at 320 px;
@@ -127,24 +142,6 @@ Review at minimum:
 - reduced-motion behavior;
 - keyboard focus and contrast.
 
-## Stage 4G review questions
-
-1. Does the hero now have a memorable SPCase-specific visual presence without
-   looking like decorative 3D artwork?
-2. Does pseudo-3D carry information/hierarchy or merely fill empty space?
-3. Is the dark interface richer without becoming cyberpunk, glassy or
-   developer-tool-like?
-4. Is Format more engaging while still readable as the actual competition
-   process?
-5. Is Schedule still primarily information, not a 3D interaction demo?
-6. Are FAQ and auth restrained enough to create contrast with the signature
-   spatial moments?
-7. Does motion feel like direct physical response rather than choreography?
-8. Does the interface remain complete and convincing under reduced motion?
-9. Does mobile flatten gracefully rather than preserving desktop spectacle at
-   the expense of content?
-10. Has any old illustration/poster cliche returned under a different name?
-
 ## Documentation ownership
 
 Coding agents do not declare visual acceptance and do not edit this file.
@@ -153,5 +150,5 @@ that policy.
 
 ## Gate
 
-Phase 5 is blocked until Stage 4G receives an explicit human **ACCEPT** in this
-file. A technically valid Stage 4G commit is not enough.
+Phase 5 is blocked until Stage 4H receives an explicit human **ACCEPT** in this
+file. A technically valid Stage 4H commit is not enough.

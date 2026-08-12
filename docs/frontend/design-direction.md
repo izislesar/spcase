@@ -1,6 +1,6 @@
 # Frontend design direction
 
-> **Status: approved stable visual constitution for Stage 4G and subsequent
+> **Status: approved stable visual constitution for Stage 4H and subsequent
 > product-surface work unless superseded by human review.**
 > Current human verdicts live in `visual-acceptance.md`; product/interaction
 > semantics live in `experience-model.md`.
@@ -14,23 +14,30 @@ SaaS dashboard, a creative-agency portfolio, a Swiss-poster exercise or a
 3D-showcase website.
 
 Stage 4F established the correct neutral foundation: dark canvas, factual copy,
-low decorative noise and much less motion. Human review accepted that cleanup
-as a foundation but found the rendered result **visually incomplete**. Stage 4G
-adds depth, spatial hierarchy and a small number of memorable visual moments
-without restoring illustration-led design.
+low decorative noise and much less motion. Stage 4G then established the
+approved spatial/material vocabulary. Human review accepted that direction but
+found the rendered composition **too tentative**: the hero artifact is small
+and risks reading as a layered-card stack, Format still reads as separate dark
+panels, and wide-screen negative space often becomes dead space.
 
-The governing rule is:
+Stage 4H therefore changes **composition, scale and relationships**, not visual
+vocabulary.
+
+The primary governing rule is:
+
+> **Fill space with scale, relationships and depth — not with more components.**
+
+The existing filters remain valid:
 
 > **Visual complexity is allowed when it creates spatial hierarchy,
 > interaction, orientation, or a memorable product object.**
 
-The older Stage 4F test remains useful:
-
 > **If an element exists only to make an empty region look more interesting,
 > remove it.**
 
-These rules are complementary. Stage 4G is not a return to decoration; it is a
-controlled increase in visual richness.
+Negative space is not a bug. Dead space is different: it is space that has no
+useful compositional relationship to content, hierarchy or depth. Stage 4H
+should convert dead space into intentional composition, not decorate it.
 
 ## What Stage 4F taught us
 
@@ -52,6 +59,80 @@ wireframe. SPCase still needs a recognizable visual identity and stronger UX
 hierarchy. The solution is **not** to reintroduce decorative scenes. It is to
 use restrained pseudo-3D, material depth and interactive spatial relationships
 where the underlying content benefits from them.
+
+## What Stage 4G taught us
+
+Stage 4G proved that pseudo-3D can belong in SPCase without restoring the old
+illustration grammar. Keep:
+
+- one Z2 signature moment rather than site-wide 3D;
+- graphite material planes;
+- restrained red;
+- fine-pointer tilt only as progressive enhancement;
+- Z0 schedule/FAQ/auth contrast;
+- no new visual runtime dependency.
+
+The problem is **confidence and integration**, not the chosen language. Stage
+4H must address four specific weaknesses:
+
+1. Hero spatial identity is too small relative to the desktop viewport and can
+   read as several stacked cards rather than one SPCase-specific object.
+2. Format uses depth technically, but visually still resembles three separate
+   dark panels.
+3. The global desktop content footprint is too narrow/timid in places; empty
+   viewport area does not always participate in hierarchy.
+4. Information-rich sections such as Schedule and FAQ can carry more visual
+   weight through typography, alignment and width without adding decoration.
+
+## Composition and density
+
+### Scale before count
+
+When a surface feels empty, first test whether existing important content is too
+small or too weakly related. Prefer enlarging/recomposing one meaningful system
+over adding more objects.
+
+Do not solve density by adding:
+
+- more cards;
+- more metadata than the product needs;
+- decorative labels;
+- abstract geometry;
+- filler SVG;
+- extra pseudo-3D layers;
+- slogans or invented content.
+
+### Wide layout, narrow reading
+
+The overall desktop composition may use a wide canvas (roughly 1500–1600 px on
+large screens when viewport/gutters permit), while prose and form reading
+columns remain much narrower. `max-width` for the page and readable line length
+are separate decisions.
+
+Do not center a 700–1100 px visual island inside a 1920 px viewport by default.
+Do not stretch body text simply because the layout is wide.
+
+### Negative space vs dead space
+
+Negative space is intentional when it:
+
+- separates hierarchy;
+- frames a signature object;
+- creates tension between large and small information;
+- allows spatial depth to read;
+- makes a later dense section feel distinct.
+
+Dead space is empty area created because important content is underscaled,
+unrelated or trapped in an unnecessarily narrow container. Fix dead space by
+changing scale, alignment, overlap/depth relationships or information layout.
+Do not fix it with filler.
+
+### Section density variation
+
+Different surfaces may occupy very different amounts of space. Hero may be
+large and spatial; FAQ may be wide and typographic; auth may be compact;
+schedule may be dense. This variation is desirable. Do not normalize every
+section to the same vertical padding or visual loudness.
 
 ## Dark material palette
 
@@ -79,8 +160,8 @@ restore mustard/cyan/coral as large public fields.
 ### Gradients and shadows
 
 Stage 4F broadly rejected gradients and shadows because they were likely to
-become dark-SaaS decoration. Stage 4G permits them **only as material-lighting
-primitives**.
+become dark-SaaS decoration. The current spatial direction permits them **only
+as material-lighting primitives**.
 
 Allowed examples:
 
@@ -153,7 +234,7 @@ Do not spread Z2 treatment across every section.
 
 ## Pseudo-3D implementation constraints
 
-Stage 4G should first use browser-native and already-installed primitives:
+Stage 4H continues to use browser-native and already-installed primitives:
 
 - CSS `perspective`;
 - `transform-style: preserve-3d`;
@@ -162,7 +243,7 @@ Stage 4G should first use browser-native and already-installed primitives:
 - existing Motion values/springs for restrained interaction.
 
 Do **not** add Three.js, React Three Fiber, WebGL frameworks, shaders or another
-runtime visual dependency in Stage 4G.
+runtime visual dependency in Stage 4H.
 
 True WebGL may be considered later only if a concrete interaction cannot be
 expressed convincingly with the existing stack and receives explicit human
@@ -197,7 +278,7 @@ information.
 
 ## Typography
 
-Typography remains a primary identity layer, but Stage 4G does not return to
+Typography remains a primary identity layer, but Stage 4H does not return to
 ubiquitous poster type.
 
 - Hero display type may be large enough to establish event presence.
@@ -234,54 +315,88 @@ flag, podium, floating document or abstract 3D blob.
 
 ## Homepage
 
-The homepage should combine the factual clarity of Stage 4F with one strong
-spatial identity moment.
+The homepage is the main high-salience public surface. Stage 4H should make it
+feel confident on a wide desktop without returning to decorative illustration.
 
 The hero should contain:
 
-- SPCase/championship identity;
-- clear primary title;
-- truthful location/date/registration information that the application already
-  has authority to show;
-- one obvious primary action;
-- restrained secondary navigation/context;
-- one signature spatial composition when it materially improves the page.
+- clear SPCase/championship identity;
+- concise factual lead;
+- primary action;
+- truthful event/registration facts where available;
+- one integrated signature spatial composition.
 
-The hero must not regress to `headline left + decorative object right` by
-default. If a spatial object occupies the right side, it must carry information
-or participate in the page hierarchy rather than function as illustration.
+### Hero scale
 
-A good static screenshot must still work if pointer interaction is disabled.
+The hero is the one place where display typography may become substantially
+larger than the rest of the site. It should create hierarchy, not recreate the
+Stage 4E poster system.
+
+On large screens the signature object may occupy roughly 35–45% of the useful
+composition if that produces a better balance. It should not remain a small
+artifact surrounded by unrelated empty viewport.
+
+### One spatial object, not a card stack
+
+The signature composition should read as **one physical/system object** — a
+case chassis, assembly, carrier or other integrated plane system — rather than
+several independent floating cards.
+
+Real metadata may be embedded into faces/layers of the same object. Supporting
+backplanes may create depth, but every plane should contribute to one coherent
+silhouette/relationship.
+
+Do not add a second hero illustration or decorative background object to make
+the scene larger.
+
+A left-content/right-object geometry is allowed when the two sides feel like
+one composition. It is not automatically rejected; the failure mode is a small
+"cool object" placed beside unrelated text.
+
+Static composition must be strong under reduced motion. Pointer tilt remains a
+minor physical response, never the source of visual weight.
 
 ## Format
 
-`Формат чемпионата` should remain information-first, but it no longer needs to
-be visually flat.
+Explain how the championship works in direct language.
 
-Allowed:
+Each stage communicates:
 
-- a shallow spatial sequence that clarifies progression;
-- layered/stepped planes tied to the actual three stages;
-- direct interaction that brings the focused stage forward;
-- restrained depth cues.
+- stage name;
+- date/window when authoritative;
+- what participants do;
+- what outcome moves them forward.
 
-Not allowed:
+On wide desktop, Stage 4H may represent the sequence as **one connected shallow
+spatial progression**: shared chassis/steps/planes whose geometry makes the
+ordering legible.
 
-- returning to giant `01/02/03` as decoration;
-- gear/flag scenes;
-- colored poster bands;
-- deliberately broken grid rules;
-- three equal SaaS cards;
-- a complex 3D scene whose only value is spectacle.
+Avoid three independent bounded panels that merely differ by `translateZ` or
+shadow. If the 3D transform is removed, the sequence must still read clearly.
 
-On mobile, the information should reduce naturally to a clear vertical sequence
-without depending on perspective.
+Do not restore:
+
+- giant stage numerals;
+- poster offsets;
+- flags/gears;
+- large alternating color fields;
+- hover spectacle on non-interactive stages.
+
+On mobile/touch, flatten to a straightforward vertical sequence.
 
 ## Schedule
 
 Schedule data is still the primary graphic material.
 
-Spatial treatment is optional and must improve orientation. Possible uses:
+Stage 4H should increase its visual footprint primarily through:
+
+- aligned time columns;
+- wider rules/rows;
+- stronger date hierarchy;
+- deliberate use of horizontal space;
+- larger but restrained numeric/time scale where it improves scanning.
+
+Spatial treatment remains optional and must improve orientation. Possible uses:
 
 - day groups treated as shallow layers;
 - the selected/current day advancing when a truthful state exists;
@@ -291,12 +406,20 @@ Do not hide schedule information behind a carousel-like 3D interaction. The
 full schedule must remain directly scannable, keyboard accessible and strong in
 2D/mobile layouts.
 
+The schedule should look fuller because real data is composed with confidence,
+not because each event became a card.
+
 ## FAQ
 
 FAQ remains deliberately quiet and predominantly Z0.
 
 Do not add 3D merely for consistency with the hero. Expansion/collapse is a
 state transition, not a spectacle surface.
+
+On wide screens FAQ may use much more of the page width as a typographic
+surface: long separators, clear question rhythm and a comfortable answer
+measure. Do not constrain it to a small centered island merely to preserve
+emptiness.
 
 ## Authentication
 
@@ -323,7 +446,7 @@ Examples that may become valid later:
 - selected case/submission layer separated from supporting material;
 - consequential transitions communicate a real state change.
 
-Do not design these Phase 5 surfaces during Stage 4G.
+Do not design these Phase 5 surfaces during Stage 4H.
 
 ADMIN remains predominantly Z0 and utilitarian.
 
@@ -340,6 +463,10 @@ hover spectacle and floating navigation panels.
 Reject as dominant grammar:
 
 - generic dark SaaS cards;
+- a hero made from several visibly independent spatial cards;
+- a signature object too small to establish a relationship with its viewport;
+- separate dark Format panels pretending to be one progression through tiny depth deltas;
+- filling dead space by adding more components instead of recomposing scale;
 - cyberpunk/HUD/terminal aesthetics;
 - neon or glow;
 - glassmorphism;

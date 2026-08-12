@@ -70,6 +70,29 @@ A user should understand the page even if all transforms are flattened.
 Do not invent a dossier, ticket, stamp, scoreboard, machine or technical
 metaphor when plain information hierarchy communicates the state better.
 
+## Composition carries experience
+
+The user should feel the hierarchy of the championship before interacting with
+anything. Visual footprint should track product importance.
+
+Stage 4H uses this rule:
+
+> Fill space with scale, relationships and depth — not with more components.
+
+Practical consequences:
+
+- the public hero may be physically/typographically large because it establishes
+  event identity;
+- Format should communicate one progression rather than three unrelated boxes;
+- Schedule and FAQ may occupy wide desktop surfaces because their real data/text
+  can carry the composition;
+- auth and ordinary controls stay compact when their task is compact;
+- empty space is allowed when it frames hierarchy, but not when it merely reveals
+  an underscaled or disconnected composition.
+
+Do not manufacture content, labels or product states to increase density. Use
+real information more confidently first.
+
 ## Spatial interaction model
 
 Depth is a progressive enhancement with three roles:
@@ -99,9 +122,11 @@ Its first job is still to answer basic questions truthfully:
 - who can participate / team format where known;
 - what the primary next action is.
 
-Stage 4G may add one signature spatial composition to make the championship
-feel tangible and memorable. That composition should carry or organize real
-event information rather than act as an unrelated illustration.
+The homepage may use one signature spatial composition to make the championship
+feel tangible and memorable. Stage 4H should make that composition large and
+integrated enough to participate in the whole hero, not read as a small card
+stack beside the content. It should carry or organize real event information
+rather than act as an unrelated illustration.
 
 When backend data supports a current lifecycle state, surface it. When it does
 not, use stable factual information rather than fake LIVE/NOW/count concepts.
@@ -118,8 +143,9 @@ Each stage communicates:
 - what outcome moves them forward.
 
 The stage sequence may use shallow spatial progression when that makes the
-relationship clearer or more engaging. It must still read as a simple vertical
-sequence on touch/mobile/reduced contexts.
+relationship clearer or more engaging. On desktop, prefer one connected
+progression over several independent stage panels. It must still read as a
+simple vertical sequence on touch/mobile/reduced contexts.
 
 Do not turn stage numbers into primary visual content and do not make the user
 manipulate a 3D object to read the process.
@@ -137,9 +163,11 @@ Prioritize:
 - current/next event when authoritative;
 - fast scanning on desktop and mobile.
 
-Schedule data itself provides most of the visual structure. Shallow depth may
-clarify day context or selection, but the schedule must never become a 3D
-carousel or require interaction to reveal ordinary events.
+Schedule data itself provides most of the visual structure. Use more of the
+available desktop width for times, date groups and event hierarchy before
+adding any new visual object. Shallow depth may clarify day context or
+selection, but the schedule must never become a 3D carousel or require
+interaction to reveal ordinary events.
 
 ## Auth
 
@@ -286,7 +314,8 @@ user is trying to complete.
 ## Public / product / admin density
 
 - PUBLIC: stronger visual identity is allowed; one or a few spatial moments may
-  be memorable, while factual content remains primary.
+  be memorable, while factual content remains primary. Wide-screen composition
+  should use scale and relationships confidently rather than adding filler.
 - USER/JURY: denser operational information; depth is mainly state/hierarchy.
 - ADMIN: utilitarian, highly scannable, predominantly 2D.
 
