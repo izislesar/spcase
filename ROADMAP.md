@@ -6,20 +6,20 @@ Backend, database и production-инфраструктура реализова�
 frontend-приложение до продолжения staging/production cutover
 (см. `docs/decisions/0001-frontend-v2.md`).
 
-Frontend-миграция находится на этапе публичной визуальной системы (фаза 4).
-Технический foundation и поведенческий контракт завершены. Stage 4F (`4f6cbb2`)
-зафиксировал правильный dark/content-first baseline. Stage 4G (`db9753a`)
-добавил ограниченную spatial/pseudo-3D identity; human review 2026-08-11 признал
-направление **DIRECTION ACCEPTED / COMPOSITION INCOMPLETE**: язык глубины,
-материалов и restrained motion верный, но desktop-композиция слишком робкая —
-hero-object мал и близок к layered-card stack, Format читается как три тёмные
-панели, а часть пространства остаётся dead space вместо осмысленной negative
-space. Следующий утверждённый шаг — **Stage 4H: spatial composition & density**:
-не добавлять новый visual vocabulary, а усилить масштаб, отношения между
-поверхностями и информационный footprint существующей системы. Governing rule:
-**fill space with scale, relationships and depth — not with more components**.
-Никаких новых runtime visual dependencies. См. `docs/frontend/design-direction.md`,
-`docs/frontend/experience-model.md` и `docs/frontend/visual-acceptance.md`.
+Публичная визуальная система (фаза 4) прошла human acceptance. Stage 4H
+(`ce79c32`) сохранил dark/spatial language Stage 4G, усилил hero как единый
+spatial chassis, связал Format в одну progression и увеличил информационный
+footprint Schedule/FAQ без возврата к illustration/card slop. Human review
+2026-08-12: **ACCEPT — PUBLIC VISUAL FOUNDATION**. Публичную часть больше не
+итератируем как самостоятельный арт-дирекшн без конкретной регрессии или новой
+продуктовой необходимости.
+
+Следующий утверждённый шаг — **Phase 5A: Participant Workspace Foundation**.
+Цель: заменить временный/сломанный authenticated placeholder на настоящий
+participant workspace shell и state-oriented `/dashboard`, исправив layout
+contract системно, а не локальными отступами. UX authority для этой фазы:
+`docs/frontend/participant-workspace.md` + `docs/frontend/experience-model.md`;
+поведенческая истина остаётся в domain/API/legacy contracts.
 
 Staging acceptance и production deployment НЕ являются ближайшей фазой: они
 возобновляются только после завершения frontend-миграции.
@@ -56,24 +56,28 @@ Staging acceptance и production deployment НЕ являются ближайш
 
 ## Фаза 4. Публичная визуальная система
 
-- [~] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — implementation продолжается; human visual acceptance ещё не получен
-- [~] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — технические механизмы существуют; финальная acceptance переносится в Stage 4H
+- [x] 4.1 Реализовать публичные страницы по утверждённой design direction (`docs/frontend/design-direction.md`) — Stage 4H public visual foundation human-accepted 2026-08-12
+- [x] 4.2 Реализовать адаптивную композицию от 320 px, touch-only и reduced motion — human-accepted вместе со Stage 4H baseline
 - [x] 4.3 Stage 4C — wide/full-bleed composition, heterogeneous editorial scenes, уменьшение card chrome, mobile 320/375 recomposition — технически реализовано
 - [x] 4.4 Stage 4D — Motion/view-transition interaction layer, bottom-nav marker, hero/schedule/auth choreography, PublicStatus и reduced-motion пути — технически реализовано; human review выявил избыточную agency-landing-page/motion-polish модель
 - [x] 4.5 Stage 4E — art-direction consolidation (`73185c5`) — технически реализовано; human review 2026-08-11: **REJECT DIRECTION** из-за giant-number/editorial-rule/illustration/color-field/forced-asymmetry AI-template grammar
 - [x] 4.6 Stage 4F — dark de-stylization (`4f6cbb2`): тёмный content-first canvas, один основной red accent, удалены dominant illustration/color-field/giant-number grammar, Mosaic и большая часть decorative motion; human review: **FOUNDATION ACCEPTED / VISUAL INCOMPLETE**
 - [x] 4.7 Stage 4G — spatial identity without decorative illustration (`db9753a`): один Z2 hero artifact, Z1 Format depth, material planes и restrained pointer tilt без illustration system/new runtime dependency; human review: **DIRECTION ACCEPTED / COMPOSITION INCOMPLETE**
-- [ ] 4.8 Stage 4H — spatial composition & density: сохранить Stage 4G language, увеличить visual footprint и wide-screen confidence; hero переосмыслить как один интегрированный spatial chassis/backplane вместо card-stack impression, Format связать в единую spatial progression, Schedule/FAQ использовать ширину и typography/data scale; не добавлять новые decorative components, illustration system, WebGL/Three.js или новую цветовую грамматику; обязательный desktop/mobile/reduced-motion human visual review
+- [x] 4.8 Stage 4H — spatial composition & density (`ce79c32`): hero spatial chassis, connected Format progression, wider Schedule/FAQ information composition; human review 2026-08-12: **ACCEPT — PUBLIC VISUAL FOUNDATION**
 
-**Gate:** фаза 5 НЕ начинается, пока Stage 4H human review явно не зафиксирует
-visual **ACCEPT** в `docs/frontend/visual-acceptance.md`. Технически валидный
-commit не равен визуально принятому.
+**Gate closed:** публичная visual foundation принята. Фаза 5 разрешена. Любая
+дальнейшая переработка public surfaces требует конкретной продуктовой причины
+или human-observed regression; не открывать новый бесконечный Stage 4I по умолчанию.
 
 ## Фаза 5. Миграция USER/JURY/ADMIN
 
-- [ ] 5.1 Перенести USER flows (регистрация, команда, submission)
-- [ ] 5.2 Перенести JURY flows (workspace, оценивание)
-- [ ] 5.3 Перенести ADMIN flows (статистика, export, lifecycle оценивания)
+- [~] 5.1 USER — participant workspace и основные flows
+  - [ ] 5.1A Participant Workspace Foundation: authenticated shell, `/dashboard`, no-team/has-team state, product navigation, исправление layout-contract bug
+  - [ ] 5.1B Team formation/workspace: create/join/invite/member/captain flows в рамках authoritative contract
+  - [ ] 5.1C Case workspace/materials: authoritative case state и материалы
+  - [ ] 5.1D Submission workflow: validation, upload/replace/submit/locked states и consequential UX
+- [ ] 5.2 JURY flows (workspace, оценивание)
+- [ ] 5.3 ADMIN flows (статистика, export, lifecycle оценивания)
 
 ## Фаза 6. Parity, mobile и accessibility
 

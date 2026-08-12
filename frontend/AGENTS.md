@@ -6,21 +6,19 @@
 wired into production yet; legacy `web/` remains the running frontend and the
 behavioral reference until explicit cutover.
 
-Stage 4G (`db9753a`, `feat(frontend): add restrained spatial identity`) is
-technically complete. Human review on 2026-08-11 accepted the **direction** but
-found the composition incomplete: the dark spatial language is right, while
-its scale and relationships are too tentative on wide desktop surfaces.
+Public visual Phase 4 is human-accepted. Stage 4H (`ce79c32`,
+`feat(frontend): strengthen spatial composition`) is the accepted public visual
+foundation: dark content-first canvas, restrained spatial material language, one
+strong hero chassis, connected Format progression and information-led
+Schedule/FAQ composition. Do not open another public art-direction iteration
+without a concrete human-observed regression or product requirement.
 
-The next approved implementation stage is **Stage 4H — spatial composition &
-density**. It must keep the Stage 4F cleanup and Stage 4G spatial vocabulary,
-then strengthen composition through larger visual footprint, connected spatial
-relationships and better use of real content. Its authority is
-`docs/frontend/design-direction.md` plus the current verdict in
-`docs/frontend/visual-acceptance.md`.
-
-Do not add a new visual language to solve density. Do not restore Stage 4E's
-illustration/poster grammar. Do not start Phase 5 unless the task explicitly
-says Stage 4H has received human ACCEPT.
+The next approved implementation phase is **Phase 5A — Participant Workspace
+Foundation**. Its UX authority is `docs/frontend/participant-workspace.md` plus
+`docs/frontend/experience-model.md`. Phase 5A must establish the authenticated
+workspace shell and truthful `/dashboard` states; it must also fix the current
+layout-contract defect where authenticated page content can render against the
+viewport corner. Do not fix that defect with route-local margins/padding.
 
 ## Documentation ownership
 
@@ -48,14 +46,26 @@ Read:
 1. `docs/frontend/design-direction.md`
 2. `docs/frontend/visual-acceptance.md`
 
-### New USER/JURY/ADMIN workflow
+### New USER participant workflow
+
+Read:
+
+1. `docs/frontend/participant-workspace.md`
+2. `docs/frontend/experience-model.md`
+3. the relevant sections of `docs/frontend/legacy-contract.md`
+4. the relevant endpoints in `docs/contracts/http-api.md`
+5. `docs/domain/business-rules.md` when lifecycle/locking/team behavior matters
+6. `docs/frontend/design-direction.md` for visual constraints
+
+### New JURY/ADMIN workflow
 
 Read:
 
 1. `docs/frontend/experience-model.md`
 2. the relevant sections of `docs/frontend/legacy-contract.md`
 3. the relevant endpoints in `docs/contracts/http-api.md`
-4. `docs/frontend/design-direction.md` for visual constraints
+4. `docs/domain/business-rules.md` when lifecycle/locking behavior matters
+5. `docs/frontend/design-direction.md` for visual constraints
 
 ### API/query/auth integration
 
@@ -88,8 +98,8 @@ No Tailwind and no component-library visual system in the React target.
 
 Do not add GSAP, ScrollTrigger, Lenis, Rive, Three.js, React Three Fiber, a
 WebGL framework or another runtime visual framework without explicit task-level
-approval. Stage 4H must continue using the existing CSS/Motion stack; it is a
-composition pass, not a new rendering-stack decision.
+approval. Phase 5 participant workspaces must continue using the existing CSS/Motion stack;
+new rendering/runtime dependencies require explicit approval.
 
 ## API contract
 
@@ -109,9 +119,9 @@ North star:
 
 **Dark Spatial Competition Interface.**
 
-Stage 4F's dark/content-first cleanup remains the baseline. Stage 4G established
-the approved spatial/material language. Stage 4H does not add another style; it
-makes that language compositionally confident.
+Stage 4H (`ce79c32`) is the accepted public visual baseline. Phase 5 work uses
+that dark/spatial material language more quietly: product state, task hierarchy
+and truth outrank spectacle.
 
 Governing tests:
 
@@ -179,10 +189,14 @@ weight primarily from data/typography/width, not extra 3D objects.
 
 FAQ and auth remain predominantly Z0. Forms must stay conventional.
 
-USER/JURY workspaces will use depth mainly for state/hierarchy once Phase 5 is
-approved. ADMIN remains primarily utilitarian.
+USER/JURY workspaces use depth mainly for state/hierarchy. Phase 5A participant
+UI is predominantly Z0 with at most restrained Z1 on a coherent work surface;
+do not import the public Z2 hero spectacle into `/dashboard`. ADMIN remains
+primarily utilitarian.
 
-Do not scale a hero scene into operational workspaces.
+Participant product grammar is defined in `participant-workspace.md`: one
+workspace with regions, not a dashboard grid of cards/widgets. Do not scale a
+hero scene into operational workspaces.
 
 ## Anti-slop / anti-AI contract
 

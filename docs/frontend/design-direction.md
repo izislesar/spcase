@@ -1,7 +1,8 @@
 # Frontend design direction
 
-> **Status: approved stable visual constitution for Stage 4H and subsequent
-> product-surface work unless superseded by human review.**
+> **Status: approved stable visual constitution. Stage 4H public foundation is
+> human-accepted; subsequent work moves into product surfaces unless superseded
+> by human review.**
 > Current human verdicts live in `visual-acceptance.md`; product/interaction
 > semantics live in `experience-model.md`.
 
@@ -20,10 +21,11 @@ found the rendered composition **too tentative**: the hero artifact is small
 and risks reading as a layered-card stack, Format still reads as separate dark
 panels, and wide-screen negative space often becomes dead space.
 
-Stage 4H therefore changes **composition, scale and relationships**, not visual
-vocabulary.
+Stage 4H completed that composition pass and is the accepted public baseline.
+Subsequent product work keeps the same visual vocabulary but uses it more
+operationally and with less depth.
 
-The primary governing rule is:
+The primary governing rule remains:
 
 > **Fill space with scale, relationships and depth — not with more components.**
 
@@ -36,8 +38,8 @@ The existing filters remain valid:
 > remove it.**
 
 Negative space is not a bug. Dead space is different: it is space that has no
-useful compositional relationship to content, hierarchy or depth. Stage 4H
-should convert dead space into intentional composition, not decorate it.
+useful compositional relationship to content, hierarchy or depth. Fix dead space
+through scale/relationships, not decoration.
 
 ## What Stage 4F taught us
 
@@ -234,7 +236,7 @@ Do not spread Z2 treatment across every section.
 
 ## Pseudo-3D implementation constraints
 
-Stage 4H continues to use browser-native and already-installed primitives:
+The accepted visual system uses browser-native and already-installed primitives:
 
 - CSS `perspective`;
 - `transform-style: preserve-3d`;
@@ -243,7 +245,7 @@ Stage 4H continues to use browser-native and already-installed primitives:
 - existing Motion values/springs for restrained interaction.
 
 Do **not** add Three.js, React Three Fiber, WebGL frameworks, shaders or another
-runtime visual dependency in Stage 4H.
+runtime visual dependency for routine frontend product work.
 
 True WebGL may be considered later only if a concrete interaction cannot be
 expressed convincingly with the existing stack and receives explicit human
@@ -278,7 +280,7 @@ information.
 
 ## Typography
 
-Typography remains a primary identity layer, but Stage 4H does not return to
+Typography remains a primary identity layer, but the accepted direction does not return to
 ubiquitous poster type.
 
 - Hero display type may be large enough to establish event presence.
@@ -315,7 +317,7 @@ flag, podium, floating document or abstract 3D blob.
 
 ## Homepage
 
-The homepage is the main high-salience public surface. Stage 4H should make it
+The homepage is the main high-salience public surface. The accepted Stage 4H composition makes it
 feel confident on a wide desktop without returning to decorative illustration.
 
 The hero should contain:
@@ -367,7 +369,7 @@ Each stage communicates:
 - what participants do;
 - what outcome moves them forward.
 
-On wide desktop, Stage 4H may represent the sequence as **one connected shallow
+On wide desktop, the accepted composition represents the sequence as **one connected shallow
 spatial progression**: shared chassis/steps/planes whose geometry makes the
 ordering legible.
 
@@ -388,7 +390,7 @@ On mobile/touch, flatten to a straightforward vertical sequence.
 
 Schedule data is still the primary graphic material.
 
-Stage 4H should increase its visual footprint primarily through:
+Its visual footprint should come primarily through:
 
 - aligned time columns;
 - wider rules/rows;
@@ -436,19 +438,27 @@ No art panel, glass panel or “floating form card” composition.
 
 ## Product surfaces
 
-Future USER/JURY product surfaces inherit the dark material language but use
-spatial depth primarily for **state and hierarchy**, not decoration.
+USER/JURY product surfaces inherit the dark material language but use spatial
+depth primarily for **state and hierarchy**, not decoration. Product work is
+denser and more operational than public pages.
 
-Examples that may become valid later:
+Participant Phase 5A principles:
 
-- active work artifact slightly foregrounded;
-- locked/finalized artifact visually settles into a non-interactive depth state;
-- selected case/submission layer separated from supporting material;
-- consequential transitions communicate a real state change.
+- one coherent workspace with regions, not a dashboard grid of cards;
+- wide structural layout + locally constrained reading/data measures;
+- current state and next action outrank decorative identity;
+- most product content is Z0; one restrained Z1 work surface is enough when it
+  clarifies hierarchy;
+- product navigation is quiet and task-oriented, not a generic icon sidebar;
+- no public-hero Z2 spectacle inside routine authenticated work;
+- no `Welcome back`, KPI widgets, charts or meaningless status badges.
 
-Do not design these Phase 5 surfaces during Stage 4H.
+Later valid depth examples may include an active work artifact foregrounding, a
+locked/finalized artifact settling, or a submitted layer becoming non-editable —
+only when those relationships correspond to authoritative state.
 
-ADMIN remains predominantly Z0 and utilitarian.
+Detailed participant rules live in `participant-workspace.md`. ADMIN remains
+predominantly Z0 and utilitarian.
 
 ## Navigation
 

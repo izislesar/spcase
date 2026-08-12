@@ -75,7 +75,7 @@ metaphor when plain information hierarchy communicates the state better.
 The user should feel the hierarchy of the championship before interacting with
 anything. Visual footprint should track product importance.
 
-Stage 4H uses this rule:
+The accepted public composition uses this rule:
 
 > Fill space with scale, relationships and depth — not with more components.
 
@@ -123,7 +123,7 @@ Its first job is still to answer basic questions truthfully:
 - what the primary next action is.
 
 The homepage may use one signature spatial composition to make the championship
-feel tangible and memorable. Stage 4H should make that composition large and
+feel tangible and memorable. The accepted public hero makes that composition large and
 integrated enough to participate in the whole hero, not read as a small card
 stack beside the content. It should carry or organize real event information
 rather than act as an unrelated illustration.
@@ -188,24 +188,39 @@ compete with the form or become necessary for understanding the page.
 
 ## Participant workspace
 
-The main participant surface is a work area, not a generic dashboard.
+The main participant surface is a **competition work area**, not a generic
+dashboard. `/dashboard` is the participant entry point and should answer, in
+order:
+
+1. what state/context the participant is in now;
+2. what team they belong to (or that no team exists);
+3. what the most meaningful next action is;
+4. which deadline/lock condition matters now when authoritative;
+5. where to continue into team/case/submission work.
+
+The authenticated shell owns page bounds, product navigation and responsive
+workspace structure. No authenticated page-level content may render directly
+against the viewport edge because a route forgot its own margin/padding.
 
 Preferred hierarchy:
 
-- team identity;
+- team/participant identity;
 - current competition state;
-- assigned/available case;
+- next action;
 - deadline/lock state;
 - team membership;
-- work/submission artifacts;
-- next action.
+- assigned/available case;
+- work/submission artifacts as later phases expose them.
 
-Avoid `Welcome back`, KPI cards or marketing-style hero content.
+A participant with no team receives a deliberate no-team product state with
+truthful valid actions, not a broken/empty dashboard and not an illustrated
+empty-state card.
 
-Future product depth should mostly communicate object/state relationships: an
-active artifact may come forward, supporting material may sit behind it, and a
-locked state may visually settle. These effects must correspond to real state
-and remain secondary to content.
+Avoid `Welcome back`, KPI cards, analytics, charts, marketing hero content or a
+generic sidebar. Most workspace content is Z0. Shallow Z1 depth is permitted
+only when one coherent work surface benefits from it.
+
+Detailed Phase 5A rules live in `participant-workspace.md`.
 
 ## Team formation
 
@@ -293,11 +308,14 @@ work, but comparison must remain clear and accessible.
 
 ## Persistent lifecycle orientation
 
-Where useful, a compact lifecycle indicator may orient users across routes. It
-must correspond to real state and remain understandable without animation or
-pseudo-3D.
+Where useful, a compact lifecycle/product navigation rail may orient participants
+across routes. Structure/navigation may exist before the backend exposes enough
+truth to mark stages complete, but completion/current-state semantics must not
+be fabricated.
 
 Do not create fake continuous percentage progress for a stage-based lifecycle.
+On mobile, simplify the navigation rather than preserving a desktop rail at all
+costs.
 
 ## Interaction hierarchy
 
