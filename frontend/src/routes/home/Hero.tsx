@@ -9,11 +9,13 @@ import { formatCountdown, useCountdown } from "./useCountdown";
  * The hero: factual identity content — the name, one factual lead sentence,
  * the primary action and the live registration state (countdown plus the
  * deadline date from /info, with loading, error and terminal states
- * intact) — joined by ONE signature spatial object, the layered fact
- * plates (HeroArtifact, Z2). The plates carry the championship's static
- * truths (identity, city/year, team format, jury criteria) and the
- * registration deadline as a plain line; the ticking countdown with
- * role="status" stays here in the fact list, in exactly one place.
+ * intact) — joined by ONE signature spatial object, the fact chassis
+ * (HeroArtifact, Z2). The chassis carries the championship's static truths
+ * (identity, city/year, team format, jury criteria) and the registration
+ * deadline as a plain line; the ticking countdown with role="status" stays
+ * here in the fact list, in exactly one place. On wide desktop the two
+ * sides share one asymmetric composition: the text column anchors high,
+ * the chassis anchors lower and its backplane reaches past its footprint.
  * No entrance choreography; the spatial object is progressive enhancement
  * over a complete static composition.
  */

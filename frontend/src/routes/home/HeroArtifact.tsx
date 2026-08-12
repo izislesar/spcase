@@ -18,11 +18,13 @@ function clampUnit(value: number): number {
 }
 
 /*
- * The signature spatial object (Z2): the championship's own facts carried
- * on a small stack of hard graphite plates — event identity, participation
- * facts and the registration deadline on one elevated layer. Every value is
- * a truth the page already owns (static facts or live /info data); the
- * plates only organize it spatially, so the object participates in the
+ * The signature spatial object (Z2): ONE integrated chassis carrying the
+ * championship's own facts — a dominant main face with the event identity
+ * and the participation facts embedded in it, a depth plane behind it for
+ * physical edge, one structural backplane reaching beyond the footprint,
+ * and one elevated registration module attached to the face. Every value
+ * is a truth the page already owns (static facts or live /info data); the
+ * layers only organize it spatially, so the object participates in the
  * information hierarchy instead of decorating an empty region.
  *
  * Pointer tilt (±3° through one slow spring) is bound only for fine
@@ -72,22 +74,27 @@ export function HeroArtifact() {
     <div className={styles.scene} ref={sceneRef}>
       <div className={styles.stack}>
         <motion.div className={styles.tilt} style={{ rotateX, rotateY }}>
-          {/* The dark back plate gives the stack physical thickness. */}
-          <div className={styles.plateBack} aria-hidden="true" />
-          <div className={styles.plateIdentity}>
-            <p className={styles.identityName}>СПК · 2026</p>
-            <p className={styles.identityCity}>Кейс-чемпионат, Санкт-Петербург</p>
+          {/* The structural backplane relates the chassis to the hero's
+              negative space; the side plane gives the face physical edge.
+              Both are material, not content. */}
+          <div className={styles.backplane} aria-hidden="true" />
+          <div className={styles.chassisSide} aria-hidden="true" />
+          <div className={styles.face}>
+            <div className={styles.faceIdentity}>
+              <p className={styles.identityName}>СПК · 2026</p>
+              <p className={styles.identityCity}>Кейс-чемпионат, Санкт-Петербург</p>
+            </div>
+            <dl className={styles.faceFacts}>
+              <div className={styles.factRow}>
+                <dt className={styles.factLabel}>Команда</dt>
+                <dd className={styles.factValue}>02—04 участника</dd>
+              </div>
+              <div className={styles.factRow}>
+                <dt className={styles.factLabel}>Оценка жюри</dt>
+                <dd className={styles.factValue}>6 критериев</dd>
+              </div>
+            </dl>
           </div>
-          <dl className={styles.plateFacts}>
-            <div className={styles.factRow}>
-              <dt className={styles.factLabel}>Команда</dt>
-              <dd className={styles.factValue}>02—04 участника</dd>
-            </div>
-            <div className={styles.factRow}>
-              <dt className={styles.factLabel}>Оценка жюри</dt>
-              <dd className={styles.factValue}>6 критериев</dd>
-            </div>
-          </dl>
           <RegistrationPlate />
         </motion.div>
       </div>
@@ -96,7 +103,7 @@ export function HeroArtifact() {
 }
 
 /*
- * The elevated metadata layer: the registration deadline as a static,
+ * The elevated deadline module: the registration deadline as a static,
  * truthful line. The server flag wins when present; the deadline date is
  * the fallback. Pending/error collapse to a neutral dash — the hero fact
  * list below carries the live status, loading and error messaging.

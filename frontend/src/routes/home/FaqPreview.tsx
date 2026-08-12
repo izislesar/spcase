@@ -26,7 +26,7 @@ export function FaqPreview() {
 
   return (
     <section className={styles.faq} aria-labelledby="faq-heading">
-      <div className={`container ${styles.faqInner}`}>
+      <div className={`container-wide ${styles.faqInner}`}>
         <header className={styles.sectionHeader}>
           <h2 id="faq-heading" className={styles.sectionTitle}>
             Частые вопросы

@@ -1,4 +1,6 @@
-/* Schedule preview — typographic rows on the plain dark canvas. */
+/* Schedule preview — typographic rows on the plain dark canvas. The data
+ * itself is the visual footprint: a strong aligned time column, display
+ * titles, wide hairline rules. No cards, no shadows, no artwork. */
 
 .schedule {
   padding-block: var(--section-gap);
@@ -75,7 +77,20 @@
 
 @media (width > 64rem) {
   .eventRow {
-    grid-template-columns: minmax(15rem, max-content) 1fr;
+    grid-template-columns: minmax(17rem, max-content) minmax(0, 1fr);
     align-items: baseline;
+    padding-block: var(--space-6);
+  }
+
+  /* The time becomes a stronger graphic anchor; the title carries the
+     display weight. Both stay on the flat canvas — no depth here. */
+  .eventTime {
+    font-size: var(--text-base);
+    font-weight: 800;
+    color: var(--color-text);
+  }
+
+  .eventTitle {
+    font-size: var(--text-xl);
   }
 }

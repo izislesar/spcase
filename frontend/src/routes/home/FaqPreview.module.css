@@ -1,4 +1,6 @@
-/* FAQ — quiet rows: heading, questions, answers, hairline separators. */
+/* FAQ — quiet but wide: a full-width typographic surface of hairline
+ * separators, stronger questions and a comfortable answer measure. Z0 —
+ * no cards around items, no artwork, no depth. */
 
 .faq {
   padding-block: var(--section-gap);
@@ -6,7 +8,7 @@
 
 .faqInner {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 .sectionHeader {
@@ -85,4 +87,20 @@
   max-width: 62ch;
   color: var(--color-text-muted);
   overflow-wrap: break-word;
+}
+
+@media (width > 64rem) {
+  /* Questions gain typographic weight on the wide surface; the answer
+     keeps its comfortable reading measure. */
+  .faqQuestion {
+    font-size: var(--text-xl);
+  }
+
+  .faqToggle {
+    padding: var(--space-6) 0;
+  }
+
+  .faqAnswerText {
+    padding-block-end: var(--space-6);
+  }
 }

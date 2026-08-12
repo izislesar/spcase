@@ -1,8 +1,9 @@
 /*
  * Hero — factual identity content plus the ONE signature spatial object
- * (the layered fact plates, see HeroArtifact.module.css). The content
- * column stays primary; the artifact column carries the championship's
- * facts, so the second column is information, not filler.
+ * (the integrated fact chassis, see HeroArtifact.module.css). On wide
+ * desktop the composition is deliberately asymmetric: the text column is
+ * the quiet anchor, the chassis column is the larger mass (roughly 40–45%
+ * of the composition), and only the hero carries display-scale type.
  */
 
 .hero {
@@ -50,7 +51,7 @@
 /*
  * The fact list: the live registration state as a quiet label/value row.
  * The static facts (place/year, team format, jury criteria) are carried by
- * the spatial artifact, so they are not repeated here.
+ * the spatial chassis, so they are not repeated here.
  */
 .facts {
   display: grid;
@@ -85,10 +86,26 @@
     padding-block-start: var(--space-16);
   }
 
+  /*
+   * Layout width vs reading width: the text column keeps a narrow measure,
+   * the chassis column takes the larger share (6/13 of the wide container
+   * ≈ 40–45% of the composition). The text anchors to the top; the chassis
+   * anchors lower (its own offset lives in HeroArtifact.module.css), so the
+   * two sides form one asymmetric composition rather than a centered 50/50.
+   */
   .heroInner {
-    grid-template-columns: minmax(0, 36rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 6fr);
     gap: var(--space-8) var(--space-16);
-    align-items: center;
+  }
+
+  /*
+   * The hero is the one typographic peak of the public surface: display
+   * type in the 64–80px class on wide desktop, nowhere else. Section
+   * headings keep the quiet token scale.
+   */
+  .title {
+    font-size: clamp(3rem, 1.5rem + 3.5vw, 5rem);
+    line-height: 1.05;
   }
 
   .fact {

@@ -1,7 +1,12 @@
 /*
- * Hero artifact — the Z2 signature object: the championship's own facts on
- * a small stack of hard graphite plates (identity / participation facts /
- * one elevated registration layer over a dark back plate).
+ * Hero artifact — the Z2 signature object: ONE integrated chassis carrying
+ * the championship's facts. On wide viewports it is a dominant main face
+ * (event identity + an inset fact strip) with a physical edge plane behind
+ * it, one very-low-contrast structural backplane reaching beyond the
+ * footprint, and one elevated registration module attached to the face.
+ * Depth stays inside the established Z2 range (one face, one module, one
+ * backplane) — the object's presence comes from footprint and geometry,
+ * not from deeper 3D.
  *
  * The base style is the complete fallback: one flat panel for small
  * viewports, coarse pointers and reduced motion. The spatial composition
@@ -26,12 +31,18 @@
   display: grid;
 }
 
-/* The back plate exists only in the spatial composition. */
-.plateBack {
+/* The backplane and the side plane exist only in the spatial composition. */
+.backplane,
+.chassisSide {
   display: none;
 }
 
-.plateIdentity {
+/* On the flat panel the face is transparent: its parts flow in the panel. */
+.face {
+  display: contents;
+}
+
+.faceIdentity {
   padding: var(--space-6);
 }
 
@@ -48,7 +59,7 @@
   color: var(--color-text-muted);
 }
 
-.plateFacts {
+.faceFacts {
   display: grid;
   gap: var(--space-3);
   margin: 0;
@@ -104,20 +115,25 @@
 }
 
 /*
- * Wide viewports: the panel opens into the layered spatial composition.
- * Depth is shallow and physical — three content plates at 24/48/72px over
- * the back plate, one directional material light per plane, one soft cast
- * shadow where separation is real.
+ * Wide viewports: the panel opens into the chassis. One dominant face at
+ * 32px over its edge plane, one elevated module at 72px, one structural
+ * backplane at -56px — the same shallow Z2 range as before, with one
+ * directional material light and cast shadows only where separation is
+ * real. The face fills its column (roughly 40–45% of the hero
+ * composition); the backplane may extend past the footprint, relating the
+ * object to the hero's negative space.
  */
 @media (width > 64rem) {
   .scene {
     perspective: 1500px;
+    /* The object anchors lower than the text column: one composition,
+       different vertical anchors, no centered symmetry. */
+    margin-block-start: var(--space-12);
   }
 
   .stack {
     position: relative;
-    aspect-ratio: 4 / 3.4;
-    max-inline-size: 34rem;
+    aspect-ratio: 4 / 3.2;
     border: 0;
     background: none;
     transform-style: preserve-3d;
@@ -130,38 +146,41 @@
     transform-style: preserve-3d;
   }
 
-  .plateBack {
+  /*
+   * The structural backplane: larger than the chassis and reaching past it
+   * toward the text column and downward, very low contrast. It carries no
+   * content — its only job is the spatial relationship.
+   */
+  .backplane {
     display: block;
     position: absolute;
-    inset: 9% 0 0 7%;
-    border: 1px solid var(--color-line);
+    inset: 16% 10% -12% -8%;
+    border: 1px solid color-mix(in oklab, var(--color-line) 60%, transparent);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    transform: translateZ(-56px);
+  }
+
+  /*
+   * The edge plane: the face's own back, offset down-right so a thin
+   * physical edge stays visible along the right and bottom — the chassis
+   * reads as one solid object, not a floating card.
+   */
+  .chassisSide {
+    display: block;
+    position: absolute;
+    inset: 3% 0 0 4%;
+    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 30%, transparent);
     border-radius: var(--radius);
     background: var(--color-surface);
   }
 
-  .plateIdentity {
+  .face {
     position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 0;
-    inline-size: 72%;
-    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 45%, transparent);
-    border-radius: var(--radius);
-    background: linear-gradient(
-      165deg,
-      color-mix(in oklab, var(--color-raised), white 4%),
-      var(--color-raised) 70%
-    );
-    box-shadow:
-      inset 0 1px 0 rgb(236 234 228 / 0.05),
-      0 26px 48px -24px var(--color-plane-shadow);
-    transform: translateZ(24px);
-  }
-
-  .plateFacts {
-    position: absolute;
-    inset-block-end: 0;
-    inset-inline-end: 0;
-    inline-size: 66%;
+    inset: 0 4% 7% 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     border: 1px solid color-mix(in oklab, var(--color-plane-edge) 45%, transparent);
     border-radius: var(--radius);
     background: linear-gradient(
@@ -170,15 +189,48 @@
       var(--color-plane) 70%
     );
     box-shadow:
-      inset 0 1px 0 rgb(236 234 228 / 0.06),
-      0 30px 56px -24px var(--color-plane-shadow);
-    transform: translateZ(48px);
+      inset 0 1px 0 rgb(236 234 228 / 0.05),
+      0 34px 64px -28px var(--color-plane-shadow);
+    transform: translateZ(32px);
   }
 
+  .faceIdentity {
+    padding: var(--space-8);
+  }
+
+  .identityName {
+    font-size: var(--text-2xl);
+  }
+
+  .identityCity {
+    font-size: var(--text-lg);
+  }
+
+  /*
+   * The fact strip is embedded INTO the face: a darker inset region with an
+   * inner shadow, attached to the same plane — not a separate plate with
+   * its own border and cast shadow.
+   */
+  .faceFacts {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4) var(--space-8);
+    margin: 0 var(--space-8) var(--space-8);
+    padding: var(--space-4) var(--space-6);
+    border: 1px solid color-mix(in oklab, var(--color-plane-edge) 25%, transparent);
+    border-radius: var(--radius);
+    background: color-mix(in oklab, var(--color-plane), black 18%);
+    box-shadow: inset 0 2px 12px -6px rgb(3 5 9 / 0.65);
+  }
+
+  /*
+   * The one elevated module: the registration deadline, attached to the
+   * face's top edge — an inset module raised from the chassis, not a
+   * fourth floating card.
+   */
   .plateMeta {
     position: absolute;
-    inset-block-start: 7%;
-    inset-inline-end: 4%;
+    inset-block-start: -4%;
+    inset-inline-end: 10%;
     padding: var(--space-3) var(--space-4);
     border: 1px solid color-mix(in oklab, var(--color-plane-edge) 55%, transparent);
     border-radius: var(--radius);
@@ -196,8 +248,8 @@
 
 /*
  * The static composition tilt: a few degrees so the layering reads as one
- * physical object. Removed entirely under reduced motion — the stacked
- * plates remain a complete static composition without it.
+ * physical object. Removed entirely under reduced motion — the chassis
+ * remains a complete static composition without it.
  */
 @media (width > 64rem) and (prefers-reduced-motion: no-preference) {
   .stack {
