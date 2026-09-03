@@ -63,6 +63,23 @@ seed-аккаунтов — `password`. Production использует отде
 туда не входит. Не используйте `migrate-up`, `migrate-down` или
 `migrate-reset` в production.
 
+## Трекинг задач (beads)
+
+План работ ведётся в [beads](https://github.com/steveyegge/beads) (`bd`) —
+distributed issue tracker для coding-агентов; конфиг и экспорт живут в
+`.beads/`, источник истины — локальная Dolt-база (`.beads/embeddeddolt/`,
+в git не коммитится). `.beads/issues.jsonl` — экспорт для просмотра и обмена,
+не backup.
+
+```bash
+brew install beads        # или: npm install -g @beads/bd
+bd init                   # первый запуск в клоне: создаст локальную базу
+bd import                 # разовый импорт начального плана из .beads/issues.jsonl
+bd ready                  # задачи без блокеров; bd prime — контекст для агента
+bd dolt push              # публикует базу в refs/dolt/data этого же remote;
+                          # после первого push свежие клоны поднимаются через bd bootstrap
+```
+
 ## Проверки
 
 ```bash
