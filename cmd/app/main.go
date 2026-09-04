@@ -21,7 +21,6 @@ import (
 	postgrespool "spcase.ru/backend/internal/pkg/postgres"
 	"spcase.ru/backend/internal/repository"
 	"spcase.ru/backend/internal/service"
-	"spcase.ru/backend/web"
 )
 
 const (
@@ -240,10 +239,6 @@ func buildHandler(cfg config.Config, pool *pgxpool.Pool, logger *slog.Logger) (h
 	}
 	recoveryMiddleware := httpmiddleware.NewRecoveryMiddleware(logger)
 	requestLoggingMiddleware := httpmiddleware.NewRequestLogging(logger)
-	webHandler, err := web.NewHandler()
-	if err != nil {
-		return nil, err
-	}
 
 	protected := func(handler http.HandlerFunc, roles ...domain.Role) http.Handler {
 		return authMiddleware.Middleware(httpmiddleware.RequireRoles(roles...)(handler))
@@ -291,7 +286,6 @@ func buildHandler(cfg config.Config, pool *pgxpool.Pool, logger *slog.Logger) (h
 	mux.Handle("POST /api/v1/admin/evaluations/open", protected(
 		adminHandler.OpenEvaluations, domain.RoleAdmin,
 	))
-	mux.Handle("GET /", webHandler)
 
 	return httpmiddleware.SecurityHeaders(
 		httpmiddleware.NoStoreSensitiveResponses(

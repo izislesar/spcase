@@ -1,15 +1,11 @@
-# Project documentation used for local agent context
-.docs/
-frontend.md
-
-# Local environment files (keep the public template)
+# Local environment files (keep public templates)
 .env
 .env.*
 !.env.example
 !.env.production.example
 !.env.staging.example
 
-# JavaScript dependencies, caches and logs
+# Local dependencies, caches and logs
 node_modules/
 .npm/
 .cache/
@@ -17,12 +13,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-# New frontend build and test artifacts
-frontend/dist/
-frontend/test-results/
-frontend/playwright-report/
-frontend/blob-report/
 
 # Go build and test artifacts
 /app
@@ -48,11 +38,11 @@ tmp/
 .DS_Store
 Thumbs.db
 
-# Machine-local agent tooling (not repository context)
+# Machine-local agent tooling
 .vexp/
 .codex/
 
-# Beads / Dolt files (added by bd init)
+# Beads local database artifacts (JSONL is the canonical store)
 .dolt/
 *.db
 .beads-credential-key

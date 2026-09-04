@@ -1,8 +1,6 @@
 .git
 .gitignore
 .dockerignore
-.docs
-.vexp
 
 .env
 .env.*
@@ -18,5 +16,3 @@ coverage*.out
 *.log
 *.test
 *.out
-
-web/static

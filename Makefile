@@ -11,7 +11,7 @@ SPCASE_TEST_MIGRATOR_DATABASE_URL ?= postgres://$(DB_MIGRATOR_USER):$(DB_MIGRATO
 SPCASE_TEST_APP_DATABASE_URL ?= postgres://$(DB_APP_USER):$(DB_APP_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 GOOSE_COMMAND = $(GOOSE) -dir $(MIGRATIONS_DIR) $(GOOSE_DRIVER) "$(DATABASE_URL)"
 
-.PHONY: migrate-up migrate-production migrate-down migrate-status migrate-reset test-database frontend-build security-check
+.PHONY: migrate-up migrate-production migrate-down migrate-status migrate-reset test-database security-check
 
 migrate-up:
 	$(GOOSE_COMMAND) up
@@ -34,12 +34,7 @@ test-database:
 	SPCASE_TEST_APP_DATABASE_URL="$(SPCASE_TEST_APP_DATABASE_URL)" \
 	go test -race -count=1 -tags=integration ./internal/...
 
-frontend-build:
-	npm ci
-	npm run build
-
 security-check:
 	go test -race -count=1 ./...
 	go vet ./...
 	$(GOVULNCHECK) ./...
-	npm audit
